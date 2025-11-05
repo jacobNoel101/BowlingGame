@@ -1,6 +1,6 @@
 package bowlingSprites;
 
-public class BowlingGutter
+public class BowlingGutter extends SampledSprite
 {
 
 }
