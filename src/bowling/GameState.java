@@ -5,12 +5,12 @@ import java.util.List;
 
 public class GameState implements BowlingSubject
 {
-  private List<BowlingObserver> observers = new ArrayList<>(); 
+  private List<BowlingObserver> observers = new ArrayList<>();
   private int score = 0;
   private boolean isGameOver = false;
-  
-  public GameState() {
-    
+
+  public GameState()
+  {
   }
 
   @Override
@@ -23,42 +23,44 @@ public class GameState implements BowlingSubject
   public void removeObserver(BowlingObserver observer)
   {
     observers.remove(observer);
-    
   }
 
   @Override
   public void notifyObservers()
   {
-    for (BowlingObserver observer: observers) {
+    for (BowlingObserver observer : observers)
+    {
       observer.update();
     }
   }
-  
-  public void addScore(int pins) {
+
+  public void addScore(int pins)
+  {
     score += pins;
     notifyObservers();
   }
-  
-  public void endGame() {
+
+  public void endGame()
+  {
     isGameOver = true;
     notifyObservers();
   }
-  
-  public int getScore() {
+
+  public int getScore()
+  {
     return score;
   }
-  
-  public boolean isGameOver() {
+
+  public boolean isGameOver()
+  {
     return isGameOver;
   }
-  
-  public void resetGame() {
+
+  public void resetGame()
+  {
     score = 0;
     isGameOver = false;
     notifyObservers();
   }
-  
-  
-  
-  
+
 }

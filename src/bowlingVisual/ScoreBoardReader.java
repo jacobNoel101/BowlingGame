@@ -5,19 +5,18 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import io.ResourceFinder;
 import visual.statik.sampled.ImageFactory;
 
 public class ScoreBoardReader
 {
-
   private ResourceFinder finder;
 
   /**
    * Explicit Value Constructor.
    *
-   * @param finder The ResourceFinder to use
+   * @param finder
+   *          The ResourceFinder to use
    */
   public ScoreBoardReader(final ResourceFinder finder)
   {
@@ -33,4 +32,5 @@ public class ScoreBoardReader
       images.put(".png", image);
     return images;
   }
+
 }
