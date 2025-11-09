@@ -3,15 +3,16 @@ package app;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import gui.BowlingScreen;
+import visual.PlainVisualizationRenderer;
+import visual.VisualizationView;
 
 public class BowlingApplication extends JApplication implements ActionListener
 {
+  private BowlingScreen screen;
 
   public BowlingApplication(int width, int height)
   {
     super(width, height);
-    BowlingScreen screen = new BowlingScreen(30);
-    screen.start();
   }
 
   @Override
@@ -23,7 +24,14 @@ public class BowlingApplication extends JApplication implements ActionListener
   @Override
   public void init()
   {
-    // TODO Auto-generated method stub
+    screen = new BowlingScreen(30);
+    PlainVisualizationRenderer renderer = new PlainVisualizationRenderer();
+    VisualizationView view = new VisualizationView(screen, renderer);
+    view.setBounds(0, 0, 800, 600);
+    getContentPane().add(view);
+    screen.start();
+    getContentPane().revalidate();
+    getContentPane().repaint();
   }
 
   public static void main(final String[] args)

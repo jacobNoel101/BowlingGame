@@ -4,7 +4,6 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 import io.ResourceFinder;
 import visual.statik.sampled.ImageFactory;
 
@@ -27,10 +26,10 @@ public class ScoreBoardReader
   {
     HashMap<String, Image> images = new HashMap<String, Image>();
     ImageFactory imageFactory = new ImageFactory(finder);
-    Image image = imageFactory.createBufferedImage(".png", 4);
+    BufferedImage image = imageFactory.createBufferedImage(".png", 4);
     if (image != null)
       images.put(".png", image);
-    return images;
+    return image;
   }
 
 }

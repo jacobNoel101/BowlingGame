@@ -1,12 +1,9 @@
 package bowling;
 
-import java.awt.Font;
 import java.awt.image.BufferedImage;
-import visual.dynamic.described.SampledSprite;
 
 public class ScoreboardWriter
 {
-  private static final Font SCORE_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 24);
 
   public ScoreboardWriter()
   {
@@ -24,13 +21,11 @@ public class ScoreboardWriter
   {
   }
 
-  @Override
   public void reset()
   {
     // TODO Auto-generated method stub
   }
 
-  @Override
   public void update()
   {
     // TODO Auto-generated method stub

@@ -5,9 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import bowlingVisual.ScoreBoardReader;
 import io.ResourceFinder;
-import visual.dynamic.described.SampledSprite;
 import visual.statik.SimpleContent;
-import visual.statik.sampled.Content;
 
 public class ScoreBoard implements SimpleContent, BowlingObserver
 {
