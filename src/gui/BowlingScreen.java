@@ -1,13 +1,9 @@
 package gui;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Polygon;
-import java.awt.geom.Point2D;
-import visual.dynamic.described.DescribedSprite;
-import visual.dynamic.described.Stage;
-import visual.statik.described.AggregateContent;
-import visual.statik.described.Content;
+import java.awt.*;
+import java.awt.geom.*;
+import visual.dynamic.described.*;
+import visual.statik.described.*;
 
 public class BowlingScreen extends Stage
 {
@@ -35,13 +31,13 @@ public class BowlingScreen extends Stage
     // light-gray background
     Color wallColor = new Color(180, 180, 180);
     Content bg = new Content();
-    bg.setShape(new java.awt.geom.Rectangle2D.Double(0, navbar, width, height - navbar));
+    bg.setShape(new Rectangle2D.Double(0, navbar, width, height - navbar));
     bg.setPaint(wallColor);
     laneAggregate.add(bg);
 
     // score board section
     Content bar = new Content();
-    bar.setShape(new java.awt.geom.Rectangle2D.Double(0, 0, width, navbar));
+    bar.setShape(new Rectangle2D.Double(0, 0, width, navbar));
     bar.setPaint(new Color(150, 150, 150));
     laneAggregate.add(bar);
 
