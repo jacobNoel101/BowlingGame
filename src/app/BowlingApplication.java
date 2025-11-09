@@ -10,13 +10,13 @@ public class BowlingApplication extends JApplication implements ActionListener
 {
   private BowlingScreen screen;
 
-  public BowlingApplication(int width, int height)
+  public BowlingApplication(final int width, final int height)
   {
     super(width, height);
   }
 
   @Override
-  public void actionPerformed(ActionEvent e)
+  public void actionPerformed(final ActionEvent e)
   {
     // TODO Auto-generated method stub
   }

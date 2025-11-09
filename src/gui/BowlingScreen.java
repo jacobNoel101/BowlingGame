@@ -13,7 +13,7 @@ public class BowlingScreen extends Stage
 {
   private DescribedSprite laneSprite;
 
-  public BowlingScreen(int timeStep)
+  public BowlingScreen(final int timeStep)
   {
     super(timeStep);
     laneSprite = buildLaneSprite();
@@ -26,8 +26,8 @@ public class BowlingScreen extends Stage
     int width = 800;
     int height = 600;
     int navbar = 100;
-    int laneTopWidth = 300;
-    int laneBottomWidth = 380;
+    int laneTopWidth = 340;
+    int laneBottomWidth = 340;
     int laneStartY = navbar;
     int laneEndY = height;
     int gutter = 30;
