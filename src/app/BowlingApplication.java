@@ -1,7 +1,7 @@
 package app;
 
 import java.awt.event.*;
-import gui.BowlingScreen;
+import gui.*;
 import visual.*;
 
 public class BowlingApplication extends JApplication implements ActionListener
@@ -25,7 +25,7 @@ public class BowlingApplication extends JApplication implements ActionListener
     screen = new BowlingScreen(30);
     PlainVisualizationRenderer renderer = new PlainVisualizationRenderer();
     VisualizationView view = new VisualizationView(screen, renderer);
-    view.setBounds(0, 0, 800, 600);
+    view.setBounds(0, 0, 1024, 900);
     getContentPane().add(view);
     screen.start();
     getContentPane().revalidate();
@@ -34,7 +34,7 @@ public class BowlingApplication extends JApplication implements ActionListener
 
   public static void main(final String[] args)
   {
-    JApplication app = new BowlingApplication(800, 600);
+    JApplication app = new BowlingApplication(1024, 900);
     JApplication.invokeInEventDispatchThread(app);
   }
 
