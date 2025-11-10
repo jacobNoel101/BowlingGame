@@ -6,14 +6,15 @@ import visual.*;
 
 public class BowlingApplication extends JApplication implements ActionListener
 {
+  public static final int WIDTH  = 1000;
+  public static final int HEIGHT = 800;
+
   private BowlingScreen screen;
 
-  public BowlingApplication(final int width, final int height)
+  public BowlingApplication(String[] args)
   {
-    super(width, height);
+    super(WIDTH, HEIGHT);
     this.screen = new BowlingScreen(30);
-    
-
   }
 
   @Override
@@ -25,7 +26,8 @@ public class BowlingApplication extends JApplication implements ActionListener
   @Override
   public void init()
   {
-    screen.getView().setBounds(0, 0, 1024, 900);
+    
+    screen.getView().setBounds(0, 0, WIDTH, HEIGHT);
     getContentPane().add(screen.getView());
     screen.getView().setVisible(true);
 
@@ -36,7 +38,7 @@ public class BowlingApplication extends JApplication implements ActionListener
 
   public static void main(final String[] args)
   {
-    JApplication app = new BowlingApplication(1024, 900);
+    JApplication app = new BowlingApplication(args);
     JApplication.invokeInEventDispatchThread(app);
   }
 

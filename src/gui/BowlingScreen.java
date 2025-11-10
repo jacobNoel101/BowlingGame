@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import bowling.GameState;
 import bowling.ScoreBoard;
 import bowlingSprites.*;
+import bowlingVisual.BowlingLaneReader;
 import bowlingVisual.ScoreBoardReader;
 import io.ResourceFinder;
 import visual.dynamic.described.*;
@@ -21,10 +23,12 @@ public class BowlingScreen extends Stage
   public BowlingScreen(final int timeStep)
   {
     super(timeStep);
-    SampledSprite lane = buildLane();
+    Content lane = buildLane();
     add(lane);
     ScoreBoard scoreboard = buildScoreBoard();
-    
+    add(lane);
+    BowlingGutter bowlingGutter = buildGutter();
+    add(bowlingGutter);
     add(scoreboard);
     add(new BowlingBall());
     // for (BowlingPin p : makePins())
@@ -36,29 +40,48 @@ public class BowlingScreen extends Stage
     GameState gameState = new GameState();
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
     ScoreBoardReader reader = new ScoreBoardReader(finder);
-    Point2D location = new Point2D.Double(0,0);
+    Point2D location = new Point2D.Double(255,10);
     ScoreBoard scoreboard = null;
     try
-    {
+    { 
       scoreboard = new ScoreBoard(gameState, reader.read(), Color.blue, location);
     }
     catch (IOException e)
     {
       e.printStackTrace();
-    }
+    }    
     return scoreboard;
   }
 
-  private SampledSprite buildLane()
+  private BowlingGutter buildGutter() {
+    return null;
+    
+  }
+  
+  
+  
+  private Content buildLane()
   {
-    ResourceFinder finder = ResourceFinder.createInstance(this);
-    ImageFactory factory = new ImageFactory(finder);
-    BufferedImage img = factory.createBufferedImage("/resources/bowlingLane.jpg", 1);
-    Content laneImage = new Content(img, 0, 0);
-    SampledSprite sprite = new SampledSprite();
-    sprite.addKeyTime(0, new Point2D.Double(0, 0), 0.0, 1.0, laneImage);
-    sprite.addKeyTime(1, new Point2D.Double(0, 0), 0.0, 1.0, laneImage);
-    return sprite;
+    ResourceFinder finder = ResourceFinder.createInstance(new Marker());
+    BowlingLaneReader reader = new BowlingLaneReader(finder);;
+    Content content = null;
+    double width = 0;
+    double height = 0;
+    try
+    {
+      
+      BufferedImage image = reader.read();
+      width = 1000.0 / image.getWidth();
+      height = 1000.0 / image.getHeight();
+
+      content = new Content(image, 0, 0);
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    content.setScale(width, height);
+    return content;
   }
   //
   // private BowlingPin[] makePins()

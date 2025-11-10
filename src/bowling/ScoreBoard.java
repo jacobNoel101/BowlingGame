@@ -1,18 +1,12 @@
 package bowling;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.font.FontRenderContext;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import bowlingVisual.ScoreBoardReader;
-import io.ResourceFinder;
-import resources.Marker;
 import visual.statik.SimpleContent;
 
 public class ScoreBoard implements SimpleContent, BowlingObserver
@@ -51,11 +45,11 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
 
     Color oldColor = g2.getColor();
     g2.setColor(color);
+    
+    double width = 1000;
+    double height = 100;
 
-    // Render the Image
-    double y = location.getY() - image.getHeight(null) / 2.0;
-    double x = location.getX() - image.getWidth(null) / 2.0;
-    g.drawImage(image, (int) x, (int) y, null);
+    g2.drawImage(image, (int) 0, (int) 0, (int) width, (int) height, null);
 
     g2.setColor(oldColor);
     

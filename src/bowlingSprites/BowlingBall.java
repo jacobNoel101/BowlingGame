@@ -19,5 +19,6 @@ public class BowlingBall extends DescribedSprite
     addKeyTime(0, new Point2D.Double(0, 0), 0.0, 1.0, agg);
     addKeyTime(1, new Point2D.Double(0, 0), 0.0, 1.0, agg);
   }
+  
 
 }

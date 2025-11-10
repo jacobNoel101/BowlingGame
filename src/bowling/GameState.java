@@ -6,14 +6,16 @@ import java.util.List;
 public class GameState implements BowlingSubject
 {
   private List<BowlingObserver> observers = new ArrayList<>();
-  private int score = 0;
-  private int totalScore = 0;
+  private int score;
+  private int totalScore;
   private boolean isGameOver = false;
   private GameTheme gameTheme;
 
   public GameState()
   {
     this.gameTheme = new GameTheme();
+    this.totalScore = 0;
+    this.score = 0;
   }
 
   @Override
