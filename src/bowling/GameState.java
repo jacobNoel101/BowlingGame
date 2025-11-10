@@ -7,10 +7,13 @@ public class GameState implements BowlingSubject
 {
   private List<BowlingObserver> observers = new ArrayList<>();
   private int score = 0;
+  private int totalScore = 0;
   private boolean isGameOver = false;
+  private GameTheme gameTheme;
 
   public GameState()
   {
+    this.gameTheme = new GameTheme();
   }
 
   @Override
@@ -34,6 +37,10 @@ public class GameState implements BowlingSubject
     }
   }
 
+  public void totalScore(int pins) {
+    this.totalScore += pins;
+  }
+  
   public void addScore(int pins)
   {
     score += pins;
