@@ -1,11 +1,19 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import bowling.GameState;
+import bowling.ScoreBoard;
 import bowlingSprites.*;
+import bowlingVisual.ScoreBoardReader;
 import io.ResourceFinder;
 import visual.dynamic.described.*;
 import visual.statik.sampled.*;
+import resources.Marker;
+
 
 public class BowlingScreen extends Stage
 {
@@ -15,23 +23,30 @@ public class BowlingScreen extends Stage
     super(timeStep);
     SampledSprite lane = buildLane();
     add(lane);
-    SampledSprite scoreboard = buildScoreBoard();
+    ScoreBoard scoreboard = buildScoreBoard();
+    
     add(scoreboard);
     add(new BowlingBall());
     // for (BowlingPin p : makePins())
     // add(p);
   }
 
-  private SampledSprite buildScoreBoard()
+  private ScoreBoard buildScoreBoard()
   {
-    ResourceFinder finder = ResourceFinder.createInstance(this);
-    ImageFactory factory = new ImageFactory(finder);
-    BufferedImage img = factory.createBufferedImage("/resources/scoreSheet.jpg", 1);
-    Content scoreboardImage = new Content(img, 0, 0);
-    SampledSprite sprite = new SampledSprite();
-    sprite.addKeyTime(0, new Point2D.Double(0, 0), 0.0, 1.0, scoreboardImage);
-    sprite.addKeyTime(1, new Point2D.Double(0, 0), 0.0, 1.0, scoreboardImage);
-    return sprite;
+    GameState gameState = new GameState();
+    ResourceFinder finder = ResourceFinder.createInstance(new Marker());
+    ScoreBoardReader reader = new ScoreBoardReader(finder);
+    Point2D location = new Point2D.Double(0,0);
+    ScoreBoard scoreboard = null;
+    try
+    {
+      scoreboard = new ScoreBoard(gameState, reader.read(), Color.blue, location);
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    return scoreboard;
   }
 
   private SampledSprite buildLane()

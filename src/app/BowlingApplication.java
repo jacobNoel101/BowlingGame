@@ -11,6 +11,9 @@ public class BowlingApplication extends JApplication implements ActionListener
   public BowlingApplication(final int width, final int height)
   {
     super(width, height);
+    this.screen = new BowlingScreen(30);
+    
+
   }
 
   @Override
@@ -22,11 +25,10 @@ public class BowlingApplication extends JApplication implements ActionListener
   @Override
   public void init()
   {
-    screen = new BowlingScreen(30);
-    PlainVisualizationRenderer renderer = new PlainVisualizationRenderer();
-    VisualizationView view = new VisualizationView(screen, renderer);
-    view.setBounds(0, 0, 1024, 900);
-    getContentPane().add(view);
+    screen.getView().setBounds(0, 0, 1024, 900);
+    getContentPane().add(screen.getView());
+    screen.getView().setVisible(true);
+
     screen.start();
     getContentPane().revalidate();
     getContentPane().repaint();
