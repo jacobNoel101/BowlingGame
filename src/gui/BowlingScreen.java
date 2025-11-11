@@ -19,10 +19,10 @@ public class BowlingScreen extends Stage
     add(buildBackground());
     BowlingLane lane = buildLane();
     add(lane);
-    ScoreBoard scoreboard = buildScoreBoard();
-    add(scoreboard);
     BowlingGutter bowlingGutter = buildGutter();
     add(bowlingGutter);
+    ScoreBoard scoreboard = buildScoreBoard();
+    add(scoreboard);
     BowlingBall ball = new BowlingBall();
     add(ball);
   }
@@ -47,7 +47,7 @@ public class BowlingScreen extends Stage
 
   private BowlingGutter buildGutter()
   {
-    return null;
+    return new BowlingGutter();
   }
 
   private BowlingLane buildLane()
