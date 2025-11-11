@@ -7,7 +7,7 @@ import visual.statik.described.*;
 
 public class BowlingBall extends DescribedSprite
 {
-  private final int radius = 28;
+  private final int radius = 26;
   private double cx = 500.0;
   private double cy = 830.0;
 

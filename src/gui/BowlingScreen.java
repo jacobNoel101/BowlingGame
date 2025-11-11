@@ -16,7 +16,10 @@ public class BowlingScreen extends Stage
   public BowlingScreen(final int timeStep)
   {
     super(timeStep);
-    add(buildBackground());
+    Background bg = buildBackground();
+    add(bg);
+    BowlingSide side = buildSide();
+    add(side);
     BowlingLane lane = buildLane();
     add(lane);
     BowlingGutter bowlingGutter = buildGutter();
@@ -48,6 +51,11 @@ public class BowlingScreen extends Stage
   private BowlingGutter buildGutter()
   {
     return new BowlingGutter();
+  }
+
+  private BowlingSide buildSide()
+  {
+    return new BowlingSide();
   }
 
   private BowlingLane buildLane()
