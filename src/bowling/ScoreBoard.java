@@ -1,11 +1,7 @@
 package bowling;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import visual.statik.SimpleContent;
 
@@ -16,7 +12,8 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
   protected Point2D location;
   private GameState gameState;
 
-  public ScoreBoard(GameState gameState, Image image, Color color, Point2D location) throws IOException
+  public ScoreBoard(GameState gameState, Image image, Color color, Point2D location)
+      throws IOException
   {
     this.color = color;
     this.location = location;
@@ -28,7 +25,6 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
   @Override
   public void reset()
   {
-    
   }
 
   @Override
@@ -42,17 +38,12 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
   public void render(Graphics g)
   {
     Graphics2D g2 = (Graphics2D) g;
-
     Color oldColor = g2.getColor();
     g2.setColor(color);
-    
     double width = 1000;
     double height = 100;
-
     g2.drawImage(image, (int) 0, (int) 0, (int) width, (int) height, null);
-
     g2.setColor(oldColor);
-    
   }
 
 }

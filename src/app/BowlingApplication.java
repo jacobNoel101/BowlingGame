@@ -2,13 +2,11 @@ package app;
 
 import java.awt.event.*;
 import gui.*;
-import visual.*;
 
 public class BowlingApplication extends JApplication implements ActionListener
 {
-  public static final int WIDTH  = 1000;
-  public static final int HEIGHT = 800;
-
+  public static final int WIDTH = 1000;
+  public static final int HEIGHT = 900;
   private BowlingScreen screen;
 
   public BowlingApplication(String[] args)
@@ -26,11 +24,9 @@ public class BowlingApplication extends JApplication implements ActionListener
   @Override
   public void init()
   {
-    
     screen.getView().setBounds(0, 0, WIDTH, HEIGHT);
     getContentPane().add(screen.getView());
     screen.getView().setVisible(true);
-
     screen.start();
     getContentPane().revalidate();
     getContentPane().repaint();

@@ -1,7 +1,6 @@
 package bowling;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GameState implements BowlingSubject
 {
@@ -39,10 +38,11 @@ public class GameState implements BowlingSubject
     }
   }
 
-  public void totalScore(int pins) {
+  public void totalScore(int pins)
+  {
     this.totalScore += pins;
   }
-  
+
   public void addScore(int pins)
   {
     score += pins;
