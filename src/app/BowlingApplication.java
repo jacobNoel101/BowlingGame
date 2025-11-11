@@ -18,7 +18,7 @@ public class BowlingApplication extends JApplication implements ActionListener
   @Override
   public void actionPerformed(final ActionEvent e)
   {
-    // TODO Auto-generated method stub
+    // currently nothing
   }
 
   @Override

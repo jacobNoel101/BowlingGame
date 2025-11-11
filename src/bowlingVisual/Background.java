@@ -1,16 +1,15 @@
 package bowlingVisual;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
-
 import visual.statik.SimpleContent;
 
 public class Background implements SimpleContent
 {
   private Color color;
-  public Background(Color color) { 
+
+  public Background(Color color)
+  {
     this.color = color;
   }
 
@@ -22,9 +21,6 @@ public class Background implements SimpleContent
     g2.setColor(color);
     g2.fill(rect);
     g2.draw(rect);
-    
   }
-  
-  
 
 }

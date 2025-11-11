@@ -1,17 +1,13 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.geom.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import bowling.*;
 import bowlingSprites.*;
 import bowlingVisual.*;
 import io.ResourceFinder;
 import visual.dynamic.described.*;
-import visual.statik.described.Content;
 import resources.Marker;
 
 public class BowlingScreen extends Stage
@@ -21,7 +17,7 @@ public class BowlingScreen extends Stage
   {
     super(timeStep);
     add(buildBackground());
-    visual.statik.sampled.Content lane = buildLane();
+    BowlingLane lane = buildLane();
     add(lane);
     ScoreBoard scoreboard = buildScoreBoard();
     add(scoreboard);
@@ -36,7 +32,7 @@ public class BowlingScreen extends Stage
     GameState gameState = new GameState();
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
     ScoreBoardReader reader = new ScoreBoardReader(finder);
-    Point2D location = new Point2D.Double(255, 10);
+    Point2D location = new Point2D.Double(255, 5);
     ScoreBoard scoreboard = null;
     try
     {
@@ -54,34 +50,16 @@ public class BowlingScreen extends Stage
     return null;
   }
 
-  private visual.statik.sampled.Content buildLane()
+  private BowlingLane buildLane()
   {
-    ResourceFinder finder = ResourceFinder.createInstance(new Marker());
-    BowlingLaneReader reader = new BowlingLaneReader(finder);
-    visual.statik.sampled.Content content = null;
-    double width = 0;
-    double height = 0;
-    try
-    {
-      BufferedImage image = reader.read();
-      width = 1000.0 / image.getWidth();
-      height = 900.0 / image.getHeight();
-      content = new visual.statik.sampled.Content(image, 0, 0);
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-    content.setScale(width, height);
-    return content;
+    return new BowlingLane();
   }
 
   private Background buildBackground()
   {
-    Background content = new Background(Color.black);
+    Background content = new Background(Color.lightGray);
     return content;
   }
-  
 
   @Override
   public void handleTick(int time)
