@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import bowlingSprites.*;
 import bowlingVisual.*;
 import io.ResourceFinder;
 import visual.dynamic.described.*;
+import visual.statik.described.Content;
 import resources.Marker;
 
 public class BowlingScreen extends Stage
@@ -62,7 +65,7 @@ public class BowlingScreen extends Stage
     {
       BufferedImage image = reader.read();
       width = 1000.0 / image.getWidth();
-      height = 1000.0 / image.getHeight();
+      height = 900.0 / image.getHeight();
       content = new visual.statik.sampled.Content(image, 0, 0);
     }
     catch (IOException e)
@@ -73,15 +76,12 @@ public class BowlingScreen extends Stage
     return content;
   }
 
-  private visual.statik.described.Content buildBackground()
+  private Background buildBackground()
   {
-    Rectangle2D.Double rect = new Rectangle2D.Double(0, 0, 1024, 900);
-    visual.statik.described.Content bg = new visual.statik.described.Content();
-    bg.setShape(rect);
-    bg.setPaint(Color.lightGray);
-    bg.setStroke(null);
-    return bg;
+    Background content = new Background(Color.black);
+    return content;
   }
+  
 
   @Override
   public void handleTick(int time)
