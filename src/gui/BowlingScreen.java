@@ -39,7 +39,7 @@ public class BowlingScreen extends Stage
     try
     {
       mp.read();
-      mp.update();
+      mp.playLoop();
     }
     catch (UnsupportedAudioFileException e)
     {

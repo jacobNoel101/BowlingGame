@@ -26,6 +26,24 @@ public class MusicPlayer implements BowlingObserver
     }
   }
 
+  public void playLoop()
+  {
+    new Thread(() -> {
+      while (true)
+      {
+        try
+        {
+          boomBox.start(true);
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+          break;
+        }
+      }
+    }).start();
+  }
+
   public void read() throws UnsupportedAudioFileException, IOException
   {
     BufferedSoundFactory factory = new BufferedSoundFactory(finder);
