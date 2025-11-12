@@ -34,7 +34,6 @@ public class BowlingScreen extends Stage
     add(scoreboard);
     BowlingBall ball = new BowlingBall();
     add(ball);
-    // create music. load sound, start playing it
     MusicPlayer mp = buildMusic();
     try
     {

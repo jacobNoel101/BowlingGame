@@ -8,40 +8,57 @@ import bowling.BowlingObserver;
 
 public class MusicPlayer implements BowlingObserver
 {
-  private BoomBox boomBox;
-  private BufferedSound music;
+  protected BoomBox boomBox;
+  protected BufferedSound music;
   private ResourceFinder finder;
+  private Thread loopThread;
 
   public MusicPlayer(final ResourceFinder finder)
   {
     this.finder = finder;
-    try
-    {
-      read();
-      boomBox.start(false);
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
+  }
+
+  protected void setMusic(BufferedSound music)
+  {
+    this.music = music;
+  }
+
+  protected void setBoomBox(BoomBox boomBox)
+  {
+    this.boomBox = boomBox;
+  }
+
+  protected BufferedSound getMusic()
+  {
+    return music;
+  }
+
+  protected BoomBox getBoomBox()
+  {
+    return boomBox;
   }
 
   public void playLoop()
   {
-    new Thread(() -> {
-      while (true)
+    if (boomBox == null)
+      return;
+    loopThread = new Thread(() -> {
+      try
       {
-        try
-        {
-          boomBox.start(true);
-        }
-        catch (Exception e)
-        {
-          e.printStackTrace();
-          break;
-        }
+        boomBox.start(true);
       }
-    }).start();
+      catch (Exception e)
+      {
+        e.printStackTrace();
+      }
+    });
+    loopThread.setDaemon(true);
+    loopThread.start();
+  }
+
+  public void stop()
+  {
+    boomBox = null;
   }
 
   public void read() throws UnsupportedAudioFileException, IOException
@@ -68,4 +85,5 @@ public class MusicPlayer implements BowlingObserver
       e.printStackTrace();
     }
   }
+
 }
