@@ -3,10 +3,14 @@ package gui;
 import java.awt.Color;
 import java.awt.geom.*;
 import java.io.IOException;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 import bowling.*;
 import bowlingSprites.*;
 import bowlingVisual.*;
 import io.ResourceFinder;
+import music.MusicPlayer;
 import visual.dynamic.described.*;
 import resources.Marker;
 
@@ -15,7 +19,9 @@ public class BowlingScreen extends Stage
 
   public BowlingScreen(final int timeStep)
   {
-    super(timeStep);
+    super(timeStep); // set tick interval
+
+    // call helpers and add the content to the screen
     Background bg = buildBackground();
     add(bg);
     BowlingSide side = buildSide();
@@ -28,6 +34,22 @@ public class BowlingScreen extends Stage
     add(scoreboard);
     BowlingBall ball = new BowlingBall();
     add(ball);
+    // create music. load sound, start playing it
+    MusicPlayer mp = buildMusic();
+    try
+    {
+      mp.read();
+      mp.update();
+    }
+    catch (UnsupportedAudioFileException e)
+    {
+      e.printStackTrace();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    mp.update();
   }
 
   private ScoreBoard buildScoreBoard()
@@ -35,7 +57,7 @@ public class BowlingScreen extends Stage
     GameState gameState = new GameState();
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
     ScoreBoardReader reader = new ScoreBoardReader(finder);
-    Point2D location = new Point2D.Double(255, 5);
+    Point2D location = new Point2D.Double(255, 5); // pos on screen
     ScoreBoard scoreboard = null;
     try
     {
@@ -69,9 +91,16 @@ public class BowlingScreen extends Stage
     return content;
   }
 
-  @Override
-  public void handleTick(int time)
+  private MusicPlayer buildMusic()
   {
+    ResourceFinder finder = ResourceFinder.createInstance(new Marker());
+    return new MusicPlayer(finder);
+  }
+
+  @Override
+  public void handleTick(final int time)
+  {
+    // currently nothing
   }
 
 }
