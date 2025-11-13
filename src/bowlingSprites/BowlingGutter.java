@@ -38,12 +38,12 @@ public class BowlingGutter extends DescribedSprite
     // left gutter aligned with outskirts of left lane
     Polygon leftGutter = new Polygon();
     leftGutter.addPoint(laneBottomLeftX - gutterWidth, laneBottomY);
-    leftGutter.addPoint(laneBottomLeftX, laneBottomY);
+    leftGutter.addPoint(laneBottomLeftX + 20, laneBottomY);
     leftGutter.addPoint(laneTopLeftX, laneTopY);
     leftGutter.addPoint(laneTopLeftX - gutterWidth, laneTopY);
     // right gutter mirrored to left
     Polygon rightGutter = new Polygon();
-    rightGutter.addPoint(laneBottomRightX, laneBottomY);
+    rightGutter.addPoint(laneBottomRightX - 20, laneBottomY);
     rightGutter.addPoint(laneBottomRightX + gutterWidth, laneBottomY);
     rightGutter.addPoint(laneTopRightX + gutterWidth, laneTopY);
     rightGutter.addPoint(laneTopRightX, laneTopY);

@@ -17,7 +17,6 @@ public class BowlingSide implements SimpleContent
   public void render(Graphics g)
   {
     Graphics2D g2 = (Graphics2D) g;
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // smoother edges
     // back wall and bottom of screen
     int backWallTopY = backWallY;
     int laneBottomY = screenH;

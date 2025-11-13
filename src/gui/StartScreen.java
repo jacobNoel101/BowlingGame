@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -36,13 +37,12 @@ public class StartScreen extends Stage
       e.printStackTrace();
     }
     mp.update();
-    getView().addMouseListener(new java.awt.event.MouseAdapter()
+    getView().addMouseListener(new MouseAdapter()
     {
       @Override
-      public void mouseClicked(java.awt.event.MouseEvent e)
+      public void mouseClicked(MouseEvent e)
       {
         handleMouseClick(e.getPoint());
-        mp.stop();
       }
     });
   }
@@ -85,7 +85,6 @@ public class StartScreen extends Stage
   {
     if (startContent.isStartClicked(point))
     {
-      mp.stop();
       app.launchBowlingScreen();
     }
   }

@@ -20,7 +20,6 @@ public class BowlingLane implements SimpleContent
   public void render(Graphics g)
   {
     Graphics2D g2 = (Graphics2D) g;
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // smooth edges
     int backWallX = (screenW - backWallWidth) / 2; // center back wall horizontally
     int backWallY = 240; // 240 down from top of screen
     

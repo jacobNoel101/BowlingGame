@@ -52,13 +52,7 @@ public class MusicPlayer implements BowlingObserver
         e.printStackTrace();
       }
     });
-    loopThread.setDaemon(true);
     loopThread.start();
-  }
-
-  public void stop()
-  {
-    boomBox = null;
   }
 
   public void read() throws UnsupportedAudioFileException, IOException
