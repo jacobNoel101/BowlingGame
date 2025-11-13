@@ -6,13 +6,13 @@ import gui.*;
 public class BowlingApplication extends JApplication implements ActionListener
 {
   public static final int WIDTH = 1000;
-  public static final int HEIGHT = 900;
-  private BowlingScreen screen;
+  public static final int HEIGHT = 700;
+  private StartScreen startScreen;
+  private BowlingScreen bowlingScreen;
 
-  public BowlingApplication(String[] args)
+  public BowlingApplication(final String[] args)
   {
     super(WIDTH, HEIGHT);
-    this.screen = new BowlingScreen(30);
   }
 
   @Override
@@ -24,10 +24,21 @@ public class BowlingApplication extends JApplication implements ActionListener
   @Override
   public void init()
   {
-    screen.getView().setBounds(0, 0, WIDTH, HEIGHT);
-    getContentPane().add(screen.getView());
-    screen.getView().setVisible(true);
-    screen.start();
+    startScreen = new StartScreen(17, this);
+    startScreen.getView().setBounds(0, 0, WIDTH, HEIGHT);
+    getContentPane().add(startScreen.getView());
+    startScreen.start();
+    getContentPane().revalidate();
+    getContentPane().repaint();
+  }
+
+  public void launchBowlingScreen()
+  {
+    getContentPane().remove(startScreen.getView());
+    bowlingScreen = new BowlingScreen(30);
+    bowlingScreen.getView().setBounds(0, 0, WIDTH, HEIGHT);
+    getContentPane().add(bowlingScreen.getView());
+    bowlingScreen.start();
     getContentPane().revalidate();
     getContentPane().repaint();
   }

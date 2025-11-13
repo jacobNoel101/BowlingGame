@@ -16,7 +16,8 @@ public class ScoreboardWriter
    * @param score
    *          The score to render
    */
-  public static void renderScore(Point2D location, int score, Graphics2D g2, Image image)
+  public static void renderScore(final Point2D location, final int score, final Graphics2D g2,
+      final Image image)
   {
     String text = Integer.toString(score);
     FontRenderContext frc = g2.getFontRenderContext();

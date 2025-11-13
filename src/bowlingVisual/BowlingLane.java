@@ -6,8 +6,8 @@ import visual.statik.SimpleContent;
 
 public class BowlingLane implements SimpleContent
 {
-  private final Color laneColor = new Color(181, 101, 29);
-  private final Color backWallColor = Color.BLACK;
+  private final Color laneColor = new Color(181, 101, 29); // wood like color
+  private final Color backWallColor = Color.BLACK; // back wall color
   private final int screenW = 1000;
   private final int screenH = 900;
   private final int backWallWidth = 340;
@@ -20,19 +20,25 @@ public class BowlingLane implements SimpleContent
   public void render(Graphics g)
   {
     Graphics2D g2 = (Graphics2D) g;
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    int backWallX = (screenW - backWallWidth) / 2;
-    int backWallY = 240;
+    int backWallX = (screenW - backWallWidth) / 2; // center back wall horizontally
+    int backWallY = 100; // 240 down from top of screen
+
+    // construct rectangle for back wall all black
     Rectangle2D backWall = new Rectangle2D.Double(backWallX, backWallY, backWallWidth,
         backWallHeight);
     g2.setColor(backWallColor);
     g2.fill(backWall);
+    // top of lane sits under the back wall
     int laneTopY = backWallY + backWallHeight;
-    int laneBottomY = screenH;
+    int laneBottomY = screenH; // bottom aligns to bottom of screen
+
+    // computer lane coords
     int laneTopLeftX = (screenW - laneTopWidth) / 2;
     int laneTopRightX = laneTopLeftX + laneTopWidth;
     int laneBottomLeftX = (screenW - laneBottomWidth) / 2;
     int laneBottomRightX = laneBottomLeftX + laneBottomWidth;
+
+    // draw the lane points
     Polygon lane = new Polygon();
     lane.addPoint(laneBottomLeftX, laneBottomY);
     lane.addPoint(laneBottomRightX, laneBottomY);
@@ -40,8 +46,10 @@ public class BowlingLane implements SimpleContent
     lane.addPoint(laneTopLeftX, laneTopY);
     g2.setColor(laneColor);
     g2.fill(lane);
+    // lighter brown for 3D lines
     g2.setStroke(new BasicStroke(2f));
     g2.setColor(new Color(160, 90, 20));
+    // draw 8 evenly spaced lines
     for (int i = 1; i < numStrips; i++)
     {
       double t = (double) i / numStrips;
@@ -50,6 +58,7 @@ public class BowlingLane implements SimpleContent
       Line2D strip = new Line2D.Double(xTop, laneTopY, xBottom, laneBottomY);
       g2.draw(strip);
     }
+    // outline lane and back wall in black
     g2.setStroke(new BasicStroke(4f));
     g2.setColor(Color.BLACK);
     g2.draw(backWall);

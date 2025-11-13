@@ -12,8 +12,8 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
   protected Point2D location;
   private GameState gameState;
 
-  public ScoreBoard(GameState gameState, Image image, Color color, Point2D location)
-      throws IOException
+  public ScoreBoard(final GameState gameState, final Image image, final Color color,
+      final Point2D location) throws IOException
   {
     this.color = color;
     this.location = location;
@@ -35,7 +35,7 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
   }
 
   @Override
-  public void render(Graphics g)
+  public void render(final Graphics g)
   {
     Graphics2D g2 = (Graphics2D) g;
     Color oldColor = g2.getColor();
