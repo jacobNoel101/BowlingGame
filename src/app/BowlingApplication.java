@@ -6,7 +6,7 @@ import gui.*;
 public class BowlingApplication extends JApplication implements ActionListener
 {
   public static final int WIDTH = 1000;
-  public static final int HEIGHT = 900;
+  public static final int HEIGHT = 700;
   private StartScreen startScreen;
   private BowlingScreen bowlingScreen;
 
@@ -24,7 +24,7 @@ public class BowlingApplication extends JApplication implements ActionListener
   @Override
   public void init()
   {
-    startScreen = new StartScreen(30, this);
+    startScreen = new StartScreen(17, this);
     startScreen.getView().setBounds(0, 0, WIDTH, HEIGHT);
     getContentPane().add(startScreen.getView());
     startScreen.start();

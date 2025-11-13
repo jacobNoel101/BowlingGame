@@ -11,7 +11,7 @@ public class BowlingGutter extends DescribedSprite
   private final int screenW = 1000;
   private final int screenH = 900;
   private final int gutterWidth = 40;
-  private final int backWallY = 240;
+  private final int backWallY = 100;
   private final int backWallHeight = 120;
   private final int laneTopWidth = 260;
   private final int laneBottomWidth = 580;
@@ -26,31 +26,37 @@ public class BowlingGutter extends DescribedSprite
   }
 
   @Override
-  public void render(Graphics g)
+  public void render(final Graphics g)
   {
     Graphics2D g2 = (Graphics2D) g;
+
+    // local variables for multi-use when positioning
     int laneTopY = backWallY + backWallHeight;
     int laneBottomY = screenH;
     int laneTopLeftX = (screenW - laneTopWidth) / 2;
     int laneTopRightX = laneTopLeftX + laneTopWidth;
     int laneBottomLeftX = (screenW - laneBottomWidth) / 2;
     int laneBottomRightX = laneBottomLeftX + laneBottomWidth;
+
     // left gutter aligned with outskirts of left lane
     Polygon leftGutter = new Polygon();
     leftGutter.addPoint(laneBottomLeftX - gutterWidth, laneBottomY);
     leftGutter.addPoint(laneBottomLeftX + 20, laneBottomY);
     leftGutter.addPoint(laneTopLeftX, laneTopY);
     leftGutter.addPoint(laneTopLeftX - gutterWidth, laneTopY);
+
     // right gutter mirrored to left
     Polygon rightGutter = new Polygon();
     rightGutter.addPoint(laneBottomRightX - 20, laneBottomY);
     rightGutter.addPoint(laneBottomRightX + gutterWidth, laneBottomY);
     rightGutter.addPoint(laneTopRightX + gutterWidth, laneTopY);
     rightGutter.addPoint(laneTopRightX, laneTopY);
+
     // fill the gutters dark gray
     g2.setColor(new Color(60, 60, 60));
     g2.fill(leftGutter);
     g2.fill(rightGutter);
+
     // black outline around gutters
     g2.setStroke(new BasicStroke(4f));
     g2.setColor(Color.BLACK);

@@ -17,16 +17,19 @@ public class StartScreen extends Stage
 {
   private BowlingStart startContent;
   private MusicPlayer mp;
-  private BowlingApplication app;
+  private BowlingApplication app; // to help switch screens
 
-  public StartScreen(final int timeStep, BowlingApplication app)
+  public StartScreen(final int timeStep, final BowlingApplication app)
   {
     super(timeStep);
     this.app = app;
+
     Background bg = buildBackground();
     add(bg);
+
     startContent = buildStart();
     add(startContent);
+
     mp = buildMusic();
     try
     {
@@ -37,20 +40,12 @@ public class StartScreen extends Stage
       e.printStackTrace();
     }
     mp.update();
-    getView().addMouseListener(new MouseAdapter()
-    {
-      @Override
-      public void mouseClicked(MouseEvent e)
-      {
-        handleMouseClick(e.getPoint());
-      }
-    });
+    getView().addMouseListener(new StartScreenClickListener(this));
   }
 
   private Background buildBackground()
   {
-    Background content = new Background(Color.BLACK);
-    return content;
+    return new Background(Color.BLACK);
   }
 
   private BowlingStart buildStart()
@@ -61,17 +56,7 @@ public class StartScreen extends Stage
   private MusicPlayer buildMusic()
   {
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
-    return new MusicPlayer(finder)
-    {
-      @Override
-      public void read() throws UnsupportedAudioFileException, IOException
-      {
-        BufferedSoundFactory factory = new BufferedSoundFactory(finder);
-        BufferedSound intro = factory.createBufferedSound("possible_intro_music.wav");
-        setMusic(intro);
-        setBoomBox(new BoomBox(intro));
-      }
-    };
+    return new IntroMusicPlayer(finder);
   }
 
   @Override
@@ -81,11 +66,45 @@ public class StartScreen extends Stage
     getView().repaint();
   }
 
-  public void handleMouseClick(Point2D point)
+  public void handleMouseClick(final Point2D point)
   {
     if (startContent.isStartClicked(point))
+      app.launchBowlingScreen(); // switch screens when mouse clicks start
+  }
+
+  // --- here to listen for a mouse click to start ---
+  private static class StartScreenClickListener extends MouseAdapter
+  {
+    private final StartScreen screen;
+
+    public StartScreenClickListener(StartScreen screen)
     {
-      app.launchBowlingScreen();
+      this.screen = screen;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e)
+    {
+      screen.handleMouseClick(e.getPoint());
+    }
+  }
+
+  // --- here for intro music setup ---
+  private static class IntroMusicPlayer extends MusicPlayer
+  {
+    public IntroMusicPlayer(final ResourceFinder finder)
+    {
+      super(finder);
+    }
+
+    @Override
+    public void read() throws UnsupportedAudioFileException, IOException
+    {
+      ResourceFinder finder = ResourceFinder.createInstance(new Marker());
+      BufferedSoundFactory factory = new BufferedSoundFactory(finder);
+      BufferedSound intro = factory.createBufferedSound("intro_sound.wav");
+      setMusic(intro);
+      setBoomBox(new BoomBox(intro));
     }
   }
 

@@ -21,8 +21,8 @@ public class BowlingLane implements SimpleContent
   {
     Graphics2D g2 = (Graphics2D) g;
     int backWallX = (screenW - backWallWidth) / 2; // center back wall horizontally
-    int backWallY = 240; // 240 down from top of screen
-    
+    int backWallY = 100; // 240 down from top of screen
+
     // construct rectangle for back wall all black
     Rectangle2D backWall = new Rectangle2D.Double(backWallX, backWallY, backWallWidth,
         backWallHeight);
@@ -31,13 +31,13 @@ public class BowlingLane implements SimpleContent
     // top of lane sits under the back wall
     int laneTopY = backWallY + backWallHeight;
     int laneBottomY = screenH; // bottom aligns to bottom of screen
-    
+
     // computer lane coords
     int laneTopLeftX = (screenW - laneTopWidth) / 2;
     int laneTopRightX = laneTopLeftX + laneTopWidth;
     int laneBottomLeftX = (screenW - laneBottomWidth) / 2;
     int laneBottomRightX = laneBottomLeftX + laneBottomWidth;
-    
+
     // draw the lane points
     Polygon lane = new Polygon();
     lane.addPoint(laneBottomLeftX, laneBottomY);

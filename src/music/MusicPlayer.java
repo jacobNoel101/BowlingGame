@@ -18,12 +18,12 @@ public class MusicPlayer implements BowlingObserver
     this.finder = finder;
   }
 
-  protected void setMusic(BufferedSound music)
+  protected void setMusic(final BufferedSound music)
   {
     this.music = music;
   }
 
-  protected void setBoomBox(BoomBox boomBox)
+  protected void setBoomBox(final BoomBox boomBox)
   {
     this.boomBox = boomBox;
   }

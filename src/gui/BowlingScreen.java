@@ -3,9 +3,7 @@ package gui;
 import java.awt.Color;
 import java.awt.geom.*;
 import java.io.IOException;
-
 import javax.sound.sampled.UnsupportedAudioFileException;
-
 import bowling.*;
 import bowlingSprites.*;
 import bowlingVisual.*;
