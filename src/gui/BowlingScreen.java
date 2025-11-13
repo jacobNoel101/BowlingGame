@@ -3,6 +3,9 @@ package gui;
 import java.awt.Color;
 import java.awt.geom.*;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import bowling.*;
 import bowlingSprites.*;
 import bowlingVisual.*;
@@ -28,6 +31,10 @@ public class BowlingScreen extends Stage
     add(scoreboard);
     BowlingBall ball = new BowlingBall();
     add(ball);
+    //ArrayList<BowlingPin> pins = buildPins();
+    //for (BowlingPin pin : pins) {
+     // add(pin);
+    //}
   }
 
   private ScoreBoard buildScoreBoard()
@@ -52,6 +59,16 @@ public class BowlingScreen extends Stage
   {
     return new BowlingGutter();
   }
+  
+  //private ArrayList<BowlingPin> buildPins()
+ // {
+    ArrayList<BowlingPin> pins = new ArrayList<BowlingPin>();
+    //for (int i = 0; i < 9; i++) {
+      //BowlingPin pin = new BowlingPin();
+      //pins.add(pin);
+    //}
+    //return pins;
+  //}
 
   private BowlingSide buildSide()
   {
