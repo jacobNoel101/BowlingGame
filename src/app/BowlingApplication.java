@@ -15,8 +15,6 @@ public class BowlingApplication extends JApplication implements ActionListener
     super(WIDTH, HEIGHT);
   }
 
-
-
   @Override
   public void init()
   {
@@ -38,7 +36,6 @@ public class BowlingApplication extends JApplication implements ActionListener
     getContentPane().revalidate();
     getContentPane().repaint();
     bowlingScreen.getView().requestFocusInWindow();
-
   }
 
   public static void main(final String[] args)
@@ -47,13 +44,10 @@ public class BowlingApplication extends JApplication implements ActionListener
     JApplication.invokeInEventDispatchThread(app);
   }
 
-
-
   @Override
   public void actionPerformed(ActionEvent e)
   {
     // TODO Auto-generated method stub
-    
   }
 
 }

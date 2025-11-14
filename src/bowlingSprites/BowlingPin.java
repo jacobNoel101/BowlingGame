@@ -2,10 +2,8 @@ package bowlingSprites;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.geom.Rectangle2D;
-
 import visual.dynamic.described.*;
 import visual.statik.described.Content;
 import visual.statik.described.TransformableContent;
@@ -14,7 +12,6 @@ public class BowlingPin extends RuleBasedSprite
 {
   private int row;
   Content pinContent;
-
 
   public BowlingPin(TransformableContent content, int row)
   {
@@ -49,7 +46,7 @@ public class BowlingPin extends RuleBasedSprite
         // Transform
         topPin.addPoint(0, 0);
         topPin.addPoint(20, 0);
-        topPin.addPoint(20 - 5, -3); // x , y  -> reduce y to make top smaller
+        topPin.addPoint(20 - 5, -3); // x , y -> reduce y to make top smaller
         topPin.addPoint(0 + 5, -3);
 
         TransformableContent topPinContent = new Content(topPin, Color.black, Color.gray, null);

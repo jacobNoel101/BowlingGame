@@ -23,13 +23,10 @@ public class StartScreen extends Stage
   {
     super(timeStep);
     this.app = app;
-
     Background bg = buildBackground();
     add(bg);
-
     startContent = buildStart();
     add(startContent);
-
     mp = buildMusic();
     try
     {
