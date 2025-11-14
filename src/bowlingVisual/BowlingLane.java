@@ -10,10 +10,10 @@ public class BowlingLane implements SimpleContent
   private final Color backWallColor = Color.BLACK; // back wall color
   private final int screenW = 1000;
   private final int screenH = 900;
-  private final int backWallWidth = 340;
+  private final int backWallWidth = 215;
   private final int backWallHeight = 120;
-  private final int laneTopWidth = 260;
-  private final int laneBottomWidth = 580;
+  private final int laneTopWidth = 180;
+  private final int laneBottomWidth = 1100;
   private final int numStrips = 9;
 
   @Override
