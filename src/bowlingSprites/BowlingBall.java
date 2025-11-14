@@ -22,7 +22,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       this.speed = speed;
     }
     this.x = 500;
-    this.y = 500;
+    this.y = 650;
     setLocation(x, y);
   }
 

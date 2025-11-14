@@ -90,16 +90,25 @@ public class BowlingScreen extends Stage
 
   private BowlingBall buildBall()
   {
-    Ellipse2D shape = new Ellipse2D.Double(-30, -30, 60, 60);
-    TransformableContent content = new Content(shape, Color.BLUE, Color.BLUE, null);
-    BowlingBall ball = new BowlingBall(content, null);
-    return ball;
+    // outer circle
+    Ellipse2D outer = new Ellipse2D.Double(-30, -30, 60, 60);
+    Color outerColor = new Color(30, 80, 200); // darker blue
+    TransformableContent outerContent = new Content(outer, outerColor, outerColor, null);
+    // inner circle
+    Ellipse2D inner = new Ellipse2D.Double(-25, -25, 30, 30);
+    Color innerColor = new Color(40, 100, 210); // lighter blue
+    TransformableContent innerContent = new Content(inner, innerColor, innerColor, null);
+    // make both into one content
+    visual.statik.described.CompositeContent ballContent = new visual.statik.described.CompositeContent();
+    ballContent.add(outerContent);
+    ballContent.add(innerContent);
+    return new BowlingBall(ballContent, null);
   }
 
   private ArrayList<BowlingPin> buildPins()
   {
     Rectangle2D shape = new Rectangle2D.Double(0, 0, 20.0, 60.0);
-    TransformableContent pinContent = new Content(shape, Color.black, Color.gray, null);
+    TransformableContent pinContent = new Content(shape, Color.BLACK, Color.WHITE, null);
     ArrayList<BowlingPin> pins = new ArrayList<BowlingPin>();
     for (int i = 10; i > 6; i--)
     {

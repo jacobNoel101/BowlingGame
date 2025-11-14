@@ -49,7 +49,7 @@ public class BowlingPin extends RuleBasedSprite
         topPin.addPoint(20 - 5, -3); // x , y -> reduce y to make top smaller
         topPin.addPoint(0 + 5, -3);
 
-        TransformableContent topPinContent = new Content(topPin, Color.black, Color.gray, null);
+        TransformableContent topPinContent = new Content(topPin, Color.BLACK, Color.RED, null);
         topPinContent.setLocation(x, y);
         topPinContent.setRotation(angle, rx, ry);
         topPinContent.setScale(scaleX, scaleY);
