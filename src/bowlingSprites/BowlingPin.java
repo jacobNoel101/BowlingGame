@@ -89,7 +89,6 @@ public class BowlingPin extends RuleBasedSprite
   @Override
   public void handleTick(int arg0)
   {
-    // TODO Auto-generated method stub
 
   }
 

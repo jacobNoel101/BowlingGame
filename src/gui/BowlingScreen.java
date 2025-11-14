@@ -3,10 +3,11 @@ package gui;
 import java.awt.Color;
 import java.awt.geom.*;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.SwingUtilities;
+
 import bowling.*;
 import bowlingSprites.*;
 import bowlingVisual.*;
@@ -38,7 +39,9 @@ public class BowlingScreen extends Stage
     add(scoreboard);
     BowlingBall ball = buildBall();
     add(ball);
-    
+    getView().addKeyListener(ball);
+    getView().setFocusable(true);
+    SwingUtilities.invokeLater(() -> getView().requestFocusInWindow());
     ArrayList<BowlingPin> pins = buildPins();
     for (BowlingPin pin : pins) {
       add(pin);
@@ -87,8 +90,7 @@ public class BowlingScreen extends Stage
   private BowlingBall buildBall() {
     Ellipse2D shape = new Ellipse2D.Double(-30, -30, 60, 60);
     TransformableContent content = new Content(shape, Color.BLUE, Color.BLUE, null);
-    BowlingBall ball = new BowlingBall(content,30, 30, null);
-    ball.setLocation(500, 500);
+    BowlingBall ball = new BowlingBall(content, null);
     return ball;
     
   }
@@ -151,9 +153,14 @@ public class BowlingScreen extends Stage
   }
 
   @Override
-  public void handleTick(final int time)
+  public void handleTick(final int delay)
   {
-    // currently nothing
+    super.handleTick(delay);
+    int lastKeyTime = 4000;
+    if (delay >= lastKeyTime)
+    {
+      super.getMetronome().reset();
+    }
   }
 
 }

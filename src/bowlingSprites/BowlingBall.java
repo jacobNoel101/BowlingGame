@@ -1,38 +1,77 @@
 package bowlingSprites;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.*;
 import visual.dynamic.described.DescribedSprite;
 import visual.dynamic.described.RuleBasedSprite;
 import visual.statik.described.*;
 
-public class BowlingBall extends RuleBasedSprite
+public class BowlingBall extends RuleBasedSprite implements KeyListener
 {
-  private final int radius = 25; // ball size
-  private double cx = 500.0; // x pos on screen
-  private double cy = 650.0; // y pos on screen
-  double maxX;
-  double maxY;
-  Double speed;
+  private double x, y;
+  private Double speed;
   
 
-  public BowlingBall(TransformableContent content, double width, double height, Double speed) 
+  public BowlingBall(TransformableContent content, Double speed) 
   {
     super(content);
-    this.maxX = width;
-    this.maxY = height;
     if (speed == null) {
       this.speed = 10.0;
     } else {
       this.speed = speed;
     }
-    setLocation(maxX, maxY);
+    this.x = 500;
+    this.y = 500;
+    setLocation(x,y);
   }
 
   @Override
   public void handleTick(int time)
   {
-    // currently nothing
+    setLocation(x, y);
   }
+
+
+  @Override
+  public void keyPressed(KeyEvent e)
+  {
+    int code = e.getKeyCode();
+
+    if (code == KeyEvent.VK_LEFT)
+    {
+      x -= 10;
+    }
+    else if (code == KeyEvent.VK_RIGHT)
+    {
+      x += 10;
+    }
+    else if (code == KeyEvent.VK_SPACE)
+    {
+      x += 10;
+    }
+//    else if (code == KeyEvent.VK_UP)
+//    {
+//      y -= 10;
+//    }
+//    else if (code == KeyEvent.VK_DOWN)
+//    {
+//      y += 10;
+//    }
+    
+  }
+
+  @Override
+  public void keyTyped(KeyEvent e)
+  {
+    
+  }
+
+  @Override
+  public void keyReleased(KeyEvent e)
+  {    
+  }
+
 
 }
