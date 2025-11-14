@@ -48,9 +48,9 @@ public class BowlingPin extends RuleBasedSprite
         }
         // Transform
         topPin.addPoint(0, 0);
-        topPin.addPoint(30, 0);
-        topPin.addPoint(30 - 5, -5); // x , y  -> reduce y to make top smaller
-        topPin.addPoint(0 + 5, -5);
+        topPin.addPoint(20, 0);
+        topPin.addPoint(20 - 5, -3); // x , y  -> reduce y to make top smaller
+        topPin.addPoint(0 + 5, -3);
 
         TransformableContent topPinContent = new Content(topPin, Color.black, Color.gray, null);
         topPinContent.setLocation(x, y);
