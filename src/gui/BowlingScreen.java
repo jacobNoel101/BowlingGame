@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Polygon;
 import java.awt.geom.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,16 +35,20 @@ public class BowlingScreen extends Stage
     add(bowlingGutter);
     ScoreBoard scoreboard = buildScoreBoard();
     add(scoreboard);
+    ArrayList<BowlingPin> pins = buildPins();
     BowlingBall ball = buildBall();
+
+    for (BowlingPin pin : pins)
+    {
+      //ball.addAntagonist(pin);
+      pin.addAntagonist(ball);
+
+      add(pin);
+    }
     add(ball);
     getView().addKeyListener(ball);
     getView().setFocusable(true);
     SwingUtilities.invokeLater(() -> getView().requestFocusInWindow());
-    ArrayList<BowlingPin> pins = buildPins();
-    for (BowlingPin pin : pins)
-    {
-      add(pin);
-    }
     MusicPlayer mp = buildMusic();
     try
     {
@@ -91,28 +96,39 @@ public class BowlingScreen extends Stage
   private BowlingBall buildBall()
   {
     // outer circle
-    Ellipse2D outer = new Ellipse2D.Double(-30, -30, 60, 60);
+    Ellipse2D outer = new Ellipse2D.Double(-30, -30, 70, 70);
     Color outerColor = new Color(30, 80, 200); // darker blue
     TransformableContent outerContent = new Content(outer, outerColor, outerColor, null);
     // inner circle
-    Ellipse2D inner = new Ellipse2D.Double(-25, -25, 30, 30);
+    Ellipse2D inner = new Ellipse2D.Double(-25, -25, 50, 50);
     Color innerColor = new Color(40, 100, 210); // lighter blue
     TransformableContent innerContent = new Content(inner, innerColor, innerColor, null);
     // make both into one content
     visual.statik.described.CompositeContent ballContent = new visual.statik.described.CompositeContent();
     ballContent.add(outerContent);
     ballContent.add(innerContent);
-    return new BowlingBall(ballContent, null);
+    BowlingBall ball = new BowlingBall(ballContent, null);
+    return ball;
   }
 
   private ArrayList<BowlingPin> buildPins()
   {
-    Rectangle2D shape = new Rectangle2D.Double(0, 0, 20.0, 60.0);
-    TransformableContent pinContent = new Content(shape, Color.BLACK, Color.WHITE, null);
+    Rectangle2D frontPin = new Rectangle2D.Double(0, 0, 20, 60);
+    TransformableContent pinContent = new Content(frontPin, Color.WHITE, Color.BLACK, null);
+    Polygon topPin = new Polygon();
+    topPin.addPoint(0, 0);
+    topPin.addPoint(20, 0);
+    topPin.addPoint(20 - 5, -3); // x , y -> reduce y to make top smaller
+    topPin.addPoint(0 + 5, -3);
+    TransformableContent topPinContent = new Content(topPin, Color.WHITE, Color.BLACK, null);
+    visual.statik.described.CompositeContent fullPinContent = new visual.statik.described.CompositeContent();
+    fullPinContent.add(topPinContent);
+    fullPinContent.add(pinContent);
+
     ArrayList<BowlingPin> pins = new ArrayList<BowlingPin>();
     for (int i = 10; i > 6; i--)
     {
-      BowlingPin pin = new BowlingPin(pinContent, i);
+      BowlingPin pin = new BowlingPin(fullPinContent, i);
       pin.setLocation(415 + offset, 170); // 422 , 185
       offset += 50;
       pins.add(pin);
@@ -120,7 +136,7 @@ public class BowlingScreen extends Stage
     offset = 0;
     for (int i = 6; i > 3; i--)
     {
-      BowlingPin pin = new BowlingPin(pinContent, i);
+      BowlingPin pin = new BowlingPin(fullPinContent, i);
       pin.setLocation(435 + offset, 180); // 422 , 185
       offset += 55;
       pins.add(pin);
@@ -128,12 +144,12 @@ public class BowlingScreen extends Stage
     offset = 0;
     for (int i = 3; i > 1; i--)
     {
-      BowlingPin pin = new BowlingPin(pinContent, i);
+      BowlingPin pin = new BowlingPin(fullPinContent, i);
       pin.setLocation(455 + offset, 195); // 422 , 185
       offset += 70;
       pins.add(pin);
     }
-    BowlingPin pin = new BowlingPin(pinContent, 1);
+    BowlingPin pin = new BowlingPin(fullPinContent, 1);
     pin.setLocation(490, 210); // 422 , 185
     pins.add(pin);
     return pins;
@@ -165,11 +181,11 @@ public class BowlingScreen extends Stage
   public void handleTick(final int delay)
   {
     super.handleTick(delay);
-    int lastKeyTime = 4000;
-    if (delay >= lastKeyTime)
-    {
-      super.getMetronome().reset();
-    }
+    int lastKeyTime = 2500;
+//    if (delay >= lastKeyTime)
+//    {
+//      super.getMetronome().reset();
+//    }
   }
 
 }

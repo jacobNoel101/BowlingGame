@@ -1,15 +1,23 @@
 package bowlingSprites;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Polygon;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import visual.dynamic.described.RuleBasedSprite;
+import visual.dynamic.described.Sprite;
 import visual.statik.described.*;
 
 public class BowlingBall extends RuleBasedSprite implements KeyListener
 {
+  private boolean rolling;
+  private boolean showArrow;
   private int roll = 0;
   private double x, y;
   private Double speed;
@@ -35,12 +43,13 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     this.x = 500;
     this.y = 650;
     setLocation(x, y);
+    this.roll = 1;
   }
 
   @Override
   public void handleTick(int time) {
       // --- Tweening logic ---
-      if (!keyTimes.isEmpty()) {
+      if (rolling && !keyTimes.isEmpty()) {
           int i = 0;
           // find the current segment
           while (i < keyTimes.size() - 1 && time > keyTimes.get(i + 1)) {
@@ -67,16 +76,77 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
                   y = lerp(p0.getY(), p1.getY(), t);
               }
 
-              // Optional: apply rotation/scale if your engine supports it
-              // setRotation(lerp(r0, r1, t));
-              // setScale(lerp(s0, s1, t));
+              double rotation = lerp(r0, r1, t);
+              setRotation(rotation);
+
+              double scale = lerp(s0, s1, t);
+              setScale(scale);
           }
       }
+      setLocation(x,y);
 
-      setLocation(x, y);
+      
+//      Iterator<Sprite> i;
+//      Sprite pin;
+//      i = antagonists.iterator();
+//      while (i.hasNext())
+//      {
+//      pin = i.next();
+//      if (intersects(pin)) {
+//        stopRoll();
+//        }
+//      }
+//      
+//      updateLocation();
+      
+      
   }
   
-  
+//  private void stopRoll() {
+//    rolling = false;
+//
+//    // stop movement EXACTLY where the hit occurred
+//    keyTimes.clear();
+//    locations.clear();
+//    rotations.clear();
+//    scalings.clear();
+//
+//    // optional: freeze transformation
+//    setScale(1.0);
+//    setRotation(0.0);
+//  }
+//  private void updateLocation()
+//  {
+//    setLocation(x,y);
+//  }
+
+  @Override
+  public void render(Graphics g)
+  {
+    super.render(g);
+    
+    if (showArrow) {
+      int arrowX = (int) x;        // x-coordinate of the ball
+      int arrowY = (int) y - 50;   // position above the ball
+      int arrowLength = 40;         // length of the line
+
+      g.setColor(Color.RED);
+      g.drawLine(arrowX, arrowY, arrowX, arrowY - arrowLength); // vertical line
+
+      // Draw simple triangle arrowhead at the top
+      Polygon arrowHead = new Polygon();
+      arrowHead.addPoint(arrowX, arrowY - arrowLength);
+      arrowHead.addPoint(arrowX - 5, arrowY - arrowLength + 10);
+      arrowHead.addPoint(arrowX + 5, arrowY - arrowLength + 10);
+      g.fillPolygon(arrowHead);
+      TransformableContent arrowContent = new Content(arrowHead, Color.BLACK, Color.BLACK, null);
+      arrowContent.render(g);
+
+      
+    }
+
+  }
+
   private double lerp(double a, double b, double t) {
     return a + (b - a) * t;
   }
@@ -95,16 +165,19 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     }
     else if (code == KeyEvent.VK_SPACE)
     {
-      roll = 1;
-      if (roll == 1) {
+      if (roll == 0) {
         initiateRoll();
         
-        roll = 0;
-      } else {
         roll = 1;
+      } else {
+        showRotationIndicator();
+        
+        roll = 0;
 
       }
     }
+    setLocation(x,y);
+
     // else if (code == KeyEvent.VK_UP)
     // {
     // y -= 10;
@@ -115,7 +188,13 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     // }
   }
   
-  protected int addKeyTime(int keyTime, Point2D location, Double rotation, Double scaling) {
+  private void showRotationIndicator()
+  {
+    showArrow = true;
+    
+  }
+
+  public int addKeyTime(int keyTime, Point2D location, Double rotation, Double scaling) {
     int existingKT = -1;
     int i = 0;
     boolean keepLooking = true;
@@ -139,11 +218,39 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   
   private void initiateRoll() {
     // Example: move from current position to top over time
-    int startTick = 0;
-    int endTick = 200;
-
-    addKeyTime(startTick, new Point2D.Double(x, y), 0.0, 1.0);
-    addKeyTime(endTick, new Point2D.Double(x, 0), 0.0, 1.0); // moves up
+    int endTick = 1500;
+    rolling = true;
+    keyTimes.clear();
+    locations.clear();
+    rotations.clear();
+    scalings.clear();
+    addKeyTime(0, new Point2D.Double(x, y), 0.0, 1.0); // moves up
+    addKeyTime(endTick, new Point2D.Double(x, y - 420), 0.0, .4); // moves up
+  }
+  
+  @Override
+  public boolean intersects(Sprite s) {
+    boolean retval;
+    double maxx, maxy, minx, miny;
+    double maxxO, maxyO, minxO, minyO;
+    
+    
+    Rectangle2D r;
+    retval = true;
+    r = getBounds2D(true);
+    minx = r.getX();
+    miny = r.getY();
+    maxx = minx + r.getWidth();
+    maxy = miny + r.getHeight();
+    r = s.getBounds2D(true);
+    minxO = r.getX();
+    minyO = r.getY();
+    maxxO = minxO + r.getWidth();
+    maxyO = minyO + r.getHeight();
+    if ( (maxx < minxO) || (minx > maxxO) ||
+    (maxy < minyO) || (miny > maxyO) ) retval = false;
+    return retval;
+    
   }
 
   @Override
