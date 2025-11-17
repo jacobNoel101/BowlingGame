@@ -1,7 +1,6 @@
 package gui;
 
-import java.awt.Color;
-import java.awt.Polygon;
+import java.awt.*;
 import java.awt.geom.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import bowlingSprites.*;
 import bowlingVisual.*;
 import io.ResourceFinder;
 import music.MusicPlayer;
-import visual.Visualization;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
 import resources.Marker;
@@ -39,12 +37,9 @@ public class BowlingScreen extends Stage
     add(scoreboard);
     this.pins = buildPins();
     BowlingBall ball = buildBall();
-
     for (BowlingPin pin : pins)
     {
-      //ball.addAntagonist(pin);
       pin.addAntagonist(ball);
-
       add(pin);
     }
     add(ball);
@@ -120,13 +115,12 @@ public class BowlingScreen extends Stage
     Polygon topPin = new Polygon();
     topPin.addPoint(0, 0);
     topPin.addPoint(20, 0);
-    topPin.addPoint(20 - 5, -3); // x , y -> reduce y to make top smaller
+    topPin.addPoint(20 - 5, -3);
     topPin.addPoint(0 + 5, -3);
     TransformableContent topPinContent = new Content(topPin, Color.WHITE, Color.BLACK, null);
     visual.statik.described.CompositeContent fullPinContent = new visual.statik.described.CompositeContent();
     fullPinContent.add(topPinContent);
     fullPinContent.add(pinContent);
-
     ArrayList<BowlingPin> pins = new ArrayList<BowlingPin>();
     for (int i = 10; i > 6; i--)
     {
@@ -188,7 +182,6 @@ public class BowlingScreen extends Stage
     {
       super.getMetronome().reset();
     }
-    
   }
 
 }
