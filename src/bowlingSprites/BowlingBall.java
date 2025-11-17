@@ -228,6 +228,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     addKeyTime(endTick, new Point2D.Double(x, y - 420), 0.0, .4); // moves up
   }
   
+  
   @Override
   public boolean intersects(Sprite s) {
     boolean retval;

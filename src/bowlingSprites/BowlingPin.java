@@ -14,6 +14,8 @@ import visual.statik.described.TransformableContent;
 
 public class BowlingPin extends RuleBasedSprite
 {
+  private Point2D initialPosition;
+
   private boolean knocked = false;
 
   private int row;
@@ -25,15 +27,17 @@ public class BowlingPin extends RuleBasedSprite
   public BowlingPin(TransformableContent content, int row)
   {
     super(content);
+    initialPosition = new Point2D.Double(x, y);
 
     this.row = row;
     this.keyTimes = new ArrayList<Integer>();
     this.locations = new ArrayList<Point2D>();
     this.rotations = new ArrayList<Double>();
     this.scalings = new ArrayList<Double>();
+    setLocation(x,y);
 
   }
-
+  
   @Override
   public boolean intersects(Sprite s)
   {
@@ -177,6 +181,7 @@ public class BowlingPin extends RuleBasedSprite
       {
         knocked = true;
         movePin(time);
+        
       }
     }
     setLocation(x, y);
@@ -185,6 +190,13 @@ public class BowlingPin extends RuleBasedSprite
   private double lerp(double a, double b, double t)
   {
     return a + (b - a) * t;
+  }
+  
+  private void clear() {
+    keyTimes.clear();
+    locations.clear();
+    rotations.clear();
+    scalings.clear();
   }
 
   public int addKeyTime(int keyTime, Point2D location, Double rotation, Double scaling)

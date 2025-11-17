@@ -12,6 +12,7 @@ import bowlingSprites.*;
 import bowlingVisual.*;
 import io.ResourceFinder;
 import music.MusicPlayer;
+import visual.Visualization;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
 import resources.Marker;
@@ -19,6 +20,7 @@ import resources.Marker;
 public class BowlingScreen extends Stage
 {
   double offset = 0;
+  ArrayList<BowlingPin> pins;
 
   public BowlingScreen(final int timeStep)
   {
@@ -35,7 +37,7 @@ public class BowlingScreen extends Stage
     add(bowlingGutter);
     ScoreBoard scoreboard = buildScoreBoard();
     add(scoreboard);
-    ArrayList<BowlingPin> pins = buildPins();
+    this.pins = buildPins();
     BowlingBall ball = buildBall();
 
     for (BowlingPin pin : pins)
@@ -182,10 +184,11 @@ public class BowlingScreen extends Stage
   {
     super.handleTick(delay);
     int lastKeyTime = 2500;
-//    if (delay >= lastKeyTime)
-//    {
-//      super.getMetronome().reset();
-//    }
+    if (delay >= lastKeyTime)
+    {
+      super.getMetronome().reset();
+    }
+    
   }
 
 }
