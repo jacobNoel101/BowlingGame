@@ -4,12 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import event.Metronome;
-import visual.dynamic.described.RuleBasedSprite;
-import visual.dynamic.described.Sprite;
-
+import visual.dynamic.described.*;
 import visual.statik.described.*;
 
 public class BowlingBall extends RuleBasedSprite implements KeyListener
@@ -43,7 +39,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
 
   public void handleTick(int time)
   {
-    // --- Tweening logic ---
+    // tweening logic
     if (rolling && !keyTimes.isEmpty())
     {
       int i = 0;
@@ -57,46 +53,25 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       {
         int t0 = keyTimes.get(i);
         int t1 = keyTimes.get(i + 1);
-
         Point2D p0 = locations.get(i);
         Point2D p1 = locations.get(i + 1);
-
         double r0 = rotations.get(i);
         double r1 = rotations.get(i + 1);
-
         double s0 = scalings.get(i);
         double s1 = scalings.get(i + 1);
-
         double t = (time - t0) / (double) (t1 - t0);
-
         if (p0 != null && p1 != null)
         {
           x = lerp(p0.getX(), p1.getX(), t);
           y = lerp(p0.getY(), p1.getY(), t);
         }
-
         double rotation = lerp(r0, r1, t);
         setRotation(rotation);
-
         double scale = lerp(s0, s1, t);
         setScale(scale);
       }
     }
     setLocation(x, y);
-
-    // Iterator<Sprite> i;
-    // Sprite pin;
-    // i = antagonists.iterator();
-    // while (i.hasNext())
-    // {
-    // pin = i.next();
-    // if (intersects(pin)) {
-    // stopRoll();
-    // }
-    // }
-    //
-    // updateLocation();
-
     setLocation(x, y);
     for (Sprite pin : antagonists)
     {
@@ -139,10 +114,13 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   {
     int code = e.getKeyCode();
     if (code == KeyEvent.VK_LEFT)
+    {
       x -= 10;
+    }
     else if (code == KeyEvent.VK_RIGHT)
+    {
       x += 10;
-
+    }
     else if (code == KeyEvent.VK_SPACE)
     {
       if (roll == 0)
@@ -157,7 +135,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       }
     }
     setLocation(x, y);
-
   }
 
   private void showRotationIndicator()
