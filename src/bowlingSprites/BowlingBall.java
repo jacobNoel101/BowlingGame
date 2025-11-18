@@ -10,6 +10,8 @@ import visual.statik.described.*;
 
 public class BowlingBall extends RuleBasedSprite implements KeyListener
 {
+  private double rollingAngle; // in radians
+  private double aimOffset; // horizontal offset while aiming
   private boolean rolling;
   private Metronome metronome;
   private boolean showArrow;
@@ -22,6 +24,8 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   public BowlingBall(TransformableContent content, Double speed)
   {
     super(content);
+    this.rollingAngle = 0.0;
+    this.aimOffset = 0;
     this.keyTimes = new ArrayList<Integer>();
     this.locations = new ArrayList<Point2D>();
     this.rotations = new ArrayList<Double>();
@@ -79,8 +83,8 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     for (Sprite pin : antagonists)
     {
       if (this.intersects(pin))
-      { // make sure intersects() is correct
-        ((BowlingPin) pin).onBallHit(this); // move only this pin
+      {
+        ((BowlingPin) pin).onBallHit(this);
       }
     }
   }
@@ -93,14 +97,23 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     {
       int arrowX = (int) x + 5; // x coord
       int arrowY = (int) y - 50; // distance from ball
-      int arrowLength = 40; // arrow line length
+      int arrowLength = 50; // arrow line length
+      int tipx = arrowX + (int) (arrowLength * Math.sin(rollingAngle));
+      int tipY = arrowY - (int) (arrowLength * Math.cos(rollingAngle));
+
       g.setColor(Color.BLACK);
-      g.drawLine(arrowX, arrowY, arrowX, arrowY - arrowLength + 5); // draw line
+      g.drawLine(arrowX, arrowY, tipx, tipY); // draw line
       // plot and draw triangular arrowhead
       Polygon arrowHead = new Polygon();
-      arrowHead.addPoint(arrowX, arrowY - arrowLength);
-      arrowHead.addPoint(arrowX - 5, arrowY - arrowLength + 10);
-      arrowHead.addPoint(arrowX + 5, arrowY - arrowLength + 10);
+      g.setColor(Color.RED);
+
+      double angle = Math.atan2(tipY - arrowY, tipx - arrowX);
+      int headSize = 10;
+      arrowHead.addPoint(tipx, tipY);
+      arrowHead.addPoint(tipx - (int)(headSize * Math.cos(angle + Math.PI/6)),
+                         tipY - (int)(headSize * Math.sin(angle + Math.PI/6)));
+      arrowHead.addPoint(tipx - (int)(headSize * Math.cos(angle - Math.PI/6)),
+                         tipY - (int)(headSize * Math.sin(angle - Math.PI/6)));
       g.fillPolygon(arrowHead);
       TransformableContent arrowContent = new Content(arrowHead, Color.BLACK, Color.BLACK, null);
       arrowContent.render(g);
@@ -118,19 +131,35 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     int code = e.getKeyCode();
     if (code == KeyEvent.VK_LEFT)
     {
-      x -= 10;
+      if (showArrow) {
+        aimOffset -= 10;        // move aiming left
+        updateArrowAngle();
+
+      }
+      else {
+        x -= 10;
+      }
+
     }
     else if (code == KeyEvent.VK_RIGHT)
     {
-      x += 10;
+      if (showArrow) {
+        aimOffset += 10;        // move aiming right
+        updateArrowAngle();
+
+      }
+      else {
+        x += 10;
+      }
     }
     else if (code == KeyEvent.VK_SPACE)
     {
       if (roll == 0 && !rolling)
       {
         rolling = true;
-        initiateRoll();
+        rollingAngle = Math.atan2(aimOffset, 420); // horizontal offset determines angle
         roll = 1;
+        initiateRoll();
       }
       else
       {
@@ -141,9 +170,16 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     setLocation(x, y);
   }
 
+  private void updateArrowAngle()
+  {
+    rollingAngle = Math.atan2(aimOffset, 420);
+  }
+  
   private void showRotationIndicator()
   {
     showArrow = true;
+    aimOffset = 0;
+    updateArrowAngle();
     
   }
 
@@ -188,8 +224,10 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     rotations.clear();
     scalings.clear();
     showArrow = false;
-    addKeyTime(0, new Point2D.Double(x, y), 0.0, 1.0); // moves up
-    addKeyTime(endTick, new Point2D.Double(x, y - 420), 0.0, .4); // moves up
+    double totalDistanceY = 420;
+    double totalDistanceX = Math.tan(rollingAngle) * totalDistanceY;
+    addKeyTime(0, new Point2D.Double(x, y), 0.0, 1.0);
+    addKeyTime(endTick, new Point2D.Double(x + totalDistanceX, y - totalDistanceY), 0.0, .4);
   }
 
   @Override

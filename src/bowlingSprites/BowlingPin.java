@@ -16,6 +16,7 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
   protected ArrayList<AggregateContent> content;
   private int row;
   Content pinContent;
+
   protected ArrayList<Integer> keyTimes;
   protected ArrayList<Point2D> locations;
   protected ArrayList<Double> rotations, scalings;
