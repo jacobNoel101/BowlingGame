@@ -70,8 +70,11 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         double scale = lerp(s0, s1, t);
         setScale(scale);
       }
+      
+      if (time == 1500) {
+        setVisible(false);
+      }
     }
-    setLocation(x, y);
     setLocation(x, y);
     for (Sprite pin : antagonists)
     {
@@ -81,7 +84,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       }
     }
   }
-
+  
   @Override
   public void render(Graphics g)
   {
@@ -123,8 +126,9 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     }
     else if (code == KeyEvent.VK_SPACE)
     {
-      if (roll == 0)
+      if (roll == 0 && !rolling)
       {
+        rolling = true;
         initiateRoll();
         roll = 1;
       }
@@ -140,6 +144,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   private void showRotationIndicator()
   {
     showArrow = true;
+    
   }
 
   public int addKeyTime(int keyTime, Point2D location, Double rotation, Double scaling)
