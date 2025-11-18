@@ -4,6 +4,7 @@ import java.util.*;
 
 public class GameState implements BowlingSubject
 {
+  private static int pinsKnocked;
   private List<BowlingObserver> observers = new ArrayList<>();
   private int score;
   private boolean isGameOver = false;
@@ -44,35 +45,35 @@ public class GameState implements BowlingSubject
     }
   }
 
-  public void recordRoll(int pins)
+  public static void recordRoll(int pins)
   {
-    if (isGameOver)
-      return;
-    if (pins == 10)
-    {
-      strike[set] = true;
-      set++;
-      firstRoll[set] = 0;
-      secondRoll[set] = 0;
-    }
-    if (firstRoll[set] == (Integer) null)
-    {
-      firstRoll[set] = pins;
-    }
-    else if (secondRoll[set] == (Integer) null)
-    {
-      secondRoll[set] = pins;
-      if (secondRoll[set] + firstRoll[set] == 10)
-      {
-        spare[set] = true;
-      }
-      set++;
-    }
-    if (firstRoll[set] != (Integer) null && secondRoll[set] != (Integer) null)
-    {
-      isGameOver = true;
-    }
-    notifyObservers();
+//    if (isGameOver)
+//      return;
+//    if (pins == 10)
+//    {
+//      strike[set] = true;
+//      set++;
+//      firstRoll[set] = 0;
+//      secondRoll[set] = 0;
+//    }
+//    if (firstRoll[set] == (Integer) null)
+//    {
+//      firstRoll[set] = pins;
+//    }
+//    else if (secondRoll[set] == (Integer) null)
+//    {
+//      secondRoll[set] = pins;
+//      if (secondRoll[set] + firstRoll[set] == 10)
+//      {
+//        spare[set] = true;
+//      }
+//      set++;
+//    }
+//    if (firstRoll[set] != (Integer) null && secondRoll[set] != (Integer) null)
+//    {
+//      isGameOver = true;
+//    }
+//    notifyObservers();
 
   }
 
@@ -97,6 +98,22 @@ public class GameState implements BowlingSubject
   {
     return isGameOver;
   }
+  
+
+  public void pinKnocked() {
+      pinsKnocked++;
+      System.out.println("Pins knocked: " + pinsKnocked);
+      //also check for end of frame, update score
+  }
+
+  public int getPinsKnocked() {
+      return pinsKnocked;
+  }
+
+  public void resetPins() {
+      pinsKnocked = 0;
+  }
+
 
   public void resetGame()
   {

@@ -19,10 +19,12 @@ public class BowlingScreen extends Stage
 {
   double offset = 0;
   ArrayList<BowlingPin> pins;
-
+  private GameState gameState;
+  
   public BowlingScreen(final int timeStep)
   {
     super(timeStep); // set tick interval
+    this.gameState = new GameState();
     // call helpers and add the content to the screen
     Background bg = buildBackground();
     add(bg);
@@ -38,6 +40,7 @@ public class BowlingScreen extends Stage
     BowlingBall ball = buildBall();
     for (BowlingPin pin : pins)
     {
+      pin.setGameState(gameState);
       ball.addAntagonist(pin);
       add(pin);
     }
@@ -122,7 +125,7 @@ public class BowlingScreen extends Stage
       CompositeContent content = new CompositeContent();
       content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
       content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
-      BowlingPin pin = new BowlingPin(content, i, 415 + offset, 170);
+      BowlingPin pin = new BowlingPin(content, 1, 415 + offset, 170);
       offset += 50;
       pins.add(pin);
     }
@@ -132,7 +135,7 @@ public class BowlingScreen extends Stage
       CompositeContent content = new CompositeContent();
       content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
       content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
-      BowlingPin pin = new BowlingPin(content, i, 435 + offset, 180);
+      BowlingPin pin = new BowlingPin(content, 1, 435 + offset, 180);
       offset += 55;
       pins.add(pin);
     }
@@ -142,7 +145,7 @@ public class BowlingScreen extends Stage
       CompositeContent content = new CompositeContent();
       content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
       content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
-      BowlingPin pin = new BowlingPin(content, i, 455 + offset, 195);
+      BowlingPin pin = new BowlingPin(content, 1, 455 + offset, 195);
       offset += 70;
       pins.add(pin);
     }

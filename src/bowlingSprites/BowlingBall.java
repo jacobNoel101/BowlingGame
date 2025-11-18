@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.util.ArrayList;
+
 import event.Metronome;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
@@ -77,6 +78,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       
       if (time == 1500) {
         setVisible(false);
+
       }
     }
     setLocation(x, y);

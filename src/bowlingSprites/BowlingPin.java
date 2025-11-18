@@ -5,6 +5,8 @@ import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.*;
 import java.util.*;
+
+import bowling.GameState;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
 
@@ -16,6 +18,8 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
   protected ArrayList<AggregateContent> content;
   private int row;
   Content pinContent;
+  private GameState gameState;
+
 
   protected ArrayList<Integer> keyTimes;
   protected ArrayList<Point2D> locations;
@@ -39,6 +43,12 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
     this.scalings = new ArrayList<Double>();
     setLocation(x, y);
   }
+  
+  
+  public void setGameState(GameState gameState) {
+      this.gameState = gameState;
+  }
+
 
   public boolean isLive()
   {
@@ -160,14 +170,21 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
   }
 
   @Override
-  public void onBallHit(BowlingBall ball)
-  {
-    movePin(tick, ball);
+  public void onBallHit(BowlingBall ball) {
+      if (!knocked) {
+          knocked = true;           // mark pin as knocked
+          movePin(tick, ball);      // animate the pin falling
+          if (gameState != null) {
+              gameState.pinKnocked();  // notify GameState
+          }
+      }
   }
+
 
 
   private void movePin(int time, BowlingBall ball)
   {
+
       keyTimes.clear();
       locations.clear();
       rotations.clear();
