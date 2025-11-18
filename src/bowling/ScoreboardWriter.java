@@ -1,35 +1,19 @@
 package bowling;
 
 import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.*;
+import java.awt.geom.Point2D;
 
-public class ScoreboardWriter
-{
-  private static final Font FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
+public class ScoreboardWriter {
 
-  /**
-   * Draw the score information onto the given image.
-   *
-   * @param image
-   *          The BufferedImage to draw on
-   * @param score
-   *          The score to render
-   */
-  public static void renderScore(final Point2D location, final int score, final Graphics2D g2,
-      final Image image)
-  {
-    String text = Integer.toString(score);
-    FontRenderContext frc = g2.getFontRenderContext();
-    Rectangle2D textBounds = FONT.getStringBounds(text, frc);
-    double x = location.getX() - textBounds.getWidth() / 2.0;
-    double y = location.getY() + image.getHeight(null) / 2.0 + textBounds.getHeight();
-    g2.drawString(text, (float) x, (float) y);
-  }
+    private static final Font FONT = new Font(Font.SANS_SERIF, Font.BOLD, 24);
 
-  public void reset()
-  {
-    // TODO Auto-generated method stub
-  }
-
+    public static void renderScore(Point2D location, int score, Graphics2D g2) {
+        g2.setFont(FONT);
+        String text = Integer.toString(score);
+        FontMetrics metrics = g2.getFontMetrics(FONT);
+        int x = (int) (location.getX() - metrics.stringWidth(text) / 2);
+        int y = (int) (location.getY() + metrics.getHeight() / 2);
+        g2.setColor(Color.WHITE);
+        g2.drawString(text, x, y);
+    }
 }

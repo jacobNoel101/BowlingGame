@@ -4,26 +4,19 @@ import java.util.*;
 
 public class GameState implements BowlingSubject
 {
-  private static int pinsKnocked;
+
   private List<BowlingObserver> observers = new ArrayList<>();
-  private int score;
-  private boolean isGameOver = false;
-  private int[] firstRoll;
-  private int[] secondRoll;
-  private boolean[] strike;
-  private boolean[] spare;
-  private int set;
+  private int score; // total score
+  private int pinsKnocked; // pins knocked in current frame
+  private int set; // current frame 0-9
+  private boolean isGameOver; // is the game finished
 
   public GameState()
   {
-    this.score = 0;
-    firstRoll = new int[10];
-    secondRoll = new int[10];
-    strike = new boolean[10];
-    spare = new boolean[10];
-    isGameOver = false;
+    resetGame();
   }
 
+  // Observer pattern
   @Override
   public void addObserver(BowlingObserver observer)
   {
@@ -45,47 +38,23 @@ public class GameState implements BowlingSubject
     }
   }
 
-  public static void recordRoll(int pins)
+  // Called whenever a pin is knocked down
+  public void pinKnocked()
   {
-//    if (isGameOver)
-//      return;
-//    if (pins == 10)
-//    {
-//      strike[set] = true;
-//      set++;
-//      firstRoll[set] = 0;
-//      secondRoll[set] = 0;
-//    }
-//    if (firstRoll[set] == (Integer) null)
-//    {
-//      firstRoll[set] = pins;
-//    }
-//    else if (secondRoll[set] == (Integer) null)
-//    {
-//      secondRoll[set] = pins;
-//      if (secondRoll[set] + firstRoll[set] == 10)
-//      {
-//        spare[set] = true;
-//      }
-//      set++;
-//    }
-//    if (firstRoll[set] != (Integer) null && secondRoll[set] != (Integer) null)
-//    {
-//      isGameOver = true;
-//    }
-//    notifyObservers();
-
+    pinsKnocked++;
+    System.out.println("Pins knocked: " + pinsKnocked);
   }
 
-  public void addScore(int pins)
+  // Call this at the end of a roll/frame
+  public void endFrame()
   {
-    score += pins;
-    notifyObservers();
-  }
-
-  public void endGame()
-  {
-    isGameOver = true;
+    score += pinsKnocked; // add frame pins to score
+    pinsKnocked = 0; // reset for next frame
+    set++;
+    if (set >= 10)
+    {
+      isGameOver = true;
+    }
     notifyObservers();
   }
 
@@ -94,36 +63,27 @@ public class GameState implements BowlingSubject
     return score;
   }
 
+  public int getSet()
+  {
+    return set;
+  }
+
   public boolean isGameOver()
   {
     return isGameOver;
   }
-  
 
-  public void pinKnocked() {
-      pinsKnocked++;
-      System.out.println("Pins knocked: " + pinsKnocked);
-      //also check for end of frame, update score
+  public void resetPins()
+  {
+    pinsKnocked = 0;
   }
-
-  public int getPinsKnocked() {
-      return pinsKnocked;
-  }
-
-  public void resetPins() {
-      pinsKnocked = 0;
-  }
-
 
   public void resetGame()
   {
-    firstRoll = new int[10];
-    secondRoll = new int[10];
-    strike = new boolean[10];
-    spare = new boolean[10];
     score = 0;
+    pinsKnocked = 0;
+    set = 0;
     isGameOver = false;
     notifyObservers();
   }
-
 }

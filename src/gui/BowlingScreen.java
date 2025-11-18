@@ -71,7 +71,7 @@ public class BowlingScreen extends Stage
     GameState gameState = new GameState();
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
     ScoreBoardReader reader = new ScoreBoardReader(finder);
-    Point2D location = new Point2D.Double(255, 5); // pos on screen
+    Point2D location = new Point2D.Double(177, 35); // starting pos for score
     ScoreBoard scoreboard = null;
     try
     {
