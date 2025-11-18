@@ -42,15 +42,21 @@ public class BowlingScreen extends Stage
 
     for (BowlingPin pin : pins)
     {
-      //ball.addAntagonist(pin);
-      pin.addAntagonist(ball);
+      //ball.addObserver(pin);
+      ball.addAntagonist(pin);
+      //pin.addAntagonist(ball);
+      pin.setMetronome(getMetronome());
+
 
       add(pin);
     }
     add(ball);
+    ball.setMetronome(getMetronome());
+
     getView().addKeyListener(ball);
     getView().setFocusable(true);
     SwingUtilities.invokeLater(() -> getView().requestFocusInWindow());
+    
     MusicPlayer mp = buildMusic();
     try
     {
@@ -115,47 +121,59 @@ public class BowlingScreen extends Stage
 
   private ArrayList<BowlingPin> buildPins()
   {
-    Rectangle2D frontPin = new Rectangle2D.Double(0, 0, 20, 60);
-    TransformableContent pinContent = new Content(frontPin, Color.WHITE, Color.BLACK, null);
-    Polygon topPin = new Polygon();
-    topPin.addPoint(0, 0);
-    topPin.addPoint(20, 0);
-    topPin.addPoint(20 - 5, -3); // x , y -> reduce y to make top smaller
-    topPin.addPoint(0 + 5, -3);
-    TransformableContent topPinContent = new Content(topPin, Color.WHITE, Color.BLACK, null);
-    visual.statik.described.CompositeContent fullPinContent = new visual.statik.described.CompositeContent();
-    fullPinContent.add(topPinContent);
-    fullPinContent.add(pinContent);
+      Rectangle2D frontPin = new Rectangle2D.Double(0, 0, 20, 60);
+      Polygon topPin = new Polygon();
+      topPin.addPoint(0, 0);
+      topPin.addPoint(20, 0);
+      topPin.addPoint(15, -3);
+      topPin.addPoint(5, -3);
 
-    ArrayList<BowlingPin> pins = new ArrayList<BowlingPin>();
-    for (int i = 10; i > 6; i--)
-    {
-      BowlingPin pin = new BowlingPin(fullPinContent, i);
-      pin.setLocation(415 + offset, 170); // 422 , 185
-      offset += 50;
+      ArrayList<BowlingPin> pins = new ArrayList<>();
+
+      for (int i = 10; i > 6; i--)
+      {
+          CompositeContent content = new CompositeContent();
+          content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
+          content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
+
+          BowlingPin pin = new BowlingPin(content, i, 415 + offset, 170);
+          offset += 50;
+          pins.add(pin);
+      }
+
+      offset = 0;
+      for (int i = 6; i > 3; i--)
+      {
+          CompositeContent content = new CompositeContent();
+          content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
+          content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
+
+          BowlingPin pin = new BowlingPin(content, i, 435 + offset, 180);
+          offset += 55;
+          pins.add(pin);
+      }
+
+      offset = 0;
+      for (int i = 3; i > 1; i--)
+      {
+          CompositeContent content = new CompositeContent();
+          content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
+          content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
+
+          BowlingPin pin = new BowlingPin(content, i, 455 + offset, 195);
+          offset += 70;
+          pins.add(pin);
+      }
+
+      CompositeContent content = new CompositeContent();
+      content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
+      content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
+      BowlingPin pin = new BowlingPin(content, 1, 490, 210);
       pins.add(pin);
-    }
-    offset = 0;
-    for (int i = 6; i > 3; i--)
-    {
-      BowlingPin pin = new BowlingPin(fullPinContent, i);
-      pin.setLocation(435 + offset, 180); // 422 , 185
-      offset += 55;
-      pins.add(pin);
-    }
-    offset = 0;
-    for (int i = 3; i > 1; i--)
-    {
-      BowlingPin pin = new BowlingPin(fullPinContent, i);
-      pin.setLocation(455 + offset, 195); // 422 , 185
-      offset += 70;
-      pins.add(pin);
-    }
-    BowlingPin pin = new BowlingPin(fullPinContent, 1);
-    pin.setLocation(490, 210); // 422 , 185
-    pins.add(pin);
-    return pins;
+
+      return pins;
   }
+
 
   private BowlingSide buildSide()
   {
@@ -183,11 +201,11 @@ public class BowlingScreen extends Stage
   public void handleTick(final int delay)
   {
     super.handleTick(delay);
-    int lastKeyTime = 2500;
-    if (delay >= lastKeyTime)
-    {
-      super.getMetronome().reset();
-    }
+//    int lastKeyTime = 2500;
+//    if (delay >= lastKeyTime)
+//    {
+//      super.getMetronome().reset();
+//    }
     
   }
 

@@ -8,26 +8,34 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import event.Metronome;
 import visual.dynamic.described.*;
 import visual.statik.described.Content;
 import visual.statik.described.TransformableContent;
 
-public class BowlingPin extends RuleBasedSprite
+public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
 {
-  private Point2D initialPosition;
+  private boolean live = false;
+  private int tick;
 
   private boolean knocked = false;
+  private Metronome metronome;
+
 
   private int row;
   Content pinContent;
   protected ArrayList<Integer> keyTimes;
   protected ArrayList<Point2D> locations;
   protected ArrayList<Double> rotations, scalings;
+  private double x;
+  private double y;
 
-  public BowlingPin(TransformableContent content, int row)
+  public BowlingPin(TransformableContent content, int row, double startX, double startY)
   {
     super(content);
-    initialPosition = new Point2D.Double(x, y);
+    this.tick = 0;
+    this.x = startX;
+    this.y = startY;
 
     this.row = row;
     this.keyTimes = new ArrayList<Integer>();
@@ -38,13 +46,26 @@ public class BowlingPin extends RuleBasedSprite
 
   }
   
+  public boolean isLive() {
+    return live;
+  }
+  public void setLive(boolean live) {
+    this.live = live;
+  }
+  
+  public int getRow() {
+    return row;
+  }
+  
+  
+  
   @Override
-  public boolean intersects(Sprite s)
-  {
+  public boolean intersects(Sprite s) {
     boolean retval;
     double maxx, maxy, minx, miny;
     double maxxO, maxyO, minxO, minyO;
-
+    
+    
     Rectangle2D r;
     retval = true;
     r = getBounds2D(true);
@@ -57,75 +78,12 @@ public class BowlingPin extends RuleBasedSprite
     minyO = r.getY();
     maxxO = minxO + r.getWidth();
     maxyO = minyO + r.getHeight();
-    if ((maxx < minxO) || (minx > maxxO) || (maxy < minyO) || (miny > maxyO))
-      retval = false;
+    if ( (maxx < minxO) || (minx > maxxO) ||
+    (maxy < minyO) || (miny > maxyO) ) retval = false;
     return retval;
-
+    
   }
 
-  // @Override
-  // public void render(Graphics g)
-  // {
-  // double rx, ry;
-  // Polygon topPin = new Polygon();
-  // Rectangle2D bounds;
-  // visual.statik.TransformableContent tc;
-  // if (visible)
-  // {
-  // tc = getContent();
-  // if (tc != null)
-  // {
-  // // Find the point to rotate around
-  // if (rotationPoint)
-  // {
-  // rx = rotationX;
-  // ry = rotationY;
-  // }
-  // else
-  // {
-  // bounds = tc.getBounds2D(false);
-  // rx = bounds.getWidth() / 2.0;
-  // ry = bounds.getHeight() / 2.0;
-  // }
-  // // Transform
-  // topPin.addPoint(0, 0);
-  // topPin.addPoint(20, 0);
-  // topPin.addPoint(20 - 5, -3); // x , y -> reduce y to make top smaller
-  // topPin.addPoint(0 + 5, -3);
-  //
-  // TransformableContent topPinContent = new Content(topPin, Color.BLACK, Color.RED, null);
-  // topPinContent.setLocation(x, y);
-  // topPinContent.setRotation(angle, rx, ry);
-  // topPinContent.setScale(scaleX, scaleY);
-  // tc.setLocation(x, y);
-  // tc.setRotation(angle, rx, ry);
-  // tc.setScale(scaleX, scaleY);
-  // // Render
-  // tc.render(g);
-  // topPinContent.render(g);
-  // }
-  // }
-  //
-  // }
-  // setLocation(maxX, maxY);
-  // Rectangle2D shape = new Rectangle2D.Double(0,0, 500, 350);
-  //
-  // Rectangle2D bounds = shape.getBounds2D();
-  // AffineTransform at = new AffineTransform();
-  // Shape centeredShape = at.createTransformedShape(shape);
-  // Point2D center = new Point2D.Double(bounds.getCenterX(), bounds.getCenterY());
-  //
-  // // 255)
-  // // Create Content for the first key time
-  // Content cloudShapeContent = new Content(centeredShape, Color.black, Color.black,
-  // new BasicStroke(1.0f));
-  //
-  // // Wrap it in AggregateContent
-  // AggregateContent aggregateCloudContent = new AggregateContent();
-  // aggregateCloudContent.add(cloudShapeContent);
-  // aggregateCloudContent.setLocation(100, 100);
-  // Point2D location = new Point2D.Double(x, y);
-  // //addKeyTime(0, center, null, 1.0, aggregateCloudContent);
 
   @Override
   public void handleTick(int time)
@@ -169,34 +127,13 @@ public class BowlingPin extends RuleBasedSprite
         setScale(scale);
       }
     }
+    this.tick = time;
     setLocation(x, y);
-    Iterator<Sprite> i;
-    Sprite ball;
-    i = antagonists.iterator();
-    while (i.hasNext())
-    {
-      ball = i.next();
-
-      if (intersects(ball) && !knocked)
-      {
-        knocked = true;
-        movePin(time);
-        
-      }
     }
-    setLocation(x, y);
-  }
 
   private double lerp(double a, double b, double t)
   {
     return a + (b - a) * t;
-  }
-  
-  private void clear() {
-    keyTimes.clear();
-    locations.clear();
-    rotations.clear();
-    scalings.clear();
   }
 
   public int addKeyTime(int keyTime, Point2D location, Double rotation, Double scaling)
@@ -227,16 +164,30 @@ public class BowlingPin extends RuleBasedSprite
     }
     return i;
   }
+  
+  @Override
+  public void onBallHit(BowlingBall ball) {
+    movePin(tick);
+  }
+  
+  
+  public void setMetronome(Metronome m) {
+    this.metronome = m;
+  }
 
   private void movePin(int time)
   {
+//    if (metronome != null) {
+//      metronome.reset();
+//      metronome.start();
+//    }
     keyTimes.clear();
     locations.clear();
     rotations.clear();
     scalings.clear();
     addKeyTime(time, new Point2D.Double(x, y), 0.0, 1.0);
-    addKeyTime(time + 200, new Point2D.Double(x + 200, y), 0.0, 1.0);
-    knocked = false;
+    addKeyTime(time + 200, new Point2D.Double(x + 10, y), Math.PI/2, 0.8);
+    //knocked = false;
 
   }
 }
