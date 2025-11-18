@@ -1,7 +1,6 @@
 package gui;
 
-import java.awt.Color;
-import java.awt.Polygon;
+import java.awt.*;
 import java.awt.geom.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import bowlingSprites.*;
 import bowlingVisual.*;
 import io.ResourceFinder;
 import music.MusicPlayer;
-import visual.Visualization;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
 import resources.Marker;
@@ -39,15 +37,12 @@ public class BowlingScreen extends Stage
     add(scoreboard);
     this.pins = buildPins();
     BowlingBall ball = buildBall();
-
     for (BowlingPin pin : pins)
     {
       //ball.addObserver(pin);
       ball.addAntagonist(pin);
       //pin.addAntagonist(ball);
       pin.setMetronome(getMetronome());
-
-
       add(pin);
     }
     add(ball);
