@@ -23,7 +23,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   protected ArrayList<Point2D> locations;
   protected ArrayList<Double> rotations, scalings;
 
-
   public BowlingBall(TransformableContent content, Double speed)
   {
     super(content);
@@ -36,33 +35,78 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     setLocation(x, y);
     this.roll = 1;
   }
-  
- 
 
-  public void setMetronome(Metronome m) {
-      this.metronome = m;
+  public void setMetronome(Metronome m)
+  {
+    this.metronome = m;
   }
 
-  @Override
   public void handleTick(int time)
   {
-    // tweening logic
+    // --- Tweening logic ---
     if (rolling && !keyTimes.isEmpty())
     {
       int i = 0;
+      // find the current segment
       while (i < keyTimes.size() - 1 && time > keyTimes.get(i + 1))
       {
         i++;
       }
-      
-      setLocation(x,y);
-      for (Sprite pin : antagonists) {
-        if (this.intersects(pin)) {   // make sure intersects() is correct
-            ((BowlingPin) pin).onBallHit(this);              // move only this pin
+
+      if (i < keyTimes.size() - 1)
+      {
+        int t0 = keyTimes.get(i);
+        int t1 = keyTimes.get(i + 1);
+
+        Point2D p0 = locations.get(i);
+        Point2D p1 = locations.get(i + 1);
+
+        double r0 = rotations.get(i);
+        double r1 = rotations.get(i + 1);
+
+        double s0 = scalings.get(i);
+        double s1 = scalings.get(i + 1);
+
+        double t = (time - t0) / (double) (t1 - t0);
+
+        if (p0 != null && p1 != null)
+        {
+          x = lerp(p0.getX(), p1.getX(), t);
+          y = lerp(p0.getY(), p1.getY(), t);
         }
-      }   
-    } 
+
+        double rotation = lerp(r0, r1, t);
+        setRotation(rotation);
+
+        double scale = lerp(s0, s1, t);
+        setScale(scale);
+      }
+    }
+    setLocation(x, y);
+
+    // Iterator<Sprite> i;
+    // Sprite pin;
+    // i = antagonists.iterator();
+    // while (i.hasNext())
+    // {
+    // pin = i.next();
+    // if (intersects(pin)) {
+    // stopRoll();
+    // }
+    // }
+    //
+    // updateLocation();
+
+    setLocation(x, y);
+    for (Sprite pin : antagonists)
+    {
+      if (this.intersects(pin))
+      { // make sure intersects() is correct
+        ((BowlingPin) pin).onBallHit(this); // move only this pin
+      }
+    }
   }
+
   @Override
   public void render(Graphics g)
   {
@@ -94,8 +138,10 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   public void keyPressed(KeyEvent e)
   {
     int code = e.getKeyCode();
-    if (code == KeyEvent.VK_LEFT) x -= 10;
-    else if (code == KeyEvent.VK_RIGHT) x += 10;
+    if (code == KeyEvent.VK_LEFT)
+      x -= 10;
+    else if (code == KeyEvent.VK_RIGHT)
+      x += 10;
 
     else if (code == KeyEvent.VK_SPACE)
     {
@@ -110,7 +156,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         roll = 0;
       }
     }
-    setLocation(x,y);
+    setLocation(x, y);
 
   }
 
@@ -145,9 +191,11 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     }
     return i;
   }
-  
-  private void initiateRoll() {
-    if (metronome != null) {
+
+  private void initiateRoll()
+  {
+    if (metronome != null)
+    {
       metronome.reset();
       metronome.start();
     }
@@ -184,7 +232,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       retval = false;
     return retval;
   }
-  
+
   @Override
   public void keyTyped(KeyEvent e)
   {

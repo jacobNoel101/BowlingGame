@@ -185,11 +185,8 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
     rotations.clear();
     scalings.clear();
     addKeyTime(time, new Point2D.Double(x, y), 0.0, 1.0);
-    addKeyTime(time + 200, new Point2D.Double(x + 10, y), Math.PI/2, 0.8);
-    //knocked = false;
+    addKeyTime(time + 50, new Point2D.Double(x + 10, y), Math.PI/2, 0.8);
 
-    addKeyTime(time + 200, new Point2D.Double(x + 200, y), 0.0, 1.0);
-    knocked = false;
   }
 
 }
