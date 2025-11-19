@@ -2,21 +2,129 @@ package bowling;
 
 import java.util.*;
 
+import gui.BowlingScreen;
+
 public class GameState implements BowlingSubject
 {
-
   private List<BowlingObserver> observers = new ArrayList<>();
-  private int score; // total score
-  private int pinsKnocked; // pins knocked in current frame
-  private int set; // current frame 0-9
-  private boolean isGameOver; // is the game finished
+
+  private BowlingBallController ballController;
+
+  // --- FRAME / ROLL STATE ---
+  private int set; // 1–10
+  private int rollInSet; // 1 or 2
+
+  // --- PIN TRACKING ---
+  private int pinsStanding; // how many pins remain standing
+  private int pinsDownThisRoll; // pins knocked only this roll
+  private int pinsDownInFrame; // total pins knocked entire frame
+
+  // --- BALL STATE ---
+  private boolean ballIsRolling;
+  private boolean waitingForBallToStop;
+  private boolean waitingForPlayerAim;
+  
+  
 
   public GameState()
   {
     resetGame();
   }
 
-  // Observer pattern
+  public void setBallController(BowlingBallController controller)
+  {
+    this.ballController = controller;
+  }
+
+  public void startAiming()
+  {
+    if (ballIsRolling || waitingForBallToStop)
+      return;
+    waitingForPlayerAim = true;
+  }
+
+  public boolean isAiming()
+  {
+    return waitingForPlayerAim;
+  }
+
+  public void playerRollRequested(double angle)
+  {
+    if (!waitingForPlayerAim)
+      return;
+    if (ballIsRolling)
+      return;
+    if (waitingForBallToStop)
+      return;
+
+    ballIsRolling = true;
+    waitingForBallToStop = true;
+
+    // Reset pins hit counter for this new roll
+    pinsDownThisRoll = 0;
+
+    if (ballController != null)
+      ballController.startRoll(angle);
+  }
+
+  public void pinKnocked()
+  {
+    if (!waitingForBallToStop)
+      return;
+
+    pinsDownThisRoll++;
+    pinsStanding = Math.max(0, pinsStanding - 1);
+  }
+
+  public void ballStopped() {
+    ballIsRolling = false;
+    waitingForBallToStop = false;
+
+    pinsDownInFrame += pinsDownThisRoll;
+
+    // Strike (first roll only)
+    if (rollInSet == 1 && pinsDownThisRoll == 10) {
+        endFrameAndReset(); // we can schedule reset there
+        return;
+    }
+
+    // Second roll ends frame
+    if (rollInSet == 2) {
+        endFrameAndReset(); // schedule delayed reset
+        return;
+    }
+
+    // Otherwise, start second roll
+    rollInSet = 2;
+
+    if (ballController != null)
+        ballController.resetBall(); // reset ball for second roll
+
+    notifyObservers();
+  }
+
+  private void endFrameAndReset()
+  {
+    set++;
+    if (set > 10)
+      set = 10;
+
+    rollInSet = 1;
+    pinsStanding = 10;
+    pinsDownInFrame = 0;
+
+    if (ballController != null)
+    {
+      ballController.resetBall();
+      if (ballController instanceof BowlingScreen) {
+        ((BowlingScreen) ballController).schedulePinReset();
+      }
+    }
+    
+
+    notifyObservers();
+  }
+
   @Override
   public void addObserver(BowlingObserver observer)
   {
@@ -32,58 +140,48 @@ public class GameState implements BowlingSubject
   @Override
   public void notifyObservers()
   {
-    for (BowlingObserver observer : observers)
-    {
-      observer.update();
-    }
+    for (BowlingObserver obs : observers)
+      obs.update();
   }
 
-  // Called whenever a pin is knocked down
-  public void pinKnocked()
+  public void resetGame()
   {
-    pinsKnocked++;
-    System.out.println("Pins knocked: " + pinsKnocked);
-  }
+    set = 1;
+    rollInSet = 1;
 
-  // Call this at the end of a roll/frame
-  public void endFrame()
-  {
-    score += pinsKnocked; // add frame pins to score
-    pinsKnocked = 0; // reset for next frame
-    set++;
-    if (set >= 10)
-    {
-      isGameOver = true;
-    }
+    pinsStanding = 10;
+    pinsDownInFrame = 0;
+    pinsDownThisRoll = 0;
+
+    ballIsRolling = false;
+    waitingForBallToStop = false;
+
     notifyObservers();
   }
 
-  public int getScore()
-  {
-    return score;
-  }
-
+  // --- GETTERS ---
   public int getSet()
   {
     return set;
   }
 
-  public boolean isGameOver()
+  public int getRollInSet()
   {
-    return isGameOver;
+    return rollInSet;
   }
 
-  public void resetPins()
+  public int getPinsStanding()
   {
-    pinsKnocked = 0;
+    return pinsStanding;
   }
 
-  public void resetGame()
+  public int getPinsDownInFrame()
   {
-    score = 0;
-    pinsKnocked = 0;
-    set = 0;
-    isGameOver = false;
-    notifyObservers();
+    return pinsDownInFrame;
+  }
+
+  public int getPinsDownThisRoll()
+  {
+    return pinsDownThisRoll;
   }
 }

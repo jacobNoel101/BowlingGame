@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.awt.geom.*;
 import java.util.ArrayList;
 
+import bowling.GameState;
 import event.Metronome;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
@@ -16,15 +17,20 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   private boolean rolling;
   private Metronome metronome;
   private boolean showArrow;
+  private GameState gameState;
+
   private int roll;
   private double x, y;
   protected ArrayList<Integer> keyTimes;
   protected ArrayList<Point2D> locations;
   protected ArrayList<Double> rotations, scalings;
+  private boolean waitingForPlayerAim;
 
   public BowlingBall(TransformableContent content, Double speed)
   {
     super(content);
+    this.waitingForPlayerAim = false;
+    this.gameState = null;
     this.rollingAngle = 0.0;
     this.aimOffset = 0;
     this.keyTimes = new ArrayList<Integer>();
@@ -40,6 +46,11 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   public void setMetronome(Metronome m)
   {
     this.metronome = m;
+  }
+
+  public void setGameState(GameState gameState)
+  {
+    this.gameState = gameState;
   }
 
   public void handleTick(int time)
@@ -75,11 +86,16 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         double scale = lerp(s0, s1, t);
         setScale(scale);
       }
-      
-      if (time == 1500) {
+
+      if (time == 1500)
+      {
         setVisible(false);
+        rolling = false;
+        if (gameState != null)
+          gameState.ballStopped();
 
       }
+
     }
     setLocation(x, y);
     for (Sprite pin : antagonists)
@@ -90,7 +106,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       }
     }
   }
-  
+
   @Override
   public void render(Graphics g)
   {
@@ -112,10 +128,10 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       double angle = Math.atan2(tipY - arrowY, tipx - arrowX);
       int headSize = 10;
       arrowHead.addPoint(tipx, tipY);
-      arrowHead.addPoint(tipx - (int)(headSize * Math.cos(angle + Math.PI/6)),
-                         tipY - (int)(headSize * Math.sin(angle + Math.PI/6)));
-      arrowHead.addPoint(tipx - (int)(headSize * Math.cos(angle - Math.PI/6)),
-                         tipY - (int)(headSize * Math.sin(angle - Math.PI/6)));
+      arrowHead.addPoint(tipx - (int) (headSize * Math.cos(angle + Math.PI / 6)),
+          tipY - (int) (headSize * Math.sin(angle + Math.PI / 6)));
+      arrowHead.addPoint(tipx - (int) (headSize * Math.cos(angle - Math.PI / 6)),
+          tipY - (int) (headSize * Math.sin(angle - Math.PI / 6)));
       g.fillPolygon(arrowHead);
       TransformableContent arrowContent = new Content(arrowHead, Color.BLACK, Color.BLACK, null);
       arrowContent.render(g);
@@ -133,40 +149,45 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     int code = e.getKeyCode();
     if (code == KeyEvent.VK_LEFT)
     {
-      if (showArrow) {
-        aimOffset -= 10;        // move aiming left
+      if (showArrow)
+      {
+        aimOffset -= 10;
         updateArrowAngle();
 
       }
-      else {
+      else
+      {
         x -= 10;
       }
 
     }
     else if (code == KeyEvent.VK_RIGHT)
     {
-      if (showArrow) {
-        aimOffset += 10;        // move aiming right
+      if (showArrow)
+      {
+        aimOffset += 10;
         updateArrowAngle();
 
       }
-      else {
+      else
+      {
         x += 10;
       }
     }
     else if (code == KeyEvent.VK_SPACE)
     {
-      if (roll == 0 && !rolling)
+      if (gameState != null)
       {
-        rolling = true;
-        rollingAngle = Math.atan2(aimOffset, 420); // horizontal offset determines angle
-        roll = 1;
-        initiateRoll();
-      }
-      else
-      {
-        showRotationIndicator();
-        roll = 0;
+        if (!gameState.isAiming())
+        {
+          gameState.startAiming();
+          showArrow = true;
+        }
+        else
+        {
+          gameState.playerRollRequested(rollingAngle);
+          showArrow = false;
+        }
       }
     }
     setLocation(x, y);
@@ -176,13 +197,27 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   {
     rollingAngle = Math.atan2(aimOffset, 420);
   }
-  
-  private void showRotationIndicator()
+
+  public void startRoll(double angle)
   {
+    this.rollingAngle = angle;
+    initiateRoll();
+  }
+
+  public void resetBall()
+  {
+    this.x = 495;
+    this.y = 650;
+    setLocation(x, y);
+    setRotation(0);
+    setScale(1.0);
     showArrow = true;
-    aimOffset = 0;
-    updateArrowAngle();
-    
+    setVisible(true);
+    keyTimes.clear();
+    locations.clear();
+    rotations.clear();
+    scalings.clear();
+    rolling = false;
   }
 
   public int addKeyTime(int keyTime, Point2D location, Double rotation, Double scaling)

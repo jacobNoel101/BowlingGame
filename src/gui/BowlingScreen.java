@@ -15,12 +15,15 @@ import visual.dynamic.described.*;
 import visual.statik.described.*;
 import resources.Marker;
 
-public class BowlingScreen extends Stage
+public class BowlingScreen extends Stage implements BowlingBallController
 {
   double offset = 0;
+  private static final int PIN_RESET_DELAY_TICKS = 10; // ~500ms if timestep = 50
+  private int pinResetCounter = -1; // counter for delayed pin reset
   ArrayList<BowlingPin> pins;
   private GameState gameState;
-  
+  private BowlingBall ball;
+
   public BowlingScreen(final int timeStep)
   {
     super(timeStep); // set tick interval
@@ -36,8 +39,12 @@ public class BowlingScreen extends Stage
     add(bowlingGutter);
     ScoreBoard scoreboard = buildScoreBoard();
     add(scoreboard);
+    gameState.addObserver(scoreboard);
+
     this.pins = buildPins();
-    BowlingBall ball = buildBall();
+    this.ball = buildBall();
+    this.ball.setGameState(gameState);
+
     for (BowlingPin pin : pins)
     {
       pin.setGameState(gameState);
@@ -64,11 +71,13 @@ public class BowlingScreen extends Stage
       e.printStackTrace();
     }
     mp.update();
+    gameState.setBallController(this);
+
   }
 
   private ScoreBoard buildScoreBoard()
   {
-    GameState gameState = new GameState();
+    GameState gameState = this.gameState;
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
     ScoreBoardReader reader = new ScoreBoardReader(finder);
     Point2D location = new Point2D.Double(177, 35); // starting pos for score
@@ -111,51 +120,33 @@ public class BowlingScreen extends Stage
     return ball;
   }
 
-  private ArrayList<BowlingPin> buildPins()
-  {
+  private ArrayList<BowlingPin> buildPins() {
     Rectangle2D frontPin = new Rectangle2D.Double(0, 0, 20, 60);
     Polygon topPin = new Polygon();
     topPin.addPoint(0, 0);
     topPin.addPoint(20, 0);
     topPin.addPoint(15, -3);
     topPin.addPoint(5, -3);
+
+    double[][] positions = {
+        {490, 210},                  // row 1
+        {455, 195}, {525, 195},      // row 2
+        {435, 180}, {490, 180}, {545, 180}, // row 3
+        {415, 170}, {465, 170}, {515, 170}, {565, 170} // row 4
+    };
+
     ArrayList<BowlingPin> pins = new ArrayList<>();
-    for (int i = 10; i > 6; i--)
-    {
-      CompositeContent content = new CompositeContent();
-      content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
-      content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
-      BowlingPin pin = new BowlingPin(content, 1, 415 + offset, 170);
-      offset += 50;
-      pins.add(pin);
+    for (int i = positions.length - 1; i >= 0; i--) {  // iterate in reverse
+        CompositeContent content = new CompositeContent();
+        content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
+        content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
+        BowlingPin pin = new BowlingPin(content, 1, positions[i][0], positions[i][1]);
+        pins.add(pin);
     }
-    offset = 0;
-    for (int i = 6; i > 3; i--)
-    {
-      CompositeContent content = new CompositeContent();
-      content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
-      content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
-      BowlingPin pin = new BowlingPin(content, 1, 435 + offset, 180);
-      offset += 55;
-      pins.add(pin);
-    }
-    offset = 0;
-    for (int i = 3; i > 1; i--)
-    {
-      CompositeContent content = new CompositeContent();
-      content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
-      content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
-      BowlingPin pin = new BowlingPin(content, 1, 455 + offset, 195);
-      offset += 70;
-      pins.add(pin);
-    }
-    CompositeContent content = new CompositeContent();
-    content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
-    content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
-    BowlingPin pin = new BowlingPin(content, 1, 490, 210);
-    pins.add(pin);
+
     return pins;
   }
+
 
   private BowlingSide buildSide()
   {
@@ -178,11 +169,51 @@ public class BowlingScreen extends Stage
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
     return new MusicPlayer(finder);
   }
+  
+  
+  private boolean pinsNeedReset = false;
+
+  public void schedulePinReset() {
+    pinResetCounter = PIN_RESET_DELAY_TICKS;
+  }
 
   @Override
   public void handleTick(final int delay)
   {
     super.handleTick(delay);
+    
+    if (pinResetCounter >= 0) {
+      pinResetCounter--;
+      if (pinResetCounter <= 0) {
+          resetPins();
+          pinResetCounter = -1;
+      }
+    }
+  }
+
+  @Override
+  public void startRoll(double angle)
+  {
+    ball.startRoll(angle);
+  }
+
+  @Override
+  public void resetBall()
+  {
+    ball.resetBall();
+  }
+
+  @Override
+  public void resetPins()
+  {
+    pins = buildPins();
+
+    for (BowlingPin p : pins)
+    {
+        p.setGameState(gameState);
+        ball.addAntagonist(p);
+        add(p);
+    }
   }
 
 }

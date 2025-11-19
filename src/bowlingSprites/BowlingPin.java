@@ -20,18 +20,17 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
   Content pinContent;
   private GameState gameState;
 
-
   protected ArrayList<Integer> keyTimes;
   protected ArrayList<Point2D> locations;
   protected ArrayList<Double> rotations, scalings;
   private double x;
   private double y;
-  private CompositeContent initialContent;
+  private double originalX;
+  private double originalY;
 
   public BowlingPin(TransformableContent content, int row, double startX, double startY)
   {
     super(content);
-    this.initialContent = (CompositeContent) content;
     this.content = new ArrayList<>();
     this.tick = 0;
     this.x = startX;
@@ -42,13 +41,14 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
     this.rotations = new ArrayList<Double>();
     this.scalings = new ArrayList<Double>();
     setLocation(x, y);
-  }
-  
-  
-  public void setGameState(GameState gameState) {
-      this.gameState = gameState;
+    originalX = startX;
+    originalY = startY;
   }
 
+  public void setGameState(GameState gameState)
+  {
+    this.gameState = gameState;
+  }
 
   public boolean isLive()
   {
@@ -91,6 +91,8 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
   @Override
   public void handleTick(int time)
   {
+    boolean tweeningActive = false;
+
     if (!keyTimes.isEmpty())
     {
       int i = 0;
@@ -118,7 +120,14 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
         setRotation(rotation);
         double scale = lerp(s0, s1, t);
         setScale(scale);
+        tweeningActive = true;  // still animating
+
       }
+    }
+    
+    if (!tweeningActive && knocked)
+    {
+        setVisible(false);
     }
     this.tick = time;
     setLocation(x, y);
@@ -134,6 +143,8 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
         movePin(time, (BowlingBall) ball);
       }
     }
+    
+    
   }
 
   private double lerp(double a, double b, double t)
@@ -166,50 +177,71 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
       scalings.add(i, scaling);
     }
     return i;
-    
+
   }
 
   @Override
-  public void onBallHit(BowlingBall ball) {
-      if (!knocked) {
-          knocked = true;           // mark pin as knocked
-          movePin(tick, ball);      // animate the pin falling
-          if (gameState != null) {
-              gameState.pinKnocked();  // notify GameState
-          }
+  public void onBallHit(BowlingBall ball)
+  {
+    if (!knocked)
+    {
+      
+      knocked = true; // mark pin as knocked
+      movePin(tick, ball); // animate the pin falling
+      if (gameState != null)
+      {
+        gameState.pinKnocked(); // notify GameState
       }
+      
+    }
   }
-
-
 
   private void movePin(int time, BowlingBall ball)
   {
 
-      keyTimes.clear();
-      locations.clear();
-      rotations.clear();
-      scalings.clear();
+    keyTimes.clear();
+    locations.clear();
+    rotations.clear();
+    scalings.clear();
 
-      double ballX = ball.getBounds2D().getX();
-      double pinCenterX = this.x + getBounds2D(true).getWidth() / 2;
+    double ballX = ball.getBounds2D().getX();
+    double pinCenterX = this.x + getBounds2D(true).getWidth() / 2;
 
-      boolean fallRight = ballX < pinCenterX;
+    boolean fallRight = ballX < pinCenterX;
 
-      double push = fallRight ? 20 : -20;               // how far it moves
-      double rotation = fallRight ? Math.PI/2 : -Math.PI/2;   // 90° or -90°
+    double push = fallRight ? 20 : -20; // how far it moves
+    double rotation = fallRight ? Math.PI / 2 : -Math.PI / 2; // 90° or -90°
 
-      addKeyTime(time,
-                 new Point2D.Double(x, y),
-                 0.0,                         // upright
-                 1.0);
+    addKeyTime(time, new Point2D.Double(x, y), 0.0, // upright
+        1.0);
 
-      // Keyframe: tipping over
-      addKeyTime(time + 100,
-                 new Point2D.Double(x + push, y - 10),
-                 rotation,
-                 0.8);
+    // Keyframe: tipping over
+    addKeyTime(time + 100, new Point2D.Double(x + push, y - 10), rotation, 0.8);
   }
 
+  public void resetPin()
+  {
+    knocked = false;
+    setRotation(0);
+    setScale(1.0);
+    setLocation(originalX, originalY);
+    keyTimes.clear();
+    locations.clear();
+    rotations.clear();
+    scalings.clear();
+    setVisible(true);
 
 
+  }
+
+  public double getOriginalX()
+  {
+    // TODO Auto-generated method stub
+    return originalX;
+  }
+  public double getOriginalY()
+  {
+    // TODO Auto-generated method stub
+    return originalY;
+  }
 }
