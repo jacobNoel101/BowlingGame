@@ -96,6 +96,8 @@ public class GameState implements BowlingSubject
 
     // Otherwise, start second roll
     rollInSet = 2;
+    waitingForPlayerAim = false;
+
 
     if (ballController != null)
         ballController.resetBall(); // reset ball for second roll
@@ -112,6 +114,9 @@ public class GameState implements BowlingSubject
     rollInSet = 1;
     pinsStanding = 10;
     pinsDownInFrame = 0;
+    waitingForPlayerAim = false;
+    ballIsRolling = false;
+    waitingForBallToStop = false;
 
     if (ballController != null)
     {
@@ -148,13 +153,13 @@ public class GameState implements BowlingSubject
   {
     set = 1;
     rollInSet = 1;
-
     pinsStanding = 10;
     pinsDownInFrame = 0;
     pinsDownThisRoll = 0;
-
+    waitingForPlayerAim = false;
     ballIsRolling = false;
     waitingForBallToStop = false;
+    
 
     notifyObservers();
   }

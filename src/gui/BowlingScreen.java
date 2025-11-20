@@ -49,6 +49,11 @@ public class BowlingScreen extends Stage implements BowlingBallController
     {
       pin.setGameState(gameState);
       ball.addAntagonist(pin);
+      for (BowlingPin other : pins) {
+        if (other != pin) {
+          pin.addAntagonist(other);
+        }
+      }
       add(pin);
     }
     add(ball);
@@ -120,7 +125,8 @@ public class BowlingScreen extends Stage implements BowlingBallController
     return ball;
   }
 
-  private ArrayList<BowlingPin> buildPins() {
+  private ArrayList<BowlingPin> buildPins()
+  {
     Rectangle2D frontPin = new Rectangle2D.Double(0, 0, 20, 60);
     Polygon topPin = new Polygon();
     topPin.addPoint(0, 0);
@@ -128,20 +134,29 @@ public class BowlingScreen extends Stage implements BowlingBallController
     topPin.addPoint(15, -3);
     topPin.addPoint(5, -3);
 
-    double[][] positions = {
-        {490, 210},                  // row 1
-        {455, 195}, {525, 195},      // row 2
+    double[][] positions = {{490, 210}, // row 1
+        {455, 195}, {525, 195}, // row 2
         {435, 180}, {490, 180}, {545, 180}, // row 3
         {415, 170}, {465, 170}, {515, 170}, {565, 170} // row 4
     };
 
     ArrayList<BowlingPin> pins = new ArrayList<>();
-    for (int i = positions.length - 1; i >= 0; i--) {  // iterate in reverse
-        CompositeContent content = new CompositeContent();
-        content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
-        content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
-        BowlingPin pin = new BowlingPin(content, 1, positions[i][0], positions[i][1]);
-        pins.add(pin);
+    for (int i = positions.length - 1; i >= 0; i--)
+    {
+      int row;
+      if (i == 0)
+        row = 1;
+      else if (i <= 2)
+        row = 2;
+      else if (i <= 5)
+        row = 3;
+      else
+        row = 4;
+      CompositeContent content = new CompositeContent();
+      content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
+      content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
+      BowlingPin pin = new BowlingPin(content, row, positions[i][0], positions[i][1]);
+      pins.add(pin);
     }
 
     return pins;
@@ -206,12 +221,18 @@ public class BowlingScreen extends Stage implements BowlingBallController
   @Override
   public void resetPins()
   {
+    pins = null;
     pins = buildPins();
 
     for (BowlingPin p : pins)
     {
         p.setGameState(gameState);
         ball.addAntagonist(p);
+        for (BowlingPin other : pins) {
+          if (other != p) {
+            p.addAntagonist(other);
+          }
+        }
         add(p);
     }
   }

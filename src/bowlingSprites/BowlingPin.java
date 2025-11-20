@@ -66,29 +66,6 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
   }
 
   @Override
-  public boolean intersects(Sprite s)
-  {
-    boolean retval;
-    double maxx, maxy, minx, miny;
-    double maxxO, maxyO, minxO, minyO;
-    Rectangle2D r;
-    retval = true;
-    r = getBounds2D(true);
-    minx = r.getX();
-    miny = r.getY();
-    maxx = minx + r.getWidth();
-    maxy = miny + r.getHeight();
-    r = s.getBounds2D(true);
-    minxO = r.getX();
-    minyO = r.getY();
-    maxxO = minxO + r.getWidth();
-    maxyO = minyO + r.getHeight();
-    if ((maxx < minxO) || (minx > maxxO) || (maxy < minyO) || (miny > maxyO))
-      retval = false;
-    return retval;
-  }
-
-  @Override
   public void handleTick(int time)
   {
     boolean tweeningActive = false;
@@ -120,31 +97,112 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
         setRotation(rotation);
         double scale = lerp(s0, s1, t);
         setScale(scale);
-        tweeningActive = true;  // still animating
+        tweeningActive = true; // still animating
 
       }
     }
-    
+
     if (!tweeningActive && knocked)
     {
-        setVisible(false);
+      setVisible(false);
     }
     this.tick = time;
     setLocation(x, y);
     Iterator<Sprite> i;
-    Sprite ball;
+    Sprite sprite;
     i = antagonists.iterator();
     while (i.hasNext())
     {
-      ball = i.next();
-      if (intersects(ball) && !knocked)
+      sprite = i.next();
+      if (sprite instanceof BowlingBall)
       {
-        knocked = true;
-        movePin(time, (BowlingBall) ball);
+        if (intersects(sprite) && !knocked)
+        {
+          knocked = true;
+          row++;
+          movePin(time, (BowlingBall) sprite);
+        }
+
+      }
+      if (sprite instanceof BowlingPin)
+      {
+        BowlingPin other = (BowlingPin) sprite;
+
+        // Only collide if in same row
+        if (!intersects(other))
+          continue;
+
+        // CASE 1: This pin is knocked, other is NOT → knock the other
+        if (this.knocked && !other.knocked)
+        {
+          other.knocked = true;
+          other.row++; // move forward a row
+          other.movePin(time, this);
+          continue;
+        }
+        //
+        // // CASE 2: Other pin is knocked, this is not → knock THIS one
+        // if (!this.knocked && other.knocked) {
+        // this.knocked = true;
+        // this.row++; // move forward a row
+        // this.movePin(time, other);
+        // return;
+        // }
+
+        // // CASE 3: Both unknocked (rare but possible if moving fast)
+        // if (!this.knocked && !other.knocked) {
+        // this.knocked = true;
+        // other.knocked = true;
+        // this.row++;
+        // other.row++;
+        // this.movePin(time, other);
+        // other.movePin(time, this);
+        // }
+
+        // CASE 4: both knocked
+        // do nothing (already falling)
+      }
+
+    }
+
+  }
+
+  @Override
+  public boolean intersects(Sprite s)
+  {
+    boolean retval;
+    double maxx, maxy, minx, miny;
+    double maxxO, maxyO, minxO, minyO;
+    Rectangle2D r;
+    retval = true;
+    r = getBounds2D(true);
+    minx = r.getX();
+    miny = r.getY();
+    maxx = minx + r.getWidth();
+    maxy = miny + r.getHeight();
+    r = s.getBounds2D(true);
+    minxO = r.getX();
+    minyO = r.getY();
+    maxxO = minxO + r.getWidth();
+    maxyO = minyO + r.getHeight();
+    if (s instanceof BowlingPin)
+    {
+      BowlingPin pin = (BowlingPin) s;
+
+      // Only collide if in SAME row
+      if (pin.row != this.row)
+      {
+        return false;
+      }
+
+      // Basic bounding box overlap
+      if ((maxx < minxO) || (minx > maxxO) || (maxy < minyO) || (miny > maxyO))
+      {
+        return false;
       }
     }
-    
-    
+    return true;
+
   }
 
   private double lerp(double a, double b, double t)
@@ -185,18 +243,17 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
   {
     if (!knocked)
     {
-      
       knocked = true; // mark pin as knocked
       movePin(tick, ball); // animate the pin falling
       if (gameState != null)
       {
         gameState.pinKnocked(); // notify GameState
       }
-      
+
     }
   }
 
-  private void movePin(int time, BowlingBall ball)
+  private void movePin(int time, Sprite sprite)
   {
 
     keyTimes.clear();
@@ -204,19 +261,41 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
     rotations.clear();
     scalings.clear();
 
-    double ballX = ball.getBounds2D().getX();
-    double pinCenterX = this.x + getBounds2D(true).getWidth() / 2;
+    if (sprite instanceof BowlingBall)
+    {
+      BowlingBall ball = (BowlingBall) sprite;
 
-    boolean fallRight = ballX < pinCenterX;
+      double ballX = ball.getBounds2D().getX();
+      double pinCenterX = this.x + getBounds2D(true).getWidth() / 2;
 
-    double push = fallRight ? 20 : -20; // how far it moves
-    double rotation = fallRight ? Math.PI / 2 : -Math.PI / 2; // 90° or -90°
+      boolean fallRight = ballX < pinCenterX;
 
-    addKeyTime(time, new Point2D.Double(x, y), 0.0, // upright
-        1.0);
+      double push = fallRight ? 20 : -20; // how far it moves
+      double rotation = fallRight ? Math.PI / 2 : -Math.PI / 2; // 90° or -90°
 
-    // Keyframe: tipping over
-    addKeyTime(time + 100, new Point2D.Double(x + push, y - 10), rotation, 0.8);
+      addKeyTime(time, new Point2D.Double(x, y), 0.0, 1.0);
+
+      // Keyframe: tipping over
+      addKeyTime(time + 100, new Point2D.Double(x + push, y - 10), rotation, 0.8);
+      return;
+    }
+    if (sprite instanceof BowlingPin)
+    {
+      BowlingPin pin = (BowlingPin) sprite;
+
+      Rectangle2D thisBounds = getBounds2D(true);
+      Rectangle2D otherBounds = pin.getBounds2D(true);
+
+      boolean fallRight = otherBounds.getMaxX() < thisBounds.getCenterX();
+
+      double push = fallRight ? 20 : -20;
+      double rotation = fallRight ? Math.PI / 2 : -Math.PI / 2; // 90° or -90°
+
+      addKeyTime(time, new Point2D.Double(x, y), 0.0, 1.0);
+
+      addKeyTime(time + 100, new Point2D.Double(x + push, y - 10), rotation, 0.8);
+      return;
+    }
   }
 
   public void resetPin()
@@ -231,7 +310,6 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
     scalings.clear();
     setVisible(true);
 
-
   }
 
   public double getOriginalX()
@@ -239,6 +317,7 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
     // TODO Auto-generated method stub
     return originalX;
   }
+
   public double getOriginalY()
   {
     // TODO Auto-generated method stub

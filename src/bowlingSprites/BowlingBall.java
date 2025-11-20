@@ -211,7 +211,9 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     setLocation(x, y);
     setRotation(0);
     setScale(1.0);
-    showArrow = true;
+    showArrow = false;
+    aimOffset = 0;
+    rollingAngle = 0;
     setVisible(true);
     keyTimes.clear();
     locations.clear();
@@ -261,7 +263,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     rotations.clear();
     scalings.clear();
     showArrow = false;
-    double totalDistanceY = 420;
+    double totalDistanceY = 460;
     double totalDistanceX = Math.tan(rollingAngle) * totalDistanceY;
     addKeyTime(0, new Point2D.Double(x, y), 0.0, 1.0);
     addKeyTime(endTick, new Point2D.Double(x + totalDistanceX, y - totalDistanceY), 0.0, .4);
