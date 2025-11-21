@@ -11,7 +11,6 @@ public class GameState implements BowlingSubject
   private BowlingBallController ballController;
   private List<Integer> rollScores; // Stores pins knocked down for each roll
 
-
   // --- FRAME / ROLL STATE ---
   private int set; // 1–10
   private int rollInSet; // 1 or 2
@@ -25,11 +24,8 @@ public class GameState implements BowlingSubject
   private boolean ballIsRolling;
   private boolean waitingForBallToStop;
   private boolean waitingForPlayerAim;
-  
-  private int lastRoll = 1;
 
-  
-  
+  private int lastRoll = 1;
 
   public GameState()
   {
@@ -81,13 +77,36 @@ public class GameState implements BowlingSubject
     pinsStanding = Math.max(0, pinsStanding - 1);
   }
 
-
   public void ballStopped() {
     ballIsRolling = false;
     waitingForBallToStop = false;
 
     pinsDownInFrame += pinsDownThisRoll;
     rollScores.add(pinsDownThisRoll);
+    
+    boolean isStrike = (rollInSet == 1 && pinsDownThisRoll == 10);
+    boolean isSpare  = (rollInSet == 2 && pinsDownInFrame == 10);
+
+    // Strike
+    if (isStrike) {
+        if (ballController != null) {
+          ballController.showMessage("Nice Strike!");
+        }
+
+        endFrameAndReset();
+        return;
+    }
+
+    // Spare
+    if (isSpare) {
+        if (ballController != null) 
+        {
+            ballController.showMessage("Nice Spare!"); 
+        }
+        
+        endFrameAndReset();
+        return;
+    }
 
 
     // Strike (first roll only)
@@ -130,11 +149,11 @@ public class GameState implements BowlingSubject
     if (ballController != null)
     {
       ballController.resetBall();
-      if (ballController instanceof BowlingScreen) {
+      if (ballController instanceof BowlingScreen)
+      {
         ((BowlingScreen) ballController).schedulePinReset();
       }
     }
-    
 
     notifyObservers();
   }
@@ -157,8 +176,9 @@ public class GameState implements BowlingSubject
     for (BowlingObserver obs : observers)
       obs.update();
   }
-  
-  public ArrayList<Integer> getRollScores() {
+
+  public ArrayList<Integer> getRollScores()
+  {
     return (ArrayList<Integer>) rollScores;
   }
 
@@ -173,8 +193,6 @@ public class GameState implements BowlingSubject
     ballIsRolling = false;
     waitingForBallToStop = false;
     rollScores = new ArrayList<>(); // Reset roll history
-
-    
 
     notifyObservers();
   }

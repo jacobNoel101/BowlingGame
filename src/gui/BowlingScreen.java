@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.geom.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,22 +14,30 @@ import bowlingVisual.*;
 import io.ResourceFinder;
 import music.MusicPlayer;
 import visual.dynamic.described.*;
+import visual.dynamic.sampled.TransformableContentSuperimposition;
 import visual.statik.described.*;
 import resources.Marker;
 
 public class BowlingScreen extends Stage implements BowlingBallController
 {
+  private int frameNumber = 0;
+
   double offset = 0;
   private static final int PIN_RESET_DELAY_TICKS = 10; // ~500ms if timestep = 50
   private int pinResetCounter = -1; // counter for delayed pin reset
   ArrayList<BowlingPin> pins;
+  ArrayList<visual.dynamic.sampled.Superimposition> superImpositions;
+
   private GameState gameState;
   private BowlingBall ball;
+  private BowlingSuperImpositions currentMessage = null;
 
   public BowlingScreen(final int timeStep)
   {
     super(timeStep); // set tick interval
     this.gameState = new GameState();
+    this.superImpositions = new ArrayList<>();
+
     // call helpers and add the content to the screen
     Background bg = buildBackground();
     add(bg);
@@ -49,8 +59,10 @@ public class BowlingScreen extends Stage implements BowlingBallController
     {
       pin.setGameState(gameState);
       ball.addAntagonist(pin);
-      for (BowlingPin other : pins) {
-        if (other != pin) {
+      for (BowlingPin other : pins)
+      {
+        if (other != pin)
+        {
           pin.addAntagonist(other);
         }
       }
@@ -77,9 +89,18 @@ public class BowlingScreen extends Stage implements BowlingBallController
     }
     mp.update();
     gameState.setBallController(this);
-
+    //forceStrike();
   }
 
+  
+  public void addSuperimposition(visual.dynamic.sampled.Superimposition si) {
+    superImpositions.add(si);
+  }
+ 
+  
+  
+
+  
   private ScoreBoard buildScoreBoard()
   {
     GameState gameState = this.gameState;
@@ -124,6 +145,7 @@ public class BowlingScreen extends Stage implements BowlingBallController
     BowlingBall ball = new BowlingBall(ballContent, null);
     return ball;
   }
+  
 
   private ArrayList<BowlingPin> buildPins()
   {
@@ -162,7 +184,6 @@ public class BowlingScreen extends Stage implements BowlingBallController
     return pins;
   }
 
-
   private BowlingSide buildSide()
   {
     return new BowlingSide();
@@ -184,11 +205,11 @@ public class BowlingScreen extends Stage implements BowlingBallController
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
     return new MusicPlayer(finder);
   }
-  
-  
+
   private boolean pinsNeedReset = false;
 
-  public void schedulePinReset() {
+  public void schedulePinReset()
+  {
     pinResetCounter = PIN_RESET_DELAY_TICKS;
   }
 
@@ -196,15 +217,28 @@ public class BowlingScreen extends Stage implements BowlingBallController
   public void handleTick(final int delay)
   {
     super.handleTick(delay);
-    
-    if (pinResetCounter >= 0) {
+
+    if (pinResetCounter >= 0)
+    {
       pinResetCounter--;
-      if (pinResetCounter <= 0) {
-          resetPins();
-          pinResetCounter = -1;
+      if (pinResetCounter <= 0)
+      {
+        resetPins();
+        pinResetCounter = -1;
       }
     }
+    if (currentMessage != null) {
+      currentMessage.tick();
+      if (currentMessage.isExpired()) {
+          remove(currentMessage); // remove from Stage
+          currentMessage = null;
+      }
+    }
+
+    frameNumber++;
+    getView().repaint();
   }
+  
 
   @Override
   public void startRoll(double angle)
@@ -226,15 +260,47 @@ public class BowlingScreen extends Stage implements BowlingBallController
 
     for (BowlingPin p : pins)
     {
-        p.setGameState(gameState);
-        ball.addAntagonist(p);
-        for (BowlingPin other : pins) {
-          if (other != p) {
-            p.addAntagonist(other);
-          }
+      p.setGameState(gameState);
+      ball.addAntagonist(p);
+      for (BowlingPin other : pins)
+      {
+        if (other != p)
+        {
+          p.addAntagonist(other);
         }
-        add(p);
+      }
+      add(p);
     }
   }
+  
+  
+  public void forceStrike() {
+    // Make sure it's the first roll
+    if (gameState.getRollInSet() != 1) return;
+    resetPins();
 
+    // Knock down all pins
+    for (BowlingPin pin : pins) {
+        gameState.pinKnocked();    // increments pinsDownThisRoll
+    }
+
+    // Notify GameState that ball stopped
+    gameState.ballStopped();
+
+    // Optional: show "Nice Strike!" message
+    showMessage("Nice Strike!");
+  }
+  
+  private int messageDuration = 0;
+
+  public void showMessage(String message) {
+    Point2D center = new Point2D.Double(500, 350);
+    int durationTicks = 120; // e.g., ~2–3 seconds at timestep=50ms
+    currentMessage = new BowlingSuperImpositions(message, center, durationTicks);
+    add(currentMessage); // Stage will render it automatically
+  }
+
+
+
+  
 }

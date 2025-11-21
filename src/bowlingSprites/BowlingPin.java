@@ -127,11 +127,9 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
       if (sprite instanceof BowlingPin)
       {
         BowlingPin other = (BowlingPin) sprite;
-
         // Only collide if in same row
         if (!intersects(other))
           continue;
-
         // This pin is knocked, other is NOT so knock the other
         if (this.knocked && !other.knocked)
         {
@@ -271,7 +269,7 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
 
       boolean fallRight = otherBounds.getMaxX() < thisBounds.getCenterX();
 
-      double push = fallRight ? 20 : -20;
+      double push = fallRight ? 30 : -30;
       double rotation = fallRight ? Math.PI / 2 : -Math.PI / 2; // 90° or -90°
 
       addKeyTime(time, new Point2D.Double(x, y), 0.0, 1.0);
