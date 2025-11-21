@@ -3,6 +3,8 @@ package bowling;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+
+import visual.dynamic.sampled.Superimposition;
 import visual.statik.SimpleContent;
 
 public class ScoreBoard implements SimpleContent, BowlingObserver
@@ -32,6 +34,7 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
   {
   }
 
+
   @Override
   public void render(final Graphics g)
   {
@@ -42,7 +45,7 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
     // Draw current score
     g2.setColor(Color.white);
 
-    ScoreboardWriter.renderScore(location, gameState.getPinsDownThisRoll(), g2);
+    ScoreboardWriter.renderScore(location, gameState.getRollScores(), g2);
   }
 
 }

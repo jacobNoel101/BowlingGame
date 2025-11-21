@@ -85,7 +85,7 @@ public class BowlingScreen extends Stage implements BowlingBallController
     GameState gameState = this.gameState;
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
     ScoreBoardReader reader = new ScoreBoardReader(finder);
-    Point2D location = new Point2D.Double(177, 35); // starting pos for score
+    Point2D location = new Point2D.Double(177, 40); // starting pos for score
     ScoreBoard scoreboard = null;
     try
     {

@@ -9,6 +9,8 @@ public class GameState implements BowlingSubject
   private List<BowlingObserver> observers = new ArrayList<>();
 
   private BowlingBallController ballController;
+  private List<Integer> rollScores; // Stores pins knocked down for each roll
+
 
   // --- FRAME / ROLL STATE ---
   private int set; // 1–10
@@ -23,6 +25,9 @@ public class GameState implements BowlingSubject
   private boolean ballIsRolling;
   private boolean waitingForBallToStop;
   private boolean waitingForPlayerAim;
+  
+  private int lastRoll = 1;
+
   
   
 
@@ -76,17 +81,21 @@ public class GameState implements BowlingSubject
     pinsStanding = Math.max(0, pinsStanding - 1);
   }
 
+
   public void ballStopped() {
     ballIsRolling = false;
     waitingForBallToStop = false;
 
     pinsDownInFrame += pinsDownThisRoll;
+    rollScores.add(pinsDownThisRoll);
+
 
     // Strike (first roll only)
     if (rollInSet == 1 && pinsDownThisRoll == 10) {
         endFrameAndReset(); // we can schedule reset there
         return;
     }
+    
 
     // Second roll ends frame
     if (rollInSet == 2) {
@@ -148,6 +157,10 @@ public class GameState implements BowlingSubject
     for (BowlingObserver obs : observers)
       obs.update();
   }
+  
+  public ArrayList<Integer> getRollScores() {
+    return (ArrayList<Integer>) rollScores;
+  }
 
   public void resetGame()
   {
@@ -159,6 +172,8 @@ public class GameState implements BowlingSubject
     waitingForPlayerAim = false;
     ballIsRolling = false;
     waitingForBallToStop = false;
+    rollScores = new ArrayList<>(); // Reset roll history
+
     
 
     notifyObservers();

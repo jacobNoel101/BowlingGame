@@ -132,35 +132,18 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
         if (!intersects(other))
           continue;
 
-        // CASE 1: This pin is knocked, other is NOT → knock the other
+        // This pin is knocked, other is NOT so knock the other
         if (this.knocked && !other.knocked)
         {
           other.knocked = true;
-          other.row++; // move forward a row
+          other.row++;
           other.movePin(time, this);
+          if (gameState != null)
+          {
+            gameState.pinKnocked(); // notify GameState
+          }
           continue;
         }
-        //
-        // // CASE 2: Other pin is knocked, this is not → knock THIS one
-        // if (!this.knocked && other.knocked) {
-        // this.knocked = true;
-        // this.row++; // move forward a row
-        // this.movePin(time, other);
-        // return;
-        // }
-
-        // // CASE 3: Both unknocked (rare but possible if moving fast)
-        // if (!this.knocked && !other.knocked) {
-        // this.knocked = true;
-        // other.knocked = true;
-        // this.row++;
-        // other.row++;
-        // this.movePin(time, other);
-        // other.movePin(time, this);
-        // }
-
-        // CASE 4: both knocked
-        // do nothing (already falling)
       }
 
     }

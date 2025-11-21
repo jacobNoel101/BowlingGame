@@ -23,7 +23,11 @@ public class ScoreBoardReader
   public BufferedImage read() throws IOException
   {
     ImageFactory imageFactory = new ImageFactory(finder);
-    BufferedImage image = imageFactory.createBufferedImage("scoreSheet.jpg", 4);
+    BufferedImage image = imageFactory.createBufferedImage("scoreSheet3.png", 4);
+
+    //BufferedImage image = imageFactory.createBufferedImage("2ndscoreSheet.png", 4);
+
+    //BufferedImage image = imageFactory.createBufferedImage("scoreSheet.jpg", 4);
     return image;
   }
 
