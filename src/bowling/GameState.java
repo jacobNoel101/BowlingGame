@@ -18,7 +18,7 @@ public class GameState implements BowlingSubject
   // --- PIN TRACKING ---
   private int pinsStanding; // how many pins remain standing
   private int pinsDownThisRoll; // pins knocked only this roll
-  private int pinsDownInFrame; // total pins knocked entire frame
+  private int pinsDownInSet; // total pins knocked entire frame
 
   // --- BALL STATE ---
   private boolean ballIsRolling;
@@ -77,58 +77,61 @@ public class GameState implements BowlingSubject
     pinsStanding = Math.max(0, pinsStanding - 1);
   }
 
-  public void ballStopped() {
+  public void ballStopped()
+  {
     ballIsRolling = false;
     waitingForBallToStop = false;
 
-    pinsDownInFrame += pinsDownThisRoll;
+    pinsDownInSet += pinsDownThisRoll;
     rollScores.add(pinsDownThisRoll);
-    
+
     boolean isStrike = (rollInSet == 1 && pinsDownThisRoll == 10);
-    boolean isSpare  = (rollInSet == 2 && pinsDownInFrame == 10);
+    boolean isSpare = (rollInSet == 2 && pinsDownInSet == 10);
 
     // Strike
-    if (isStrike) {
-        if (ballController != null) {
-          ballController.showMessage("Nice Strike!");
-        }
+    if (isStrike)
+    {
+      if (ballController != null)
+      {
+        ballController.showMessage("Nice Strike!");
+      }
 
-        endFrameAndReset();
-        return;
+      endFrameAndReset();
+      return;
     }
 
     // Spare
-    if (isSpare) {
-        if (ballController != null) 
-        {
-            ballController.showMessage("Nice Spare!"); 
-        }
-        
-        endFrameAndReset();
-        return;
-    }
+    if (isSpare)
+    {
+      if (ballController != null)
+      {
+        ballController.showMessage("Nice Spare!");
+      }
 
+      endFrameAndReset();
+      return;
+    }
 
     // Strike (first roll only)
-    if (rollInSet == 1 && pinsDownThisRoll == 10) {
-        endFrameAndReset(); // we can schedule reset there
-        return;
+    if (rollInSet == 1 && pinsDownThisRoll == 10)
+    {
+      endFrameAndReset(); // we can schedule reset there
+      return;
     }
-    
 
     // Second roll ends frame
-    if (rollInSet == 2) {
-        endFrameAndReset(); // schedule delayed reset
-        return;
+    if (rollInSet == 2)
+    {
+      endFrameAndReset(); // schedule delayed reset
+      return;
     }
 
     // Otherwise, start second roll
     rollInSet = 2;
     waitingForPlayerAim = false;
 
-
     if (ballController != null)
-        ballController.resetBall(); // reset ball for second roll
+      ballController.resetBall(); // reset ball for second roll
 
     notifyObservers();
   }
@@ -141,7 +144,7 @@ public class GameState implements BowlingSubject
 
     rollInSet = 1;
     pinsStanding = 10;
-    pinsDownInFrame = 0;
+    pinsDownInSet = 0;
     waitingForPlayerAim = false;
     ballIsRolling = false;
     waitingForBallToStop = false;
@@ -187,7 +190,7 @@ public class GameState implements BowlingSubject
     set = 1;
     rollInSet = 1;
     pinsStanding = 10;
-    pinsDownInFrame = 0;
+    pinsDownInSet = 0;
     pinsDownThisRoll = 0;
     waitingForPlayerAim = false;
     ballIsRolling = false;
@@ -203,6 +206,11 @@ public class GameState implements BowlingSubject
     return set;
   }
 
+  /**
+   * Whether first roll or Second roll in set.
+   * 
+   * @return 1 or 2 for roll
+   */
   public int getRollInSet()
   {
     return rollInSet;
@@ -213,9 +221,9 @@ public class GameState implements BowlingSubject
     return pinsStanding;
   }
 
-  public int getPinsDownInFrame()
+  public int getPinsDownInSet()
   {
-    return pinsDownInFrame;
+    return pinsDownInSet;
   }
 
   public int getPinsDownThisRoll()

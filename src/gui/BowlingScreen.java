@@ -1,8 +1,6 @@
 package gui;
 
 import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
 import java.awt.geom.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,16 +12,13 @@ import bowlingVisual.*;
 import io.ResourceFinder;
 import music.MusicPlayer;
 import visual.dynamic.described.*;
-import visual.dynamic.sampled.TransformableContentSuperimposition;
 import visual.statik.described.*;
 import resources.Marker;
 
 public class BowlingScreen extends Stage implements BowlingBallController
 {
-  private int frameNumber = 0;
-
   double offset = 0;
-  private static final int PIN_RESET_DELAY_TICKS = 10; // ~500ms if timestep = 50
+  private static final int PIN_RESET_DELAY_TICKS = 10;
   private int pinResetCounter = -1; // counter for delayed pin reset
   ArrayList<BowlingPin> pins;
   ArrayList<visual.dynamic.sampled.Superimposition> superImpositions;
@@ -234,9 +229,6 @@ public class BowlingScreen extends Stage implements BowlingBallController
           currentMessage = null;
       }
     }
-
-    frameNumber++;
-    getView().repaint();
   }
   
 
@@ -281,23 +273,17 @@ public class BowlingScreen extends Stage implements BowlingBallController
 
     // Knock down all pins
     for (BowlingPin pin : pins) {
-        gameState.pinKnocked();    // increments pinsDownThisRoll
+        gameState.pinKnocked();
     }
-
-    // Notify GameState that ball stopped
     gameState.ballStopped();
-
-    // Optional: show "Nice Strike!" message
     showMessage("Nice Strike!");
   }
   
-  private int messageDuration = 0;
-
   public void showMessage(String message) {
     Point2D center = new Point2D.Double(500, 350);
-    int durationTicks = 120; // e.g., ~2–3 seconds at timestep=50ms
+    int durationTicks = 120;
     currentMessage = new BowlingSuperImpositions(message, center, durationTicks);
-    add(currentMessage); // Stage will render it automatically
+    add(currentMessage);
   }
 
 

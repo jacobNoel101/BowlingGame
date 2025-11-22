@@ -10,11 +10,13 @@ import bowling.GameState;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
 
-public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
+public class BowlingPin extends RuleBasedSprite
 {
   private boolean live = false;
   private int tick;
   private boolean knocked = false;
+  private boolean isTweening = false;  // Track if pin is tweening
+
   protected ArrayList<AggregateContent> content;
   private int row;
   Content pinContent;
@@ -48,6 +50,10 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
   public void setGameState(GameState gameState)
   {
     this.gameState = gameState;
+  }
+  
+  private void setTweening(boolean tweening) {
+    this.isTweening = tweening;  // Setter to mark pin as tweening or not
   }
 
   public boolean isLive()
@@ -104,7 +110,12 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
 
     if (!tweeningActive && knocked)
     {
+      setTweening(false);
       setVisible(false);
+    }
+    
+    if (row >= 6) {
+      setVisible(false);  // Pin becomes invisible if the row exceeds or is equal to 6
     }
     this.tick = time;
     setLocation(x, y);
@@ -170,7 +181,6 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
     {
       BowlingPin pin = (BowlingPin) s;
 
-      // Only collide if in SAME row
       if (pin.row != this.row)
       {
         return false;
@@ -219,11 +229,11 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
 
   }
 
-  @Override
   public void onBallHit(BowlingBall ball)
   {
-    if (!knocked)
+    if (!knocked && !isTweening)
     {
+      setTweening(true);  // Set the pin to tweening state
       knocked = true; // mark pin as knocked
       movePin(tick, ball); // animate the pin falling
       if (gameState != null)
@@ -252,7 +262,7 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
       boolean fallRight = ballX < pinCenterX;
 
       double push = fallRight ? 20 : -20; // how far it moves
-      double rotation = fallRight ? Math.PI / 2 : -Math.PI / 2; // 90° or -90°
+      double rotation = fallRight ? Math.PI / 2 : -Math.PI / 2;
 
       addKeyTime(time, new Point2D.Double(x, y), 0.0, 1.0);
 
@@ -270,7 +280,7 @@ public class BowlingPin extends RuleBasedSprite implements BowlingBallObserver
       boolean fallRight = otherBounds.getMaxX() < thisBounds.getCenterX();
 
       double push = fallRight ? 30 : -30;
-      double rotation = fallRight ? Math.PI / 2 : -Math.PI / 2; // 90° or -90°
+      double rotation = fallRight ? Math.PI / 2 : -Math.PI / 2;
 
       addKeyTime(time, new Point2D.Double(x, y), 0.0, 1.0);
 
