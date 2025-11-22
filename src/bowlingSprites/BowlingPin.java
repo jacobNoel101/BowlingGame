@@ -1,8 +1,5 @@
 package bowlingSprites;
 
-import java.awt.Color;
-import java.awt.Polygon;
-import java.awt.Shape;
 import java.awt.geom.*;
 import java.util.*;
 
@@ -12,7 +9,6 @@ import visual.statik.described.*;
 
 public class BowlingPin extends RuleBasedSprite
 {
-  private boolean live = false;
   private int tick;
   private boolean knocked = false;
   private boolean isTweening = false;  // Track if pin is tweening
@@ -55,17 +51,7 @@ public class BowlingPin extends RuleBasedSprite
   private void setTweening(boolean tweening) {
     this.isTweening = tweening;  // Setter to mark pin as tweening or not
   }
-
-  public boolean isLive()
-  {
-    return live;
-  }
-
-  public void setLive(boolean live)
-  {
-    this.live = live;
-  }
-
+  
   public int getRow()
   {
     return row;
@@ -159,7 +145,6 @@ public class BowlingPin extends RuleBasedSprite
 
   }
 
-  @Override
   public boolean intersects(Sprite s)
   {
     boolean retval;

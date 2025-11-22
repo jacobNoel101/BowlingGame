@@ -19,17 +19,14 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   private boolean showArrow;
   private GameState gameState;
 
-  private int roll;
   private double x, y;
   protected ArrayList<Integer> keyTimes;
   protected ArrayList<Point2D> locations;
   protected ArrayList<Double> rotations, scalings;
-  private boolean waitingForPlayerAim;
 
   public BowlingBall(TransformableContent content, Double speed)
   {
     super(content);
-    this.waitingForPlayerAim = false;
     this.gameState = null;
     this.rollingAngle = 0.0;
     this.aimOffset = 0;
@@ -40,7 +37,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     this.x = 495;
     this.y = 650;
     setLocation(x, y);
-    this.roll = 1;
   }
 
   public void setMetronome(Metronome m)
@@ -269,7 +265,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     addKeyTime(endTick, new Point2D.Double(x + totalDistanceX, y - totalDistanceY), 0.0, .4);
   }
 
-  @Override
   public boolean intersects(Sprite s)
   {
     boolean retval;

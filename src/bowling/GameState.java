@@ -25,7 +25,6 @@ public class GameState implements BowlingSubject
   private boolean waitingForBallToStop;
   private boolean waitingForPlayerAim;
 
-  private int lastRoll = 1;
 
   public GameState()
   {
@@ -96,7 +95,7 @@ public class GameState implements BowlingSubject
         ballController.showMessage("Nice Strike!");
       }
 
-      endFrameAndReset();
+      endFrameAndResetSet();
       return;
     }
 
@@ -108,21 +107,21 @@ public class GameState implements BowlingSubject
         ballController.showMessage("Nice Spare!");
       }
 
-      endFrameAndReset();
+      endFrameAndResetSet();
       return;
     }
 
     // Strike (first roll only)
     if (rollInSet == 1 && pinsDownThisRoll == 10)
     {
-      endFrameAndReset(); // we can schedule reset there
+      endFrameAndResetSet();
       return;
     }
 
     // Second roll ends frame
     if (rollInSet == 2)
     {
-      endFrameAndReset(); // schedule delayed reset
+      endFrameAndResetSet(); // schedule delayed reset
       return;
     }
 
@@ -136,11 +135,12 @@ public class GameState implements BowlingSubject
     notifyObservers();
   }
 
-  private void endFrameAndReset()
+  private void endFrameAndResetSet()
   {
     set++;
     if (set > 10)
       set = 10;
+      //game end logic 
 
     rollInSet = 1;
     pinsStanding = 10;
@@ -195,12 +195,10 @@ public class GameState implements BowlingSubject
     waitingForPlayerAim = false;
     ballIsRolling = false;
     waitingForBallToStop = false;
-    rollScores = new ArrayList<>(); // Reset roll history
-
+    rollScores = new ArrayList<>();
     notifyObservers();
   }
 
-  // --- GETTERS ---
   public int getSet()
   {
     return set;
