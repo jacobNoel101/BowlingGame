@@ -6,7 +6,6 @@ import visual.statik.SimpleContent;
 
 public class BowlingLane implements SimpleContent
 {
-  private final Color laneColor = new Color(181, 101, 29); // wood like color
   private final Color backWallColor = Color.BLACK; // back wall color
   private final int screenW = 1000;
   private final int screenH = 900;
@@ -15,6 +14,12 @@ public class BowlingLane implements SimpleContent
   private final int laneTopWidth = 180;
   private final int laneBottomWidth = 1100;
   private final int numStrips = 9;
+  private Color laneColor;
+
+  public BowlingLane(Color laneColor)
+  {
+    this.laneColor = laneColor;
+  }
 
   @Override
   public void render(Graphics g)

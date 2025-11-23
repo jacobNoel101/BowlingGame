@@ -22,17 +22,17 @@ public class BowlingScreen extends Stage implements BowlingBallController
   private int pinResetCounter = -1; // counter for delayed pin reset
   ArrayList<BowlingPin> pins;
   ArrayList<visual.dynamic.sampled.Superimposition> superImpositions;
-
+  private GameTheme theme;
   private GameState gameState;
   private BowlingBall ball;
   private BowlingSuperImpositions currentMessage = null;
 
-  public BowlingScreen(final int timeStep)
+  public BowlingScreen(final int timeStep, GameTheme theme)
   {
     super(timeStep); // set tick interval
+    this.theme = theme;
     this.gameState = new GameState();
     this.superImpositions = new ArrayList<>();
-
     // call helpers and add the content to the screen
     Background bg = buildBackground();
     add(bg);
@@ -84,18 +84,13 @@ public class BowlingScreen extends Stage implements BowlingBallController
     }
     mp.update();
     gameState.setBallController(this);
-    //forceStrike();
   }
 
-  
-  public void addSuperimposition(visual.dynamic.sampled.Superimposition si) {
+  public void addSuperimposition(visual.dynamic.sampled.Superimposition si)
+  {
     superImpositions.add(si);
   }
- 
-  
-  
 
-  
   private ScoreBoard buildScoreBoard()
   {
     GameState gameState = this.gameState;
@@ -127,20 +122,18 @@ public class BowlingScreen extends Stage implements BowlingBallController
   {
     // outer circle
     Ellipse2D outer = new Ellipse2D.Double(-30, -30, 70, 70);
-    Color outerColor = new Color(30, 80, 200); // darker blue
+    Color outerColor = theme.ballOuterColor;
     TransformableContent outerContent = new Content(outer, outerColor, outerColor, null);
     // inner circle
     Ellipse2D inner = new Ellipse2D.Double(-25, -25, 50, 50);
-    Color innerColor = new Color(40, 100, 210); // lighter blue
+    Color innerColor = theme.ballInnerColor;
     TransformableContent innerContent = new Content(inner, innerColor, innerColor, null);
-    // make both into one content
+    // composite ball content
     visual.statik.described.CompositeContent ballContent = new visual.statik.described.CompositeContent();
     ballContent.add(outerContent);
     ballContent.add(innerContent);
-    BowlingBall ball = new BowlingBall(ballContent, null);
-    return ball;
+    return new BowlingBall(ballContent, null);
   }
-  
 
   private ArrayList<BowlingPin> buildPins()
   {
@@ -170,12 +163,12 @@ public class BowlingScreen extends Stage implements BowlingBallController
       else
         row = 4;
       CompositeContent content = new CompositeContent();
-      content.add(new Content(topPin, Color.WHITE, Color.BLACK, null));
-      content.add(new Content(frontPin, Color.WHITE, Color.BLACK, null));
+      Color outline = (theme.getType() == GameTheme.ThemeType.BASIC) ? Color.WHITE : Color.BLACK;
+      content.add(new Content(topPin, outline, theme.pinColor, null));
+      content.add(new Content(frontPin, outline, theme.pinColor, null));
       BowlingPin pin = new BowlingPin(content, row, positions[i][0], positions[i][1]);
       pins.add(pin);
     }
-
     return pins;
   }
 
@@ -186,13 +179,12 @@ public class BowlingScreen extends Stage implements BowlingBallController
 
   private BowlingLane buildLane()
   {
-    return new BowlingLane();
+    return new BowlingLane(theme.laneColor);
   }
 
   private Background buildBackground()
   {
-    Background content = new Background(Color.lightGray);
-    return content;
+    return new Background(theme.backgroundColor);
   }
 
   private MusicPlayer buildMusic()
@@ -200,8 +192,6 @@ public class BowlingScreen extends Stage implements BowlingBallController
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
     return new MusicPlayer(finder);
   }
-
-  private boolean pinsNeedReset = false;
 
   public void schedulePinReset()
   {
@@ -222,15 +212,16 @@ public class BowlingScreen extends Stage implements BowlingBallController
         pinResetCounter = -1;
       }
     }
-    if (currentMessage != null) {
+    if (currentMessage != null)
+    {
       currentMessage.tick();
-      if (currentMessage.isExpired()) {
-          remove(currentMessage); // remove from Stage
-          currentMessage = null;
+      if (currentMessage.isExpired())
+      {
+        remove(currentMessage); // remove from Stage
+        currentMessage = null;
       }
     }
   }
-  
 
   @Override
   public void startRoll(double angle)
@@ -264,29 +255,29 @@ public class BowlingScreen extends Stage implements BowlingBallController
       add(p);
     }
   }
-  
-  
-  public void forceStrike() {
+
+  public void forceStrike()
+  {
     // Make sure it's the first roll
-    if (gameState.getRollInSet() != 1) return;
+    if (gameState.getRollInSet() != 1)
+      return;
     resetPins();
 
     // Knock down all pins
-    for (BowlingPin pin : pins) {
-        gameState.pinKnocked();
+    for (BowlingPin pin : pins)
+    {
+      gameState.pinKnocked();
     }
     gameState.ballStopped();
     showMessage("Nice Strike!");
   }
-  
-  public void showMessage(String message) {
+
+  public void showMessage(String message)
+  {
     Point2D center = new Point2D.Double(500, 350);
     int durationTicks = 120;
     currentMessage = new BowlingSuperImpositions(message, center, durationTicks);
     add(currentMessage);
   }
 
-
-
-  
 }

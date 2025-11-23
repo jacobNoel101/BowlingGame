@@ -17,6 +17,8 @@ public class StartScreen extends Stage
 {
   private BowlingStart startContent;
   private MusicPlayer mp;
+  private ThemeButton themeButton;
+  private boolean themeButtonAdded = false;
   private BowlingApplication app; // to help switch screens
 
   public StartScreen(final int timeStep, final BowlingApplication app)
@@ -60,11 +62,27 @@ public class StartScreen extends Stage
   public void handleTick(final int time)
   {
     startContent.handleTick(time);
+    if (!themeButtonAdded && startContentIsFinished())
+    {
+      themeButton = new ThemeButton();
+      add(themeButton);
+      themeButtonAdded = true;
+    }
     getView().repaint();
+  }
+
+  private boolean startContentIsFinished()
+  {
+    return startContent.isFinished();
   }
 
   public void handleMouseClick(final Point2D point)
   {
+    if (themeButtonAdded && themeButton.clicked(point))
+    {
+      app.launchThemeScreen();
+      return;
+    }
     if (startContent.isStartClicked(point))
       app.launchBowlingScreen(); // switch screens when mouse clicks start
   }

@@ -64,6 +64,11 @@ public class BowlingStart implements SimpleContent
     }
   }
 
+  public boolean isFinished()
+  {
+    return finishedTitle;
+  }
+
   public boolean isStartClicked(Point2D point)
   {
     // returns true when user clicks an area inside of start border
