@@ -12,6 +12,8 @@ public class BowlingPin extends RuleBasedSprite {
     private boolean falling = false;   // actively tipping
     private boolean knocked = false;   // finished falling
     private double x, y;
+    private double fallDirection = 1; // 1 = right, -1 = left
+
     private final double originalX, originalY;
     
     private double tiltBack = 0;           // visual backward tilt angle
@@ -48,6 +50,8 @@ public class BowlingPin extends RuleBasedSprite {
 
         // Compute linear velocity away from ball
         double dx = x - ball.getX();
+        fallDirection = (dx >= 0) ? 1 : -1;  // ball hits from left → fall right, hits from right → fall left
+
         double dy = y - ball.getY();
         double length = Math.hypot(dx, dy);
         double speed = 3 + Math.random() * 2;  // small random for realism
@@ -57,6 +61,8 @@ public class BowlingPin extends RuleBasedSprite {
         // Start tipping over
         falling = true;
         angularVelocity = 0.05 + Math.random() * 0.05;
+        tiltBackVelocity = 0.05 + Math.random() * 0.03;
+        tiltBackVelocity *= fallDirection;  // apply left/right
     }
 
     /** Called when another pin collides */
@@ -84,9 +90,9 @@ public class BowlingPin extends RuleBasedSprite {
             velocityY *= 0.92;
 
             // rotation (tipping)
-            rotation += angularVelocity;
+            rotation += angularVelocity * fallDirection;
             angularVelocity *= 0.95; // rotational friction
-            if (angularVelocity < 0.001) angularVelocity = 0;
+            if (Math.abs(angularVelocity) < 0.001) angularVelocity = 0;
             
          // optional small uniform scale change to exaggerate fall
             tiltBack += tiltBackVelocity;
@@ -95,7 +101,7 @@ public class BowlingPin extends RuleBasedSprite {
             setScale(1.0 + 0.1 * Math.sin(tiltBack)); // subtle effect
 
             // Stop when almost stationary
-            if (Math.hypot(velocityX, velocityY) < 0.1 && angularVelocity == 0 && !knocked) {
+            if (Math.hypot(velocityX, velocityY) < 0.2 && angularVelocity < 0.2 && !knocked) {
                 knocked = true;
                 falling = false;
                 setVisible(false);
