@@ -15,6 +15,7 @@ public class GameState implements BowlingSubject
   // --- FRAME / ROLL STATE ---
   private int set; // 1–10
   private int rollInSet; // 1 or 2
+  private String userName = "username";
 
   // --- PIN TRACKING ---
   private int pinsStanding; // how many pins remain standing
@@ -306,5 +307,15 @@ public class GameState implements BowlingSubject
   public int getPinsDownThisRoll()
   {
     return pinsDownThisRoll;
+  }
+
+  public String getUserName()
+  {
+    return userName;
+  }
+
+  public void setUserName(String userName)
+  {
+    this.userName = userName;
   }
 }

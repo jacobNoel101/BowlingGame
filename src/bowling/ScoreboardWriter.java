@@ -14,9 +14,11 @@ public class ScoreboardWriter
   private static final String STRIKE = "X";
   private static final String SPARE = "/";
 
-  public static void renderScore(Point2D location, ArrayList<Integer> rollScores,
+  public static void renderScore(Point2D location, String username, ArrayList<Integer> rollScores,
       ArrayList<Integer> totalScores, Graphics2D g2)
   {
+    
+    
     if (rollScores == null)
       rollScores = new ArrayList<>();
     if (totalScores == null)
@@ -29,6 +31,9 @@ public class ScoreboardWriter
     int y = (int) location.getY();
 
     g2.setColor(Color.BLACK);
+    drawCentered(g2, username, 70, 50, metrics);
+
+    
 
     int rollIndex = 0;
 

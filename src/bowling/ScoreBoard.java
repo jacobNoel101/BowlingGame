@@ -42,7 +42,7 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
     // Draw current score
     g2.setColor(Color.white);
 
-    ScoreboardWriter.renderScore(location, gameState.getRollScores(), gameState.getTotalScore(),
+    ScoreboardWriter.renderScore(location, gameState.getUserName(), gameState.getRollScores(), gameState.getTotalScore(),
         g2);
   }
 
