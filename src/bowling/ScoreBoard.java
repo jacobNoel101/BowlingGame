@@ -3,8 +3,6 @@ package bowling;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
-
-import visual.dynamic.sampled.Superimposition;
 import visual.statik.SimpleContent;
 
 public class ScoreBoard implements SimpleContent, BowlingObserver
