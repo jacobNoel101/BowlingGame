@@ -2,301 +2,150 @@ package bowlingSprites;
 
 import java.awt.geom.*;
 import java.util.*;
-
 import bowling.GameState;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
 
-public class BowlingPin extends RuleBasedSprite
-{
-  private int tick;
-  private boolean knocked = false;
-  private boolean isTweening = false;  // Track if pin is tweening
+public class BowlingPin extends RuleBasedSprite {
 
-  protected ArrayList<AggregateContent> content;
-  private int row;
-  Content pinContent;
-  private GameState gameState;
-
-  protected ArrayList<Integer> keyTimes;
-  protected ArrayList<Point2D> locations;
-  protected ArrayList<Double> rotations, scalings;
-  private double x;
-  private double y;
-  private double originalX;
-  private double originalY;
-
-  public BowlingPin(TransformableContent content, int row, double startX, double startY)
-  {
-    super(content);
-    this.content = new ArrayList<>();
-    this.tick = 0;
-    this.x = startX;
-    this.y = startY;
-    this.row = row;
-    this.keyTimes = new ArrayList<Integer>();
-    this.locations = new ArrayList<Point2D>();
-    this.rotations = new ArrayList<Double>();
-    this.scalings = new ArrayList<Double>();
-    setLocation(x, y);
-    originalX = startX;
-    originalY = startY;
-  }
-
-  public void setGameState(GameState gameState)
-  {
-    this.gameState = gameState;
-  }
-  
-  private void setTweening(boolean tweening) {
-    this.isTweening = tweening;  // Setter to mark pin as tweening or not
-  }
-  
-  public int getRow()
-  {
-    return row;
-  }
-
-  @Override
-  public void handleTick(int time)
-  {
-    boolean tweeningActive = false;
-
-    if (!keyTimes.isEmpty())
-    {
-      int i = 0;
-      while (i < keyTimes.size() - 1 && time > keyTimes.get(i + 1))
-      {
-        i++;
-      }
-      if (i < keyTimes.size() - 1)
-      {
-        int t0 = keyTimes.get(i);
-        int t1 = keyTimes.get(i + 1);
-        Point2D p0 = locations.get(i);
-        Point2D p1 = locations.get(i + 1);
-        double r0 = rotations.get(i);
-        double r1 = rotations.get(i + 1);
-        double s0 = scalings.get(i);
-        double s1 = scalings.get(i + 1);
-        double t = (time - t0) / (double) (t1 - t0);
-        if (p0 != null && p1 != null)
-        {
-          x = lerp(p0.getX(), p1.getX(), t);
-          y = lerp(p0.getY(), p1.getY(), t);
-        }
-        double rotation = lerp(r0, r1, t);
-        setRotation(rotation);
-        double scale = lerp(s0, s1, t);
-        setScale(scale);
-        tweeningActive = true; // still animating
-
-      }
-    }
-
-    if (!tweeningActive && knocked)
-    {
-      setTweening(false);
-      setVisible(false);
-    }
+    private boolean hit = false;       // touched by ball or other pin
+    private boolean falling = false;   // actively tipping
+    private boolean knocked = false;   // finished falling
+    private double x, y;
+    private final double originalX, originalY;
     
-    if (row >= 6) {
-      setVisible(false);  // Pin becomes invisible if the row exceeds or is equal to 6
+    private double tiltBack = 0;           // visual backward tilt angle
+    private double tiltBackVelocity = 0;
+
+    private double velocityX = 0;
+    private double velocityY = 0;
+    private double rotation = 0;         // current rotation
+    private double angularVelocity = 0;  // rotation speed
+    private final double radius;
+
+    private ArrayList<Sprite> antagonists = new ArrayList<>();
+    private GameState gameState;
+
+    public BowlingPin(TransformableContent content, double startX, double startY, double radius) {
+        super(content);
+        this.x = startX;
+        this.y = startY;
+        this.originalX = startX;
+        this.originalY = startY;
+        this.radius = radius;
+        setLocation(x, y);
+        setVisible(true);
     }
-    this.tick = time;
-    setLocation(x, y);
-    Iterator<Sprite> i;
-    Sprite sprite;
-    i = antagonists.iterator();
-    while (i.hasNext())
-    {
-      sprite = i.next();
-      if (sprite instanceof BowlingBall)
-      {
-        if (intersects(sprite) && !knocked)
-        {
-          knocked = true;
-          row++;
-          movePin(time, (BowlingBall) sprite);
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    /** Called when hit by ball */
+    public void hitByBall(BowlingBall ball) {
+        if (hit) return;
+        hit = true;
+
+        // Compute linear velocity away from ball
+        double dx = x - ball.getX();
+        double dy = y - ball.getY();
+        double length = Math.hypot(dx, dy);
+        double speed = 3 + Math.random() * 2;  // small random for realism
+        velocityX = dx / length * speed;
+        velocityY = dy / length * speed;
+
+        // Start tipping over
+        falling = true;
+        angularVelocity = 0.05 + Math.random() * 0.05;
+    }
+
+    /** Called when another pin collides */
+    public void startMoving(double vx, double vy) {
+        if (!hit) hit = true;
+        velocityX += vx;
+        velocityY += vy;
+        falling = true;
+        if (angularVelocity == 0) angularVelocity = 0.03 + Math.random() * 0.02;
+    }
+
+    /** Pin-to-pin collision */
+    public boolean intersectsPin(BowlingPin other) {
+        double dx = other.x - x;
+        double dy = other.y - y;
+        return Math.hypot(dx, dy) < (this.radius + other.radius);
+    }
+
+    public void handleTick(int time) {
+        if (falling) {
+            // linear motion
+            x += velocityX;
+            y += velocityY;
+            velocityX *= 0.92; // friction
+            velocityY *= 0.92;
+
+            // rotation (tipping)
+            rotation += angularVelocity;
+            angularVelocity *= 0.95; // rotational friction
+            if (angularVelocity < 0.001) angularVelocity = 0;
+            
+         // optional small uniform scale change to exaggerate fall
+            tiltBack += tiltBackVelocity;
+            tiltBackVelocity *= 0.95;
+            if (tiltBackVelocity < 0.001) tiltBackVelocity = 0;
+            setScale(1.0 + 0.1 * Math.sin(tiltBack)); // subtle effect
+
+            // Stop when almost stationary
+            if (Math.hypot(velocityX, velocityY) < 0.1 && angularVelocity == 0 && !knocked) {
+                knocked = true;
+                falling = false;
+                setVisible(false);
+
+                if (gameState != null) gameState.pinKnocked(this);
+            }
+
+            // collisions with other pins
+            for (Sprite s : antagonists) {
+                if (s instanceof BowlingPin) {
+                    BowlingPin other = (BowlingPin) s;
+                    if (other != this && !other.hit && intersectsPin(other)) {
+                        double transfer = 0.7;
+                        other.startMoving(velocityX * transfer, velocityY * transfer);
+                    }
+                }
+            }
         }
 
-      }
-      if (sprite instanceof BowlingPin)
-      {
-        BowlingPin other = (BowlingPin) sprite;
-        // Only collide if in same row
-        if (!intersects(other))
-          continue;
-        // This pin is knocked, other is NOT so knock the other
-        if (this.knocked && !other.knocked)
-        {
-          other.knocked = true;
-          other.row++;
-          other.movePin(time, this);
-          if (gameState != null)
-          {
-            gameState.pinKnocked(); // notify GameState
-          }
-          continue;
-        }
-      }
-
+        setLocation(x, y);
+        setRotation(rotation);  // visual tipping
     }
 
-  }
-
-  public boolean intersects(Sprite s)
-  {
-    boolean retval;
-    double maxx, maxy, minx, miny;
-    double maxxO, maxyO, minxO, minyO;
-    Rectangle2D r;
-    retval = true;
-    r = getBounds2D(true);
-    minx = r.getX();
-    miny = r.getY();
-    maxx = minx + r.getWidth();
-    maxy = miny + r.getHeight();
-    r = s.getBounds2D(true);
-    minxO = r.getX();
-    minyO = r.getY();
-    maxxO = minxO + r.getWidth();
-    maxyO = minyO + r.getHeight();
-    if (s instanceof BowlingPin)
-    {
-      BowlingPin pin = (BowlingPin) s;
-
-      if (pin.row != this.row)
-      {
-        return false;
-      }
-
-      // Basic bounding box overlap
-      if ((maxx < minxO) || (minx > maxxO) || (maxy < minyO) || (miny > maxyO))
-      {
-        return false;
-      }
+    public void resetPin() {
+        hit = false;
+        falling = false;
+        knocked = false;
+        velocityX = 0;
+        velocityY = 0;
+        angularVelocity = 0;
+        tiltBack = 0;           // visual backward tilt angle
+        tiltBackVelocity = 0;
+        rotation = 0;
+        x = originalX;
+        y = originalY;
+        setLocation(x, y);
+        setRotation(0);
+        setVisible(true);
     }
-    return true;
 
-  }
+    public void addAntagonist(Sprite s) { antagonists.add(s); }
 
-  private double lerp(double a, double b, double t)
-  {
-    return a + (b - a) * t;
-  }
+    public double getX() { return x; }
+    public double getY() { return y; }
+    public double getRadius() { return radius; }
+    public boolean isKnocked() { return knocked; }
+    public boolean isHit() { return hit; }
+    public double getVelocityX() { return velocityX; }
+    public double getVelocityY() { return velocityY; }
+    public double getAngularVelocity() { return angularVelocity; }
 
-  public int addKeyTime(int keyTime, Point2D location, Double rotation, Double scaling)
-  {
-    int existingKT = -1;
-    int i = 0;
-    boolean keepLooking = true;
-    while ((i < keyTimes.size()) && keepLooking)
-    {
-      existingKT = keyTimes.get(i);
-      if (existingKT >= keyTime)
-        keepLooking = false;
-      else
-        i++;
-    }
-    if ((existingKT == i) && !keepLooking)
-    {
-      i = -1;
-    }
-    else
-    {
-      keyTimes.add(i, keyTime);
-      locations.add(i, location);
-      rotations.add(i, rotation);
-      scalings.add(i, scaling);
-    }
-    return i;
 
-  }
-
-  public void onBallHit(BowlingBall ball)
-  {
-    if (!knocked && !isTweening)
-    {
-      setTweening(true);  // Set the pin to tweening state
-      knocked = true; // mark pin as knocked
-      movePin(tick, ball); // animate the pin falling
-      if (gameState != null)
-      {
-        gameState.pinKnocked(); // notify GameState
-      }
-
-    }
-  }
-
-  private void movePin(int time, Sprite sprite)
-  {
-
-    keyTimes.clear();
-    locations.clear();
-    rotations.clear();
-    scalings.clear();
-
-    if (sprite instanceof BowlingBall)
-    {
-      BowlingBall ball = (BowlingBall) sprite;
-
-      double ballX = ball.getBounds2D().getX();
-      double pinCenterX = this.x + getBounds2D(true).getWidth() / 2;
-
-      boolean fallRight = ballX < pinCenterX;
-
-      double push = fallRight ? 20 : -20; // how far it moves
-      double rotation = fallRight ? Math.PI / 2 : -Math.PI / 2;
-
-      addKeyTime(time, new Point2D.Double(x, y), 0.0, 1.0);
-
-      // Keyframe: tipping over
-      addKeyTime(time + 100, new Point2D.Double(x + push, y - 10), rotation, 0.8);
-      return;
-    }
-    if (sprite instanceof BowlingPin)
-    {
-      BowlingPin pin = (BowlingPin) sprite;
-
-      Rectangle2D thisBounds = getBounds2D(true);
-      Rectangle2D otherBounds = pin.getBounds2D(true);
-
-      boolean fallRight = otherBounds.getMaxX() < thisBounds.getCenterX();
-
-      double push = fallRight ? 30 : -30;
-      double rotation = fallRight ? Math.PI / 2 : -Math.PI / 2;
-
-      addKeyTime(time, new Point2D.Double(x, y), 0.0, 1.0);
-
-      addKeyTime(time + 100, new Point2D.Double(x + push, y - 10), rotation, 0.8);
-      return;
-    }
-  }
-
-  public void resetPin()
-  {
-    knocked = false;
-    setRotation(0);
-    setScale(1.0);
-    setLocation(originalX, originalY);
-    keyTimes.clear();
-    locations.clear();
-    rotations.clear();
-    scalings.clear();
-    setVisible(true);
-
-  }
-
-  public double getOriginalX()
-  {
-    // TODO Auto-generated method stub
-    return originalX;
-  }
-
-  public double getOriginalY()
-  {
-    // TODO Auto-generated method stub
-    return originalY;
-  }
 }

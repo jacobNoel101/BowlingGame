@@ -6,6 +6,7 @@ import java.awt.geom.*;
 import java.util.ArrayList;
 
 import bowling.GameState;
+import bowling.GameState.PinData;
 import event.Metronome;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
@@ -18,6 +19,8 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   private Metronome metronome;
   private boolean showArrow;
   private GameState gameState;
+  private boolean waitingForPins = false; // ball is moving, independent of pins
+
 
   private double x, y;
   protected ArrayList<Integer> keyTimes;
@@ -49,59 +52,71 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     this.gameState = gameState;
   }
 
-  public void handleTick(int time)
-  {
-    // tweening logic
-    if (rolling && !keyTimes.isEmpty())
-    {
-      int i = 0;
-      // find the current segment
-      while (i < keyTimes.size() - 1 && time > keyTimes.get(i + 1))
-      {
-        i++;
-      }
+  public void handleTick(int time) {
+    // 1️⃣ Move the ball along keyframes if rolling
+    if (rolling && !keyTimes.isEmpty()) {
+        int i = 0;
+        while (i < keyTimes.size() - 1 && time > keyTimes.get(i + 1)) i++;
 
-      if (i < keyTimes.size() - 1)
-      {
-        int t0 = keyTimes.get(i);
-        int t1 = keyTimes.get(i + 1);
-        Point2D p0 = locations.get(i);
-        Point2D p1 = locations.get(i + 1);
-        double r0 = rotations.get(i);
-        double r1 = rotations.get(i + 1);
-        double s0 = scalings.get(i);
-        double s1 = scalings.get(i + 1);
-        double t = (time - t0) / (double) (t1 - t0);
-        if (p0 != null && p1 != null)
-        {
-          x = lerp(p0.getX(), p1.getX(), t);
-          y = lerp(p0.getY(), p1.getY(), t);
+        if (i < keyTimes.size() - 1) {
+            int t0 = keyTimes.get(i);
+            int t1 = keyTimes.get(i + 1);
+            Point2D p0 = locations.get(i);
+            Point2D p1 = locations.get(i + 1);
+            double r0 = rotations.get(i);
+            double r1 = rotations.get(i + 1);
+            double s0 = scalings.get(i);
+            double s1 = scalings.get(i + 1);
+            double t = (time - t0) / (double) (t1 - t0);
+            if (p0 != null && p1 != null) {
+                x = lerp(p0.getX(), p1.getX(), t);
+                y = lerp(p0.getY(), p1.getY(), t);
+            }
+            double rotation = lerp(r0, r1, t);
+            setRotation(rotation);
+            double scale = lerp(s0, s1, t);
+            setScale(scale);
         }
-        double rotation = lerp(r0, r1, t);
-        setRotation(rotation);
-        double scale = lerp(s0, s1, t);
-        setScale(scale);
-      }
 
-      if (time == 1500)
-      {
-        setVisible(false);
-        rolling = false;
-        if (gameState != null)
-          gameState.ballStopped();
-
-      }
-
+        setLocation(x, y);
+        if (time >= keyTimes.get(keyTimes.size() - 1)) {
+            rolling = false;  // ball finished moving
+        }
     }
-    setLocation(x, y);
-    for (Sprite pin : antagonists)
-    {
-      if (this.intersects(pin))
-      {
-        ((BowlingPin) pin).onBallHit(this);
-      }
+
+    // 2️⃣ Check collisions with pins
+    for (Sprite s : antagonists) {
+        if (s instanceof BowlingPin) {
+            BowlingPin pin = (BowlingPin) s;
+            if (intersects(pin) && !pin.isKnocked()) {
+                pin.hitByBall(this);
+            }
+        }
     }
-  }
+
+    // 3️⃣ Wait for pins to settle after the ball finishes
+    if (!rolling && waitingForPins && gameState != null) {
+        boolean allPinsStopped = true;
+        for (GameState.PinData pd : gameState.getPins()) {
+            BowlingPin pin = pd.pin;
+            if (pin.isHit() && !pin.isKnocked() &&
+                (Math.abs(pin.getVelocityX()) > 0.1 ||
+                 Math.abs(pin.getVelocityY()) > 0.1 ||
+                 Math.abs(pin.getAngularVelocity()) > 0.001)) {
+                allPinsStopped = false;
+                break;
+            }
+        }
+        if (allPinsStopped) {
+            waitingForPins = false;
+            gameState.ballStopped(); // now scores update correctly
+        }
+    }
+}
+
+
+  public double getX() { return x; }
+  public double getY() { return y; }
 
   @Override
   public void render(Graphics g)
@@ -197,6 +212,8 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   public void startRoll(double angle)
   {
     this.rollingAngle = angle;
+    rolling = true;          // animation starts
+    waitingForPins = true;
     initiateRoll();
   }
 
@@ -216,6 +233,8 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     rotations.clear();
     scalings.clear();
     rolling = false;
+    waitingForPins = false;
+
   }
 
   public int addKeyTime(int keyTime, Point2D location, Double rotation, Double scaling)

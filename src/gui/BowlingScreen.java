@@ -18,7 +18,7 @@ import resources.Marker;
 public class BowlingScreen extends Stage implements BowlingBallController
 {
   double offset = 0;
-  private static final int PIN_RESET_DELAY_TICKS = 10;
+  private static final int PIN_RESET_DELAY_TICKS = 20;
   private int pinResetCounter = -1; // counter for delayed pin reset
   ArrayList<BowlingPin> pins;
   ArrayList<visual.dynamic.sampled.Superimposition> superImpositions;
@@ -50,8 +50,12 @@ public class BowlingScreen extends Stage implements BowlingBallController
     this.ball = buildBall();
     this.ball.setGameState(gameState);
 
+    for (int i = 0; i < pins.size(); i++) {
+      gameState.addPin(i, pins.get(i));
+    }
     for (BowlingPin pin : pins)
     {
+      
       pin.setGameState(gameState);
       ball.addAntagonist(pin);
       for (BowlingPin other : pins)
@@ -134,9 +138,10 @@ public class BowlingScreen extends Stage implements BowlingBallController
     ballContent.add(innerContent);
     return new BowlingBall(ballContent, null);
   }
+  
+  
 
-  private ArrayList<BowlingPin> buildPins()
-  {
+  private ArrayList<BowlingPin> buildPins() {
     Rectangle2D frontPin = new Rectangle2D.Double(0, 0, 20, 60);
     Polygon topPin = new Polygon();
     topPin.addPoint(0, 0);
@@ -144,33 +149,33 @@ public class BowlingScreen extends Stage implements BowlingBallController
     topPin.addPoint(15, -3);
     topPin.addPoint(5, -3);
 
-    double[][] positions = {{490, 210}, // row 1
+    double[][] positions = {
+        {490, 210}, // row 1
         {455, 195}, {525, 195}, // row 2
         {435, 180}, {490, 180}, {545, 180}, // row 3
         {415, 170}, {465, 170}, {515, 170}, {565, 170} // row 4
     };
 
     ArrayList<BowlingPin> pins = new ArrayList<>();
-    for (int i = positions.length - 1; i >= 0; i--)
-    {
-      int row;
-      if (i == 0)
-        row = 1;
-      else if (i <= 2)
-        row = 2;
-      else if (i <= 5)
-        row = 3;
-      else
-        row = 4;
-      CompositeContent content = new CompositeContent();
-      Color outline = (theme.getType() == GameTheme.ThemeType.BASIC) ? Color.WHITE : Color.BLACK;
-      content.add(new Content(topPin, outline, theme.pinColor, null));
-      content.add(new Content(frontPin, outline, theme.pinColor, null));
-      BowlingPin pin = new BowlingPin(content, row, positions[i][0], positions[i][1]);
-      pins.add(pin);
+    double radius = 10; // collision radius
+
+    for (int i = positions.length - 1; i >= 0; i--) {
+        CompositeContent content = new CompositeContent();
+        Color outline = (theme.getType() == GameTheme.ThemeType.BASIC) ? Color.WHITE : Color.BLACK;
+        content.add(new Content(topPin, outline, theme.pinColor, null));
+        content.add(new Content(frontPin, outline, theme.pinColor, null));
+
+        // Correct order: content, X, Y, radius
+        BowlingPin pin = new BowlingPin(content, positions[i][0], positions[i][1], radius);
+        pins.add(pin);
+
+        // Add to visual stage
+        add(pin);  
     }
+
     return pins;
   }
+
 
   private BowlingSide buildSide()
   {
@@ -238,39 +243,26 @@ public class BowlingScreen extends Stage implements BowlingBallController
   @Override
   public void resetPins()
   {
-    pins = null;
-    pins = buildPins();
-
-    for (BowlingPin p : pins)
-    {
-      p.setGameState(gameState);
-      ball.addAntagonist(p);
-      for (BowlingPin other : pins)
-      {
-        if (other != p)
-        {
-          p.addAntagonist(other);
-        }
-      }
-      add(p);
+    for (BowlingPin p : pins) {
+      p.resetPin();
     }
   }
 
-  public void forceStrike()
-  {
-    // Make sure it's the first roll
-    if (gameState.getRollInSet() != 1)
-      return;
-    resetPins();
-
-    // Knock down all pins
-    for (BowlingPin pin : pins)
-    {
-      gameState.pinKnocked();
-    }
-    gameState.ballStopped();
-    showMessage("Nice Strike!");
-  }
+//  public void forceStrike()
+//  {
+//    // Make sure it's the first roll
+//    if (gameState.getRollInSet() != 1)
+//      return;
+//    resetPins();
+//
+//    // Knock down all pins
+//    for (BowlingPin pin : pins)
+//    {
+//      gameState.pinKnocked();
+//    }
+//    gameState.ballStopped();
+//    showMessage("Nice Strike!");
+//  }
 
   public void showMessage(String message)
   {
