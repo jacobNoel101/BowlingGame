@@ -32,7 +32,6 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
   {
   }
 
-
   @Override
   public void render(final Graphics g)
   {
@@ -43,7 +42,8 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
     // Draw current score
     g2.setColor(Color.white);
 
-    ScoreboardWriter.renderScore(location, gameState.getRollScores(), g2);
+    ScoreboardWriter.renderScore(location, gameState.getRollScores(), gameState.getTotalScore(),
+        g2);
   }
 
 }
