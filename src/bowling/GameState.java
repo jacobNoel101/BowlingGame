@@ -100,10 +100,16 @@ public class GameState implements BowlingSubject {
       boolean isStrike = (rollInSet == 1 && pinsDownThisRoll == 10);
       boolean isSpare = (rollInSet == 2 && pinsDownInSet == 10);
 
+      // show message
+      if (ballController instanceof BowlingScreen) {
+          BowlingScreen screen = (BowlingScreen) ballController;
+          if (isStrike) screen.showMessage("Nice Strike!");
+          else if (isSpare) screen.showMessage("Nice Spare!");
+      }
+
       if (isStrike || isSpare || rollInSet == 2) {
           endFrameAndResetSet();
       } else {
-          // start second roll
           rollInSet = 2;
           waitingForPlayerAim = false;
           if (ballController != null) ballController.resetBall();
@@ -111,6 +117,7 @@ public class GameState implements BowlingSubject {
 
       notifyObservers();
     }
+
 
 
     private void endFrameAndResetSet() {
