@@ -36,14 +36,13 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
   public void render(final Graphics g)
   {
     Graphics2D g2 = (Graphics2D) g;
-    // Draw background
+    // draw background
     g2.setColor(color);
     g2.drawImage(image, 0, 0, 1000, 100, null);
-    // Draw current score
+    // draw current score
     g2.setColor(Color.white);
-
-    ScoreboardWriter.renderScore(location, gameState.getUserName(), gameState.getRollScores(), gameState.getTotalScore(),
-        g2);
+    ScoreboardWriter.renderScore(location, gameState.getUserName(), gameState.getRollScores(),
+        gameState.getTotalScore(), g2);
   }
 
 }

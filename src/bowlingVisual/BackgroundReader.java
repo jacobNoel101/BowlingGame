@@ -5,7 +5,7 @@ import java.io.IOException;
 import io.ResourceFinder;
 import visual.statik.sampled.ImageFactory;
 
-public class ScoreBoardReader
+public class BackgroundReader
 {
   private ResourceFinder finder;
 
@@ -15,7 +15,7 @@ public class ScoreBoardReader
    * @param finder
    *          The ResourceFinder to use
    */
-  public ScoreBoardReader(final ResourceFinder finder)
+  public BackgroundReader(final ResourceFinder finder)
   {
     this.finder = finder;
   }
@@ -23,7 +23,7 @@ public class ScoreBoardReader
   public BufferedImage read() throws IOException
   {
     ImageFactory imageFactory = new ImageFactory(finder);
-    BufferedImage image = imageFactory.createBufferedImage("scoreSheet.png", 4);
+    BufferedImage image = imageFactory.createBufferedImage("bern.jpg", 4);
     return image;
   }
 

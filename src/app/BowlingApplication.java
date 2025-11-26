@@ -41,7 +41,7 @@ public class BowlingApplication extends JApplication implements ActionListener
   public void launchBowlingScreen()
   {
     getContentPane().remove(startScreen.getView());
-    bowlingScreen = new BowlingScreen(30, currentTheme);
+    bowlingScreen = new BowlingScreen(30, currentTheme, this);
     bowlingScreen.getView().setBounds(0, 0, WIDTH, HEIGHT);
     getContentPane().add(bowlingScreen.getView());
     bowlingScreen.start();
@@ -72,15 +72,26 @@ public class BowlingApplication extends JApplication implements ActionListener
     getContentPane().repaint();
   }
 
-  public static void main(final String[] args)
+  public void launchEndScreen(int finalScore)
   {
-    JApplication app = new BowlingApplication(args);
-    JApplication.invokeInEventDispatchThread(app);
+    getContentPane().removeAll();
+    EndScreen end = new EndScreen(17, this, finalScore);
+    end.getView().setBounds(0, 0, WIDTH, HEIGHT);
+    getContentPane().add(end.getView());
+    end.start();
+    getContentPane().revalidate();
+    getContentPane().repaint();
   }
 
   @Override
   public void actionPerformed(ActionEvent e)
   {
+  }
+
+  public static void main(final String[] args)
+  {
+    JApplication app = new BowlingApplication(args);
+    JApplication.invokeInEventDispatchThread(app);
   }
 
 }

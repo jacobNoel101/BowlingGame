@@ -11,6 +11,7 @@ public class GameState implements BowlingSubject
   private List<BowlingObserver> observers = new ArrayList<>();
   private BowlingBallController ballController;
   private List<Integer> rollScores = new ArrayList<>();
+  private BowlingScreen screen;
 
   // --- FRAME / ROLL STATE ---
   private int set; // 1–10
@@ -144,14 +145,11 @@ public class GameState implements BowlingSubject
   {
     ballIsRolling = false;
     waitingForBallToStop = false;
-
     pinsDownInSet += pinsDownThisRoll;
     rollScores.add(pinsDownThisRoll);
     updateTotalScores();
-
     boolean isStrike = (rollInSet == 1 && pinsDownThisRoll == 10);
     boolean isSpare = (rollInSet == 2 && pinsDownInSet == 10);
-
     // show message
     if (ballController instanceof BowlingScreen)
     {
@@ -168,6 +166,11 @@ public class GameState implements BowlingSubject
       if (rollInSet == 2)
       {
         waitingForPlayerAim = false;
+        if (screen != null)
+        {
+          int finalScore = totalScore.isEmpty() ? 0 : totalScore.get(totalScore.size() - 1);
+          screen.showEndGamePopup(finalScore);
+        }
         notifyObservers();
         return; // stop further rolls
       }
@@ -312,6 +315,11 @@ public class GameState implements BowlingSubject
   public String getUserName()
   {
     return userName;
+  }
+
+  public void setBowlingScreen(BowlingScreen screen)
+  {
+    this.screen = screen;
   }
 
   public void setUserName(String userName)
