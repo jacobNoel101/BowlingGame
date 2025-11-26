@@ -19,7 +19,10 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   private boolean showArrow;
   private GameState gameState;
   private boolean waitingForPins = false; // ball is moving, independent of pins
-
+  private boolean inGutter = false;
+  private boolean gutterLeft = false;
+  private double gutterSpeedY = 6.0;
+  private boolean gutterFinished = false;
   private double x, y;
   protected ArrayList<Integer> keyTimes;
   protected ArrayList<Point2D> locations;
@@ -52,13 +55,17 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
 
   public void handleTick(int time)
   {
-    // 1️⃣ Move the ball along keyframes if rolling
+    if (inGutter)
+    {
+      updateGutterMovement();
+      return;
+    }
+
     if (rolling && !keyTimes.isEmpty())
     {
       int i = 0;
       while (i < keyTimes.size() - 1 && time > keyTimes.get(i + 1))
         i++;
-
       if (i < keyTimes.size() - 1)
       {
         int t0 = keyTimes.get(i);
@@ -82,6 +89,15 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       }
 
       setLocation(x, y);
+      if (rolling && checkGutterCollision())
+      {
+        inGutter = true;
+        gutterFinished = false;
+        rolling = false;
+        updateGutterMovement();
+        return;
+      }
+
       if (time >= keyTimes.get(keyTimes.size() - 1))
       {
         rolling = false;
@@ -99,7 +115,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         }
       }
     }
-
     // Wait for pins to settle after the ball finishes
     if (!rolling && waitingForPins && gameState != null)
     {
@@ -120,6 +135,90 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         gameState.ballStopped(); // now scores update correctly
       }
     }
+  }
+
+  private void updateGutterMovement()
+  {
+    // 1. Slide upward
+    y -= gutterSpeedY;
+    if (y < 220)
+      y = 220; // clamp to top of lane
+    // Compute lane geometry (same as BowlingGutter)
+    int screenW = 1000;
+    int screenH = 900;
+    int backWallY = 100;
+    int laneTopWidth = 180;
+    int laneBottomWidth = 1100;
+    int wallBottomY = backWallY + 120;
+    int laneTopY = wallBottomY;
+    int laneBottomY = screenH;
+    double t = (y - laneBottomY) / (laneTopY - laneBottomY);
+    t = Math.max(0, Math.min(1, t));
+    double laneTopLeftX = (screenW - laneTopWidth) / 2.0;
+    double laneTopRightX = laneTopLeftX + laneTopWidth;
+    double laneBottomLeftX = (screenW - laneBottomWidth) / 2.0;
+    double laneBottomRightX = laneBottomLeftX + laneBottomWidth;
+    double targetX;
+    if (gutterLeft)
+    {
+      targetX = laneBottomLeftX + t * (laneTopLeftX - laneBottomLeftX);
+      x = targetX - 20;
+    }
+    else
+    {
+      targetX = laneBottomRightX + t * (laneTopRightX - laneBottomRightX);
+      x = targetX + 20;
+    }
+    setLocation(x, y);
+    if (inGutter)
+    {
+      double scale = 1.0 - 0.7 * t;
+      setScale(scale);
+    }
+    else
+    {
+      double scale = 1.0 - 0.6 * t;
+      setScale(scale);
+    }
+    if (y <= laneTopY && !gutterFinished)
+    {
+      gutterFinished = true;
+      inGutter = false;
+      if (gameState != null)
+        gameState.ballStopped();
+    }
+  }
+
+  private boolean checkGutterCollision()
+  {
+    double yPos = this.y;
+    // Lane geometry (MATCHES BowlingGutter)
+    int screenW = 1000;
+    int screenH = 900;
+    int backWallY = 100;
+    int laneTopWidth = 180;
+    int laneBottomWidth = 1100;
+    int wallBottomY = backWallY + 120;
+    // interpolation factor
+    double t = (yPos - wallBottomY) / (screenH - wallBottomY);
+    t = Math.max(0, Math.min(1, t));
+    double halfTop = laneTopWidth / 2.0;
+    double halfBottom = laneBottomWidth / 2.0;
+    double halfLane = halfTop + (halfBottom - halfTop) * t;
+    double laneCenter = screenW / 2.0;
+    // Left gutter
+    if (x < laneCenter - halfLane)
+    {
+      gutterLeft = true;
+      return true;
+    }
+    // Right gutter
+    if (x > laneCenter + halfLane)
+    {
+      gutterLeft = false;
+      return true;
+    }
+    return false;
   }
 
   public double getX()
@@ -178,13 +277,15 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       {
         aimOffset -= 10;
         updateArrowAngle();
-
       }
       else
       {
-        x -= 10;
-      }
+        double newX = x - 10;
 
+        // Only allow movement if newX is still inside the lane
+        if (!wouldBeInGutter(newX, y))
+          x = newX;
+      }
     }
     else if (code == KeyEvent.VK_RIGHT)
     {
@@ -192,11 +293,13 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       {
         aimOffset += 10;
         updateArrowAngle();
-
       }
       else
       {
-        x += 10;
+        double newX = x + 10;
+
+        if (!wouldBeInGutter(newX, y))
+          x = newX;
       }
     }
     else if (code == KeyEvent.VK_SPACE)
@@ -229,6 +332,28 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     rolling = true; // animation starts
     waitingForPins = true;
     initiateRoll();
+  }
+
+  private boolean wouldBeInGutter(double futureX, double yPos)
+  {
+    int screenW = 1000;
+    int screenH = 900;
+    int backWallY = 100;
+    int laneTopWidth = 180;
+    int laneBottomWidth = 1100;
+    int wallBottomY = backWallY + 120;
+    double t = (yPos - wallBottomY) / (screenH - wallBottomY);
+    t = Math.max(0, Math.min(1, t));
+    double halfTop = laneTopWidth / 2.0;
+    double halfBottom = laneBottomWidth / 2.0;
+    double halfLane = halfTop + (halfBottom - halfTop) * t;
+    double laneCenter = screenW / 2.0;
+    double radius = 35;
+    if (futureX - radius < laneCenter - halfLane)
+      return true;
+    if (futureX + radius > laneCenter + halfLane)
+      return true;
+    return false;
   }
 
   public void resetBall()
