@@ -19,6 +19,7 @@ public class EndScreen extends Stage
   private int finalScore;
   private Rectangle2D playAgainBox;
   private Rectangle2D quitBox;
+  private Rectangle2D leaderboardBox;
   private MusicPlayer mp;
   private Image backgroundImage;
 
@@ -27,6 +28,8 @@ public class EndScreen extends Stage
     super(timeStep);
     this.app = app;
     this.finalScore = finalScore;
+    String username = "PLAYER";
+    app.addScore(username, finalScore);
     try
     {
       ResourceFinder finder = ResourceFinder.createInstance(new Marker());
@@ -38,8 +41,9 @@ public class EndScreen extends Stage
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    playAgainBox = new Rectangle2D.Double(200, 560, 250, 60);
-    quitBox = new Rectangle2D.Double(550, 560, 250, 60);
+    playAgainBox = new Rectangle2D.Double(150, 560, 220, 60);
+    leaderboardBox = new Rectangle2D.Double(390, 560, 220, 60);
+    quitBox = new Rectangle2D.Double(630, 560, 220, 60);
     add(new EndScreenContent());
     mp = buildMusic();
     try
@@ -67,6 +71,10 @@ public class EndScreen extends Stage
     if (playAgainBox.contains(p))
     {
       app.launchStartScreen();
+    }
+    else if (leaderboardBox.contains(p))
+    {
+      app.launchLeaderboardScreen();
     }
     else if (quitBox.contains(p))
     {
@@ -103,6 +111,7 @@ public class EndScreen extends Stage
       int w = g2.getFontMetrics().stringWidth(scoreText);
       g2.drawString(scoreText, 500 - w / 2, 150);
       drawButton(g2, playAgainBox, "PLAY AGAIN", Color.DARK_GRAY);
+      drawButton(g2, leaderboardBox, "LEADERBOARD", Color.DARK_GRAY);
       drawButton(g2, quitBox, "QUIT", Color.DARK_GRAY);
     }
 

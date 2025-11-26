@@ -1,7 +1,10 @@
 package app;
 
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 import bowling.GameTheme;
+import bowling.LeaderboardEntry;
 import gui.*;
 
 public class BowlingApplication extends JApplication implements ActionListener
@@ -11,6 +14,7 @@ public class BowlingApplication extends JApplication implements ActionListener
   private GameTheme currentTheme = new GameTheme(GameTheme.ThemeType.BASIC);
   private StartScreen startScreen;
   private BowlingScreen bowlingScreen;
+  private List<LeaderboardEntry> leaderboard = new ArrayList<>();
 
   public BowlingApplication(final String[] args)
   {
@@ -20,6 +24,12 @@ public class BowlingApplication extends JApplication implements ActionListener
   public GameTheme getTheme()
   {
     return currentTheme;
+  }
+
+  public void addScore(String name, int score)
+  {
+    leaderboard.add(new LeaderboardEntry(name, score));
+    leaderboard.sort((a, b) -> b.score - a.score); // highest first
   }
 
   public void setTheme(GameTheme.ThemeType t)
@@ -79,6 +89,17 @@ public class BowlingApplication extends JApplication implements ActionListener
     end.getView().setBounds(0, 0, WIDTH, HEIGHT);
     getContentPane().add(end.getView());
     end.start();
+    getContentPane().revalidate();
+    getContentPane().repaint();
+  }
+
+  public void launchLeaderboardScreen()
+  {
+    getContentPane().removeAll();
+    LeaderboardScreen ls = new LeaderboardScreen(17, this, leaderboard);
+    ls.getView().setBounds(0, 0, WIDTH, HEIGHT);
+    getContentPane().add(ls.getView());
+    ls.start();
     getContentPane().revalidate();
     getContentPane().repaint();
   }
