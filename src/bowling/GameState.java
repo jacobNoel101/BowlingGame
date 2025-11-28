@@ -22,7 +22,6 @@ public class GameState implements BowlingSubject
   private int pinsStanding; // how many pins remain standing
   private int pinsDownThisRoll; // pins knocked only this roll
   private int pinsDownInSet; // total pins knocked in this frame
-
   // --- BALL STATE ---
   private boolean ballIsRolling;
   private boolean waitingForBallToStop;
@@ -199,6 +198,16 @@ public class GameState implements BowlingSubject
     }
 
     notifyObservers();
+  }
+
+  public boolean anyPinsHit()
+  {
+    for (PinData pd : pins.values())
+    {
+      if (pd.pin.isHit())
+        return true;
+    }
+    return false;
   }
 
   private void endFrameAndResetSet()

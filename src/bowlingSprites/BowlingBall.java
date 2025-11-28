@@ -184,8 +184,18 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     {
       gutterFinished = true;
       inGutter = false;
+
       if (gameState != null)
-        gameState.ballStopped();
+      {
+        if (!gameState.anyPinsHit())
+        {
+          gameState.ballStopped();
+        }
+        else
+        {
+          waitingForPins = true;
+        }
+      }
     }
   }
 
