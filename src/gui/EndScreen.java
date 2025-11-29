@@ -4,13 +4,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.io.IOException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+//import javax.sound.sampled.UnsupportedAudioFileException;
 import app.BowlingApplication;
 import io.ResourceFinder;
-import music.MusicPlayer;
+//import music.MusicPlayer;
 import resources.Marker;
 import visual.dynamic.described.Stage;
-import auditory.sampled.*;
+//import auditory.sampled.*;
 import bowlingVisual.BackgroundReader;
 
 public class EndScreen extends Stage
@@ -20,7 +20,7 @@ public class EndScreen extends Stage
   private Rectangle2D playAgainBox;
   private Rectangle2D quitBox;
   private Rectangle2D leaderboardBox;
-  private MusicPlayer mp;
+  // private MusicPlayer mp;
   private Image backgroundImage;
 
   public EndScreen(int timeStep, BowlingApplication app, int finalScore)
@@ -45,17 +45,17 @@ public class EndScreen extends Stage
     leaderboardBox = new Rectangle2D.Double(390, 560, 220, 60);
     quitBox = new Rectangle2D.Double(630, 560, 220, 60);
     add(new EndScreenContent());
-    mp = buildMusic();
-    try
-    {
-      mp.read();
-      mp.playLoop();
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
-    mp.update();
+    // mp = buildMusic();
+    // try
+    // {
+    // mp.read();
+    // mp.playLoop();
+    // }
+    // catch (Exception e)
+    // {
+    // e.printStackTrace();
+    // }
+    // mp.update();
     getView().addMouseListener(new MouseAdapter()
     {
       @Override
@@ -82,21 +82,21 @@ public class EndScreen extends Stage
     }
   }
 
-  private MusicPlayer buildMusic()
-  {
-    return new MusicPlayer(ResourceFinder.createInstance(new Marker()))
-    {
-      @Override
-      public void read() throws UnsupportedAudioFileException, IOException
-      {
-        ResourceFinder finder = ResourceFinder.createInstance(new Marker());
-        BufferedSoundFactory factory = new BufferedSoundFactory(finder);
-        BufferedSound snd = factory.createBufferedSound("outro_music.wav");
-        setMusic(snd);
-        setBoomBox(new BoomBox(snd));
-      }
-    };
-  }
+  // private MusicPlayer buildMusic()
+  // {
+  // return new MusicPlayer(ResourceFinder.createInstance(new Marker()))
+  // {
+  // @Override
+  // public void read() throws UnsupportedAudioFileException, IOException
+  // {
+  // ResourceFinder finder = ResourceFinder.createInstance(new Marker());
+  // BufferedSoundFactory factory = new BufferedSoundFactory(finder);
+  // BufferedSound snd = factory.createBufferedSound("outro_music.wav");
+  // setMusic(snd);
+  // setBoomBox(new BoomBox(snd));
+  // }
+  // };
+  // }
 
   private class EndScreenContent implements visual.statik.SimpleContent
   {
