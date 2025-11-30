@@ -27,8 +27,9 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   protected ArrayList<Integer> keyTimes;
   protected ArrayList<Point2D> locations;
   protected ArrayList<Double> rotations, scalings;
+  public BallReflection reflectionSprite;
 
-  public BowlingBall(TransformableContent content, Double speed)
+  public BowlingBall(TransformableContent content, Double speed, TransformableContent reflection)
   {
     super(content);
     this.gameState = null;
@@ -40,6 +41,8 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     this.scalings = new ArrayList<Double>();
     this.x = 495;
     this.y = 650;
+    this.reflectionSprite = new BallReflection(reflection);
+
     setLocation(x, y);
   }
 
@@ -55,6 +58,12 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
 
   public void handleTick(int time)
   {
+    if (reflectionSprite != null)
+    {
+      reflectionSprite.setOrigin(x, y); // offset to look like a reflection
+      reflectionSprite.handleTick(time);
+    }
+
     if (inGutter)
     {
       updateGutterMovement();
@@ -86,6 +95,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         setRotation(rotation);
         double scale = lerp(s0, s1, t);
         setScale(scale);
+
       }
 
       setLocation(x, y);
@@ -135,6 +145,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         gameState.ballStopped(); // now scores update correctly
       }
     }
+
   }
 
   private void updateGutterMovement()

@@ -95,6 +95,8 @@ public class BowlingScreen extends Stage implements BowlingBallController
     }
     mp.update();
     gameState.setBallController(this);
+    add(ball.reflectionSprite); // add reflection to stage
+
   }
 
   public void showEndGamePopup(int finalScore)
@@ -157,14 +159,11 @@ public class BowlingScreen extends Stage implements BowlingBallController
     Color outerColor = theme.ballOuterColor;
     TransformableContent outerContent = new Content(outer, outerColor, outerColor, null);
     // inner circle
-    Ellipse2D inner = new Ellipse2D.Double(-25, -25, 50, 50);
+    Ellipse2D inner = new Ellipse2D.Double(-10, -10, 10, 10);
     Color innerColor = theme.ballInnerColor;
     TransformableContent innerContent = new Content(inner, innerColor, innerColor, null);
-    // composite ball content
-    visual.statik.described.CompositeContent ballContent = new visual.statik.described.CompositeContent();
-    ballContent.add(outerContent);
-    ballContent.add(innerContent);
-    return new BowlingBall(ballContent, null);
+
+    return new BowlingBall(outerContent, null, innerContent);
   }
 
   private ArrayList<BowlingPin> buildPins()
