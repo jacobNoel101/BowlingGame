@@ -1,15 +1,21 @@
-package bowlingSprites;
+package sprites;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-import java.util.ArrayList;
-
 import bowling.GameState;
 import event.Metronome;
+import java.util.ArrayList;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
 
+/**
+ * BowlingBall for the Bowling Game.
+ * 
+ * Honor Statement: This code adheres to JMU Policy.
+ * 
+ * @author Jacob Noel and Tristan Apgar
+ */
 public class BowlingBall extends RuleBasedSprite implements KeyListener
 {
   private double rollingAngle; // in radians
@@ -23,13 +29,26 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   private boolean gutterLeft = false;
   private double gutterSpeedY = 6.0;
   private boolean gutterFinished = false;
-  private double x, y;
+  private double x;
+  private double y;
   protected ArrayList<Integer> keyTimes;
   protected ArrayList<Point2D> locations;
-  protected ArrayList<Double> rotations, scalings;
+  protected ArrayList<Double> rotations;
+  protected ArrayList<Double> scalings;
   public BallReflection reflectionSprite;
 
-  public BowlingBall(TransformableContent content, Double speed, TransformableContent reflection)
+  /**
+   * BowlingBall Constructor.
+   *
+   * @param content
+   *          to be used
+   * @param speed
+   *          of the ball
+   * @param reflection
+   *          of the ball
+   */
+  public BowlingBall(final TransformableContent content, final Double speed,
+      final TransformableContent reflection)
   {
     super(content);
     this.gameState = null;
@@ -46,17 +65,35 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     setLocation(x, y);
   }
 
-  public void setMetronome(Metronome m)
+  /**
+   * Sets the metronome.
+   *
+   * @param m
+   *          the Metronome to use
+   */
+  public void setMetronome(final Metronome m)
   {
     this.metronome = m;
   }
 
-  public void setGameState(GameState gameState)
+  /**
+   * Sets the GameState.
+   *
+   * @param gameState
+   *          to use.
+   */
+  public void setGameState(final GameState gameState)
   {
     this.gameState = gameState;
   }
 
-  public void handleTick(int time)
+  /**
+   * Handles the tick updates from the metronome.
+   * 
+   * @param time
+   *          between ticks.
+   */
+  public void handleTick(final int time)
   {
     if (reflectionSprite != null)
     {
@@ -74,7 +111,9 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     {
       int i = 0;
       while (i < keyTimes.size() - 1 && time > keyTimes.get(i + 1))
+      {
         i++;
+      }
       if (i < keyTimes.size() - 1)
       {
         int t0 = keyTimes.get(i);
@@ -131,7 +170,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       boolean allPinsStopped = true;
       for (GameState.PinData pd : gameState.getPins())
       {
-        BowlingPin pin = pd.pin;
+        BowlingPin pin = pd.getPin();
         if (pin.isHit() && !pin.isKnocked() && (Math.abs(pin.getVelocityX()) > 0.1
             || Math.abs(pin.getVelocityY()) > 0.1 || Math.abs(pin.getAngularVelocity()) > 0.001))
         {
@@ -148,12 +187,17 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
 
   }
 
+  /**
+   * Updates the Ball after hitting Gutter.
+   */
   private void updateGutterMovement()
   {
     // 1. Slide upward
     y -= gutterSpeedY;
     if (y < 220)
+    {
       y = 220; // clamp to top of lane
+    }
     // Compute lane geometry (same as BowlingGutter)
     int screenW = 1000;
     int screenH = 900;
@@ -210,6 +254,11 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     }
   }
 
+  /**
+   * Checks the collision of the ball and gutter.
+   *
+   * @return true or false if ball hits gutter
+   */
   private boolean checkGutterCollision()
   {
     double yPos = this.y;
@@ -242,18 +291,28 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     return false;
   }
 
+  /**
+   * Gets the x position.
+   *
+   * @return the x coordinate
+   */
   public double getX()
   {
     return x;
   }
 
+  /**
+   * Gets the y position.
+   *
+   * @return the y coordinate
+   */
   public double getY()
   {
     return y;
   }
 
   @Override
-  public void render(Graphics g)
+  public void render(final Graphics g)
   {
     super.render(g);
     if (showArrow)
@@ -283,13 +342,24 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     }
   }
 
-  private double lerp(double a, double b, double t)
+  /**
+   * The linear Interpolation to use.
+   *
+   * @param a
+   *          starting value
+   * @param b
+   *          ending value
+   * @param t
+   *          interpolation factor
+   * @return interpolated value between value a and b
+   */
+  private double lerp(final double a, final double b, final double t)
   {
     return a + (b - a) * t;
   }
 
   @Override
-  public void keyPressed(KeyEvent e)
+  public void keyPressed(final KeyEvent e)
   {
     int code = e.getKeyCode();
     if (code == KeyEvent.VK_LEFT)
@@ -305,7 +375,9 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
 
         // Only allow movement if newX is still inside the lane
         if (!wouldBeInGutter(newX, y))
+        {
           x = newX;
+        }
       }
     }
     else if (code == KeyEvent.VK_RIGHT)
@@ -320,7 +392,9 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         double newX = x + 10;
 
         if (!wouldBeInGutter(newX, y))
+        {
           x = newX;
+        }
       }
     }
     else if (code == KeyEvent.VK_SPACE)
@@ -342,12 +416,21 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     setLocation(x, y);
   }
 
+  /**
+   * Updates the arrow angle for rolling.
+   */
   private void updateArrowAngle()
   {
     rollingAngle = Math.atan2(aimOffset, 420);
   }
 
-  public void startRoll(double angle)
+  /**
+   * Starts the rolling process.
+   *
+   * @param angle
+   *          of the ball for interpolation.
+   */
+  public void startRoll(final double angle)
   {
     this.rollingAngle = angle;
     rolling = true; // animation starts
@@ -355,7 +438,13 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     initiateRoll();
   }
 
-  private boolean wouldBeInGutter(double futureX, double yPos)
+  /**
+   * 
+   * @param futureX
+   * @param yPos
+   * @return
+   */
+  private boolean wouldBeInGutter(final double futureX, final double yPos)
   {
     int screenW = 1000;
     int screenH = 900;
@@ -371,12 +460,19 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     double laneCenter = screenW / 2.0;
     double radius = 35;
     if (futureX - radius < laneCenter - halfLane)
+    {
       return true;
+    }
     if (futureX + radius > laneCenter + halfLane)
+    {
       return true;
+    }
     return false;
   }
 
+  /**
+   * Resets the ball for next roll.
+   */
   public void resetBall()
   {
     this.x = 495;
@@ -397,7 +493,17 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
 
   }
 
-  public int addKeyTime(int keyTime, Point2D location, Double rotation, Double scaling)
+  /**
+   * Add key times for future interpolation.
+   *
+   * @param keyTime time for key
+   * @param location of the key time
+   * @param rotation of the shape at time
+   * @param scaling of the shape at time
+   * @return the index at which the key time was inserted
+   */
+  public int addKeyTime(final int keyTime, final Point2D location, final Double rotation,
+      final Double scaling)
   {
     int existingKT = -1;
     int i = 0;
@@ -406,9 +512,13 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     {
       existingKT = keyTimes.get(i);
       if (existingKT >= keyTime)
+      {
         keepLooking = false;
+      }
       else
+      {
         i++;
+      }
     }
     if ((existingKT == i) && !keepLooking)
     {
@@ -424,6 +534,9 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     return i;
   }
 
+  /**
+   * Initiate the actual roll of the ball.
+   */
   private void initiateRoll()
   {
     if (metronome != null)
@@ -431,7 +544,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       metronome.reset();
       metronome.start();
     }
-    int endTick = 1500;
     rolling = true;
     keyTimes.clear();
     locations.clear();
@@ -439,40 +551,47 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     scalings.clear();
     showArrow = false;
     double totalDistanceY = 460;
+    int endTick = 1500;
     double totalDistanceX = Math.tan(rollingAngle) * totalDistanceY;
     addKeyTime(0, new Point2D.Double(x, y), 0.0, 1.0);
     addKeyTime(endTick, new Point2D.Double(x + totalDistanceX, y - totalDistanceY), 0.0, .4);
   }
 
-  public boolean intersects(Sprite s)
+  /**
+   * Intersection of the bounding bodies of the ball and other shapes.
+   *
+   * @param Sprite to check for intersection
+   * @return true or false if ball intersects another shape
+   */
+  public boolean intersects(final Sprite s)
   {
     boolean retval;
-    double maxx, maxy, minx, miny;
-    double maxxO, maxyO, minxO, minyO;
     Rectangle2D r;
     retval = true;
     r = getBounds2D(true);
-    minx = r.getX();
-    miny = r.getY();
-    maxx = minx + r.getWidth();
-    maxy = miny + r.getHeight();
+    double minx = r.getX();
+    double miny = r.getY();
+    double maxx = minx + r.getWidth();
+    double maxy = miny + r.getHeight();
     r = s.getBounds2D(true);
-    minxO = r.getX();
-    minyO = r.getY();
-    maxxO = minxO + r.getWidth();
-    maxyO = minyO + r.getHeight();
+    double minxO = r.getX();
+    double minyO = r.getY();
+    double maxxO = minxO + r.getWidth();
+    double maxyO = minyO + r.getHeight();
     if ((maxx < minxO) || (minx > maxxO) || (maxy < minyO) || (miny > maxyO))
+    {
       retval = false;
+    }
     return retval;
   }
 
   @Override
-  public void keyTyped(KeyEvent e)
+  public void keyTyped(final KeyEvent e)
   {
   }
 
   @Override
-  public void keyReleased(KeyEvent e)
+  public void keyReleased(final KeyEvent e)
   {
   }
 

@@ -1,10 +1,17 @@
-package bowlingSprites;
+package sprites;
 
 import java.util.*;
 import bowling.GameState;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
 
+/**
+ * BowlingPin for Bowling Game.
+ * 
+ * Honor Statement: This code adheres to JMU Policy.
+ * 
+ * @author Jacob Noel and Tristan Apgar
+ */
 public class BowlingPin extends RuleBasedSprite
 {
 
@@ -24,7 +31,20 @@ public class BowlingPin extends RuleBasedSprite
   private ArrayList<Sprite> antagonists = new ArrayList<>();
   private GameState gameState;
 
-  public BowlingPin(TransformableContent content, double startX, double startY, double radius)
+  /**
+   * Constructor for BowlingPin.
+   *
+   * @param content
+   *          for the BowlingPin
+   * @param startX
+   *          position
+   * @param startY
+   *          position
+   * @param radius
+   *          of the bowling pin
+   */
+  public BowlingPin(final TransformableContent content, final double startX, final double startY,
+      final double radius)
   {
     super(content);
     this.x = startX;
@@ -36,13 +56,24 @@ public class BowlingPin extends RuleBasedSprite
     setVisible(true);
   }
 
-  public void setGameState(GameState gameState)
+  /**
+   * Sets the game state.
+   *
+   * @param gameState
+   *          to be used
+   */
+  public void setGameState(final GameState gameState)
   {
     this.gameState = gameState;
   }
 
-  // called when a pin is hit by the ball
-  public void hitByBall(BowlingBall ball)
+  /**
+   * Response from getting hit by the ball.
+   *
+   * @param ball
+   *          which hit pin
+   */
+  public void hitByBall(final BowlingBall ball)
   {
     if (hit)
     {
@@ -64,8 +95,15 @@ public class BowlingPin extends RuleBasedSprite
     tiltBackVelocity *= fallDirection; // apply left/right
   }
 
-  // called when another pin collides
-  public void startMoving(double vx, double vy)
+  /**
+   * Pins movement from being hit by ball.
+   *
+   * @param vx
+   *          position to move
+   * @param vy
+   *          position to move
+   */
+  public void startMoving(final double vx, final double vy)
   {
     if (!hit)
     {
@@ -80,15 +118,27 @@ public class BowlingPin extends RuleBasedSprite
     }
   }
 
-  // pin to pin collision
-  public boolean intersectsPin(BowlingPin other)
+  /**
+   * Pins intersection with other pins.
+   *
+   * @param other
+   *          pin to check intersection
+   * @return true or false if pins intersect
+   */
+  public boolean intersectsPin(final BowlingPin other)
   {
     double dx = other.x - x;
     double dy = other.y - y;
     return Math.hypot(dx, dy) < (this.radius + other.radius);
   }
 
-  public void handleTick(int time)
+  /**
+   * Pin logic between ticks.
+   *
+   * @param time
+   *          between ticks
+   */
+  public void handleTick(final int time)
   {
     if (falling)
     {
@@ -145,6 +195,9 @@ public class BowlingPin extends RuleBasedSprite
     setRotation(rotation); // visual tipping
   }
 
+  /**
+   * Resets pins for next roll.
+   */
   public void resetPin()
   {
     hit = false;
@@ -163,46 +216,91 @@ public class BowlingPin extends RuleBasedSprite
     setVisible(true);
   }
 
-  public void addAntagonist(Sprite s)
+  /**
+   * add antagonists to current pin.
+   *
+   * @param s sprite to add as antagonist
+   */
+  public void addAntagonist(final Sprite s)
   {
     antagonists.add(s);
   }
 
+  /**
+   * Gets the x coordinate.
+   *
+   * @return the x coordinate
+   */
   public double getX()
   {
     return x;
   }
 
+  /**
+   * Gets the y coordinate.
+   *
+   * @return the y coordinate
+   */
   public double getY()
   {
     return y;
   }
 
+  /**
+   * Gets the radius.
+   *
+   * @return returns the radius
+   */
   public double getRadius()
   {
     return radius;
   }
 
+  /**
+   * Whether the pin was knocked over.
+   *
+   * @return true or false if pin was knocked
+   */
   public boolean isKnocked()
   {
     return knocked;
   }
 
+  /**
+   * Whether pin was hit or not.
+   *
+   * @return true or false if pin was hit
+   */
   public boolean isHit()
   {
     return hit;
   }
 
+  /**
+   * Gets the x velocity of pin.
+   *
+   * @return the velocity in x direction
+   */
   public double getVelocityX()
   {
     return velocityX;
   }
 
+  /**
+   * Gets the y velocity of pin.
+   *
+   * @return the velocity in y direction
+   */
   public double getVelocityY()
   {
     return velocityY;
   }
 
+  /**
+   * Gets the angular velocity.
+   *
+   * @return the angular velocity
+   */
   public double getAngularVelocity()
   {
     return angularVelocity;

@@ -2,9 +2,16 @@ package bowling;
 
 import java.util.*;
 
-import bowlingSprites.BowlingPin;
 import gui.BowlingScreen;
+import sprites.BowlingPin;
 
+/**
+ * GameState for Bowling Game.
+ * 
+ * Honor Statement: This code adheres to JMU Policy.
+ * 
+ * @author Jacob Noel and Tristan Apgar
+ */
 public class GameState implements BowlingSubject
 {
 
@@ -32,24 +39,58 @@ public class GameState implements BowlingSubject
   private Map<Integer, PinData> pins = new HashMap<>(); // Map pinID -> PinData
   private ArrayList<Integer> totalScore = new ArrayList<>();
 
-  /** Wrapper for pin state */
+
+  /**
+   * PinData logic to use.
+   */
   public static class PinData
   {
-    public BowlingPin pin;
-    public boolean knocked;
+    private BowlingPin pin;
+    private boolean knocked;
 
-    public PinData(BowlingPin pin)
+    /**
+     * Constructor for PinData.
+     *
+     * @param pin to retrieve data
+     */
+    public PinData(final BowlingPin pin)
+    {
+      this.setPin(pin);
+      this.knocked = false;
+    }
+
+    /**
+     * Gets the pin stored.
+     *
+     * @return the bowling pin
+     */
+    public BowlingPin getPin()
+    {
+      return pin;
+    }
+
+    /**
+     * Sets the pin.
+     *
+     * @param pin to be set
+     */
+    public void setPin(final BowlingPin pin)
     {
       this.pin = pin;
-      this.knocked = false;
     }
   }
 
+  /**
+   * Constructor for GameState.
+   */
   public GameState()
   {
     resetGame();
   }
 
+  /**
+   * Updates the totalScores for game.
+   */
   private void updateTotalScores()
   {
     totalScore.clear();
@@ -86,11 +127,20 @@ public class GameState implements BowlingSubject
     }
   }
 
-  public void setBallController(BowlingBallController controller)
+  /**
+   * Sets the BowlingBallController.
+   *
+   * @param controller
+   *          to set
+   */
+  public void setBallController(final BowlingBallController controller)
   {
     this.ballController = controller;
   }
 
+  /**
+   * Starts the aiming process.
+   */
   public void startAiming()
   {
     if (ballIsRolling || waitingForBallToStop)
@@ -98,17 +148,33 @@ public class GameState implements BowlingSubject
     waitingForPlayerAim = true;
   }
 
+  /**
+   * Gets the pins.
+   *
+   * @return the collection of pin values
+   */
   public Collection<PinData> getPins()
   {
     return pins.values();
   }
 
+  /**
+   * Checks if aiming.
+   *
+   * @return true or false if aiming
+   */
   public boolean isAiming()
   {
     return waitingForPlayerAim;
   }
 
-  public void playerRollRequested(double angle)
+  /**
+   * Determines if roll can happen.
+   *
+   * @param angle
+   *          to roll at
+   */
+  public void playerRollRequested(final double angle)
   {
     if (!waitingForPlayerAim || ballIsRolling || waitingForBallToStop)
       return;
@@ -121,11 +187,17 @@ public class GameState implements BowlingSubject
       ballController.startRoll(angle);
   }
 
-  public void pinKnocked(BowlingPin pin)
+  /**
+   * Updates knocked state after collisons.
+   *
+   * @param pin
+   *          to update
+   */
+  public void pinKnocked(final BowlingPin pin)
   {
     for (PinData pd : pins.values())
     {
-      if (pd.pin == pin && !pd.knocked)
+      if (pd.getPin() == pin && !pd.knocked)
       {
         pd.knocked = true;
         pinsDownThisRoll++;
@@ -135,11 +207,19 @@ public class GameState implements BowlingSubject
     }
   }
 
+  /**
+   * Gets the total score.
+   *
+   * @return the total score
+   */
   public ArrayList<Integer> getTotalScore()
   {
     return totalScore;
   }
 
+  /**
+   * Updates the game when ball is stopped.
+   */
   public void ballStopped()
   {
     ballIsRolling = false;
@@ -152,7 +232,7 @@ public class GameState implements BowlingSubject
     // show message
     if (ballController instanceof BowlingScreen)
     {
-      BowlingScreen screen = (BowlingScreen) ballController;
+      setBowlingScreen((BowlingScreen) ballController);
       if (isStrike)
         screen.showMessage("Nice Strike!");
       else if (isSpare)
@@ -200,16 +280,24 @@ public class GameState implements BowlingSubject
     notifyObservers();
   }
 
+  /**
+   * Checks if any pins have been hit.
+   *
+   * @return true or false if any pins were hit
+   */
   public boolean anyPinsHit()
   {
     for (PinData pd : pins.values())
     {
-      if (pd.pin.isHit())
+      if (pd.getPin().isHit())
         return true;
     }
     return false;
   }
 
+  /**
+   * ends the set and resets for next set.
+   */
   private void endFrameAndResetSet()
   {
     set++;
@@ -224,8 +312,8 @@ public class GameState implements BowlingSubject
     for (PinData pd : pins.values())
     {
       pd.knocked = false; // reset knocked state
-      if (pd.pin != null)
-        pd.pin.resetPin(); // reset visual state
+      if (pd.getPin() != null)
+        pd.getPin().resetPin(); // reset visual state
     }
 
     if (ballController != null)
@@ -242,13 +330,13 @@ public class GameState implements BowlingSubject
   }
 
   @Override
-  public void addObserver(BowlingObserver observer)
+  public void addObserver(final BowlingObserver observer)
   {
     observers.add(observer);
   }
 
   @Override
-  public void removeObserver(BowlingObserver observer)
+  public void removeObserver(final BowlingObserver observer)
   {
     observers.remove(observer);
   }
@@ -260,17 +348,32 @@ public class GameState implements BowlingSubject
       obs.update();
   }
 
-  /** Add a pin to the game state */
-  public void addPin(int id, BowlingPin pin)
+  /**
+   * Add pin to the map.
+   *
+   * @param id
+   *          given to a pin
+   * @param pin
+   *          data to add to map.
+   */
+  public void addPin(final int id, final BowlingPin pin)
   {
     pins.put(id, new PinData(pin));
   }
 
+  /**
+   * Gets the roll scores of each roll.
+   *
+   * @return the array of rollScores.
+   */
   public ArrayList<Integer> getRollScores()
   {
     return new ArrayList<>(rollScores);
   }
 
+  /**
+   * Resets the game.
+   */
   public void resetGame()
   {
     set = 1;
@@ -286,9 +389,9 @@ public class GameState implements BowlingSubject
     // Reset all pins
     for (PinData pd : pins.values())
     {
-      if (pd.pin != null)
+      if (pd.getPin() != null)
       {
-        pd.pin.resetPin();
+        pd.getPin().resetPin();
         pd.knocked = false;
       }
     }
@@ -296,42 +399,84 @@ public class GameState implements BowlingSubject
     notifyObservers();
   }
 
+  /**
+   * Gets the set.
+   *
+   * @return the current set
+   */
   public int getSet()
   {
     return set;
   }
 
+  /**
+   * Gets the roll in current set.
+   *
+   * @return the roll in set
+   */
   public int getRollInSet()
   {
     return rollInSet;
   }
 
+  /**
+   * Gets the number of pins standing.
+   *
+   * @return the pins standing
+   */
   public int getPinsStanding()
   {
     return pinsStanding;
   }
 
+  /**
+   * Gets the pins down in set (total game).
+   *
+   * @return the pins down in set
+   */
   public int getPinsDownInSet()
   {
     return pinsDownInSet;
   }
 
+  /**
+   * Gets pins down this roll.
+   *
+   * @return the pins down this roll
+   */
   public int getPinsDownThisRoll()
   {
     return pinsDownThisRoll;
   }
 
+  /**
+   * Gets the user name.
+   *
+   * @return the user name
+   */
   public String getUserName()
   {
     return userName;
   }
 
-  public void setBowlingScreen(BowlingScreen screen)
+  /**
+   * Sets the bowling screen.
+   *
+   * @param otherScreen
+   *          to be used
+   */
+  public void setBowlingScreen(final BowlingScreen otherScreen)
   {
-    this.screen = screen;
+    this.screen = otherScreen;
   }
 
-  public void setUserName(String userName)
+  /**
+   * Sets the user name.
+   *
+   * @param userName
+   *          to be set
+   */
+  public void setUserName(final String userName)
   {
     this.userName = userName;
   }

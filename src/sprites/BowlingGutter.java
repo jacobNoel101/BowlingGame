@@ -1,4 +1,4 @@
-package bowlingSprites;
+package sprites;
 
 import java.awt.*;
 import java.awt.event.*;

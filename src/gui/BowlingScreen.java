@@ -10,13 +10,13 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.SwingUtilities;
 import app.BowlingApplication;
 import bowling.*;
-import bowlingSprites.*;
 import bowlingVisual.*;
 import io.ResourceFinder;
 import music.MusicPlayer;
 import visual.dynamic.described.*;
 import visual.statik.described.*;
 import resources.Marker;
+import sprites.*;
 
 public class BowlingScreen extends Stage implements BowlingBallController
 {

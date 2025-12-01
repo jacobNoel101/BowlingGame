@@ -5,6 +5,13 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import visual.statik.SimpleContent;
 
+/**
+ * ScoreBoard for Bowling Game.
+ * 
+ * Honor Statement: This code adheres to JMU Policy.
+ * 
+ * @author Jacob Noel and Tristan Apgar
+ */
 public class ScoreBoard implements SimpleContent, BowlingObserver
 {
   protected Color color;
@@ -12,6 +19,15 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
   protected Point2D location;
   private GameState gameState;
 
+  /**
+   * Constructor for ScoreBoard.
+   *
+   * @param gameState to use
+   * @param image to use
+   * @param color to use
+   * @param location to use
+   * @throws IOException if image invalid
+   */
   public ScoreBoard(final GameState gameState, final Image image, final Color color,
       final Point2D location) throws IOException
   {

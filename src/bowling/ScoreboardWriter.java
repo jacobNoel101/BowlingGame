@@ -4,6 +4,13 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+/**
+ * ScoreboardWriter for Bowling Game.
+ * 
+ * Honor Statement: This code adheres to JMU Policy.
+ * 
+ * @author Jacob Noel and Tristan Apgar
+ */
 public class ScoreboardWriter
 {
   private static final Font FONT = new Font(Font.SANS_SERIF, Font.BOLD, 24);
@@ -13,17 +20,26 @@ public class ScoreboardWriter
   private static final String STRIKE = "X";
   private static final String SPARE = "/";
 
-  public static void renderScore(Point2D location, String username, ArrayList<Integer> rollScores,
-      ArrayList<Integer> totalScores, Graphics2D g2)
+
+  /**
+   * Renders the score on the score board.
+   *
+   * @param location
+   *          to use
+   * @param username
+   *          to use
+   * @param rollScores
+   *          to use
+   * @param totalScores
+   *          to use
+   * @param g2
+   *          to use
+   */
+  public static void renderScore(final Point2D location, final String username,
+      final ArrayList<Integer> rollScores, final ArrayList<Integer> totalScores,
+      final Graphics2D g2)
   {
-    if (rollScores == null)
-    {
-      rollScores = new ArrayList<>();
-    }
-    if (totalScores == null)
-    {
-      totalScores = new ArrayList<>();
-    }
+
     g2.setFont(FONT);
     FontMetrics metrics = g2.getFontMetrics(FONT);
     int xStart = (int) location.getX();
@@ -99,19 +115,39 @@ public class ScoreboardWriter
     }
   }
 
-  private static void drawCentered(Graphics2D g2, String text, int x, int y, FontMetrics m)
+  /**
+   * Helper for drawing strings.
+   *
+   * @param g2
+   *          to use
+   * @param text
+   *          to set
+   * @param x
+   *          position
+   * @param y
+   *          position
+   * @param m
+   *          metric to use
+   */
+  private static void drawCentered(final Graphics2D g2, final String text, final int x, final int y,
+      final FontMetrics m)
   {
     int tx = x - m.stringWidth(text) / 2;
     int ty = y + m.getAscent() / 2;
     g2.drawString(text, tx, ty);
   }
 
-  private static String formatRoll10(int value, int prevRoll)
+  /**
+   * Special format for roll.
+   *
+   * @param value
+   *          to set
+   * @param prevRoll
+   *          to consider
+   * @return the current score
+   */
+  private static String formatRoll10(final int value, final int prevRoll)
   {
-    if (value < 0)
-    {
-      return "";
-    }
     if (value == 10)
     {
       return STRIKE;
