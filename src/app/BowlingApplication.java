@@ -22,6 +22,7 @@ public class BowlingApplication extends JApplication implements ActionListener
   private StartScreen startScreen;
   private BowlingScreen bowlingScreen;
   private List<LeaderboardEntry> leaderboard = new ArrayList<>();
+  private String currentUsername = "PLAYER";
 
   /**
    * Creates the bowling application.
@@ -69,6 +70,28 @@ public class BowlingApplication extends JApplication implements ActionListener
     this.currentTheme = new GameTheme(t);
   }
 
+  /**
+   * Gets the active username.
+   *
+   * @param name
+   *          username
+   */
+  public String getUsername()
+  {
+    return currentUsername;
+  }
+
+  /**
+   * Sets the active username.
+   *
+   * @param name
+   *          username
+   */
+  public void setUsername(String name)
+  {
+    this.currentUsername = name;
+  }
+
   @Override
   public void init()
   {
@@ -86,7 +109,7 @@ public class BowlingApplication extends JApplication implements ActionListener
   public void launchBowlingScreen()
   {
     getContentPane().remove(startScreen.getView());
-    bowlingScreen = new BowlingScreen(30, currentTheme, this);
+    bowlingScreen = new BowlingScreen(30, currentTheme, this, currentUsername);
     bowlingScreen.getView().setBounds(0, 0, WIDTH, HEIGHT);
     getContentPane().add(bowlingScreen.getView());
     bowlingScreen.start();

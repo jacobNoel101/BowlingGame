@@ -127,6 +127,11 @@ public class StartScreen extends Stage
     {
       if (introMusic != null)
         introMusic.stop();
+      String name = javax.swing.JOptionPane.showInputDialog(null, "Enter your name:", "Player Name",
+          javax.swing.JOptionPane.PLAIN_MESSAGE);
+      if (name == null || name.trim().isEmpty())
+        name = "PLAYER";
+      app.setUsername(name.trim());
       app.launchBowlingScreen();
     }
   }

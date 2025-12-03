@@ -44,7 +44,7 @@ public class EndScreen extends Stage
     super(timeStep);
     this.app = app;
     this.finalScore = finalScore;
-    String username = "PLAYER";
+    String username = app.getUsername();
     app.addScore(username, finalScore);
     try
     {

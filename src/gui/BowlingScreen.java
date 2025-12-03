@@ -52,7 +52,7 @@ public class BowlingScreen extends Stage implements BowlingBallController
    * @param app
    *          the main application
    */
-  public BowlingScreen(final int timeStep, final GameTheme theme, final BowlingApplication app)
+  public BowlingScreen(final int timeStep, final GameTheme theme, final BowlingApplication app, String username)
   {
     super(timeStep);
     this.theme = theme;
@@ -75,6 +75,7 @@ public class BowlingScreen extends Stage implements BowlingBallController
     this.pins = buildPins();
     this.ball = buildBall();
     this.ball.setGameState(gameState);
+    this.gameState.setUserName(username);
     // add pins, set antagonists
     for (int i = 0; i < pins.size(); i++)
     {
