@@ -5,10 +5,11 @@ import visual.statik.described.TransformableContent;
 
 /**
  * BallReflection for BowlingBall.
- * 
- * Honor Statement: This code adheres to JMU Policy.
- * 
+ *
  * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
  */
 public class BallReflection extends RuleBasedSprite
 {
@@ -47,4 +48,5 @@ public class BallReflection extends RuleBasedSprite
     setScale(scale);
     setLocation(originX, originY);
   }
+
 }

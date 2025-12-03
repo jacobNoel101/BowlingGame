@@ -4,23 +4,38 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 import app.BowlingApplication;
-import auditory.sampled.*;
 import bowlingVisual.*;
 import io.ResourceFinder;
-import music.MusicPlayer;
+import music.ClipAudio;
 import resources.Marker;
 import visual.dynamic.described.Stage;
 
+/**
+ * Shows the start screen and intro animation.
+ *
+ * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
+ */
 public class StartScreen extends Stage
 {
   private BowlingStart startContent;
-  private MusicPlayer mp;
+  private ClipAudio introMusic;
   private ThemeButton themeButton;
   private boolean themeButtonAdded = false;
-  private BowlingApplication app; // to help switch screens
+  private BowlingApplication app;
 
+  /**
+   * Creates the start screen.
+   *
+   * @param timeStep
+   *          the tick rate
+   * @param app
+   *          the main application
+   */
   public StartScreen(final int timeStep, final BowlingApplication app)
   {
     super(timeStep);
@@ -29,33 +44,45 @@ public class StartScreen extends Stage
     add(bg);
     startContent = buildStart();
     add(startContent);
-    mp = buildMusic();
-    try
-    {
-      mp.read();
-    }
-    catch (UnsupportedAudioFileException | IOException e)
-    {
-      e.printStackTrace();
-    }
-    mp.update();
+    buildMusic();
     getView().addMouseListener(new StartScreenClickListener(this));
   }
 
+  /**
+   * Builds the background.
+   *
+   * @return the background object
+   */
   private Background buildBackground()
   {
     return new Background(Color.BLACK);
   }
 
+  /**
+   * Builds the title animation.
+   *
+   * @return the title object
+   */
   private BowlingStart buildStart()
   {
     return new BowlingStart();
   }
 
-  private MusicPlayer buildMusic()
+  /**
+   * Loads and plays the intro sound.
+   */
+  private void buildMusic()
   {
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
-    return new IntroMusicPlayer(finder);
+    try
+    {
+      introMusic = new ClipAudio(finder, "intro_sound.wav");
+      introMusic.playOnce();
+    }
+    catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
+    {
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -71,55 +98,61 @@ public class StartScreen extends Stage
     getView().repaint();
   }
 
+  /**
+   * Checks if the title animation is finished.
+   *
+   * @return true if finished
+   */
   private boolean startContentIsFinished()
   {
     return startContent.isFinished();
   }
 
+  /**
+   * Handles user clicking the screen.
+   *
+   * @param point
+   *          the click location
+   */
   public void handleMouseClick(final Point2D point)
   {
     if (themeButtonAdded && themeButton.clicked(point))
     {
+      if (introMusic != null)
+        introMusic.stop();
       app.launchThemeScreen();
       return;
     }
     if (startContent.isStartClicked(point))
-      app.launchBowlingScreen(); // switch screens when mouse clicks start
+    {
+      if (introMusic != null)
+        introMusic.stop();
+      app.launchBowlingScreen();
+    }
   }
 
-  // --- here to listen for a mouse click to start ---
+  /**
+   * Mouse listener for the start screen.
+   */
   private static class StartScreenClickListener extends MouseAdapter
   {
     private final StartScreen screen;
 
-    public StartScreenClickListener(StartScreen screen)
+    /**
+     * Creates the listener.
+     *
+     * @param screen
+     *          the start screen
+     */
+    public StartScreenClickListener(final StartScreen screen)
     {
       this.screen = screen;
     }
 
     @Override
-    public void mouseClicked(MouseEvent e)
+    public void mouseClicked(final MouseEvent e)
     {
       screen.handleMouseClick(e.getPoint());
-    }
-  }
-
-  // --- here for intro music setup ---
-  private static class IntroMusicPlayer extends MusicPlayer
-  {
-    public IntroMusicPlayer(final ResourceFinder finder)
-    {
-      super(finder);
-    }
-
-    @Override
-    public void read() throws UnsupportedAudioFileException, IOException
-    {
-      ResourceFinder finder = ResourceFinder.createInstance(new Marker());
-      BufferedSoundFactory factory = new BufferedSoundFactory(finder);
-      BufferedSound intro = factory.createBufferedSound("intro_sound.wav");
-      setMusic(intro);
-      setBoomBox(new BoomBox(intro));
     }
   }
 

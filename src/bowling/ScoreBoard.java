@@ -7,10 +7,11 @@ import visual.statik.SimpleContent;
 
 /**
  * ScoreBoard for Bowling Game.
- * 
- * Honor Statement: This code adheres to JMU Policy.
- * 
+ *
  * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
  */
 public class ScoreBoard implements SimpleContent, BowlingObserver
 {
@@ -22,11 +23,16 @@ public class ScoreBoard implements SimpleContent, BowlingObserver
   /**
    * Constructor for ScoreBoard.
    *
-   * @param gameState to use
-   * @param image to use
-   * @param color to use
-   * @param location to use
-   * @throws IOException if image invalid
+   * @param gameState
+   *          to use
+   * @param image
+   *          to use
+   * @param color
+   *          to use
+   * @param location
+   *          to use
+   * @throws IOException
+   *           if image invalid
    */
   public ScoreBoard(final GameState gameState, final Image image, final Color color,
       final Point2D location) throws IOException

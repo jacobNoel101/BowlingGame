@@ -4,6 +4,14 @@ import java.awt.*;
 import java.awt.geom.*;
 import visual.statik.SimpleContent;
 
+/**
+ * Draws the bowling lane and back wall.
+ *
+ * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
+ */
 public class BowlingLane implements SimpleContent
 {
   private final Color backWallColor = Color.BLACK; // back wall color
@@ -16,18 +24,23 @@ public class BowlingLane implements SimpleContent
   private final int numStrips = 9;
   private Color laneColor;
 
-  public BowlingLane(Color laneColor)
+  /**
+   * Creates a bowling lane.
+   *
+   * @param laneColor
+   *          the main lane color
+   */
+  public BowlingLane(final Color laneColor)
   {
     this.laneColor = laneColor;
   }
 
   @Override
-  public void render(Graphics g)
+  public void render(final Graphics g)
   {
     Graphics2D g2 = (Graphics2D) g;
     int backWallX = (screenW - backWallWidth) / 2; // center back wall horizontally
     int backWallY = 100; // 240 down from top of screen
-
     // construct rectangle for back wall all black
     Rectangle2D backWall = new Rectangle2D.Double(backWallX, backWallY, backWallWidth,
         backWallHeight);
@@ -36,13 +49,11 @@ public class BowlingLane implements SimpleContent
     // top of lane sits under the back wall
     int laneTopY = backWallY + backWallHeight;
     int laneBottomY = screenH; // bottom aligns to bottom of screen
-
     // computer lane coords
     int laneTopLeftX = (screenW - laneTopWidth) / 2;
     int laneTopRightX = laneTopLeftX + laneTopWidth;
     int laneBottomLeftX = (screenW - laneBottomWidth) / 2;
     int laneBottomRightX = laneBottomLeftX + laneBottomWidth;
-
     // draw the lane points
     Polygon lane = new Polygon();
     lane.addPoint(laneBottomLeftX, laneBottomY);

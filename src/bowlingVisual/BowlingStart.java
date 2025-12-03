@@ -4,6 +4,14 @@ import java.awt.*;
 import java.awt.geom.*;
 import visual.statik.SimpleContent;
 
+/**
+ * Displays the animated start screen title and start button.
+ *
+ * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
+ */
 public class BowlingStart implements SimpleContent
 {
   private final String title = "BOWLING"; // title screen text
@@ -18,7 +26,6 @@ public class BowlingStart implements SimpleContent
     Graphics2D g2 = (Graphics2D) g;
     int screenW = 1000;
     int screenH = 900;
-
     // draw title letters in white
     g2.setColor(Color.WHITE);
     g2.setFont(new Font("SansSerif", Font.BOLD, 140));
@@ -26,7 +33,6 @@ public class BowlingStart implements SimpleContent
     int titleX = (screenW - fm.stringWidth(displayed)) / 2;
     int titleY = screenH / 2 - 100;
     g2.drawString(displayed, titleX, titleY);
-
     // draw START button once finished with title
     if (finishedTitle)
     {
@@ -51,7 +57,13 @@ public class BowlingStart implements SimpleContent
     }
   }
 
-  public void handleTick(int time)
+  /**
+   * Handles the title animation tick.
+   *
+   * @param time
+   *          the tick count
+   */
+  public void handleTick(final int time)
   {
     timer++;
     // reveal one char every 15 ticks
@@ -64,12 +76,24 @@ public class BowlingStart implements SimpleContent
     }
   }
 
+  /**
+   * Checks if title animation is finished.
+   *
+   * @return true if finished
+   */
   public boolean isFinished()
   {
     return finishedTitle;
   }
 
-  public boolean isStartClicked(Point2D point)
+  /**
+   * Checks if the start button was clicked.
+   *
+   * @param point
+   *          the click location
+   * @return true if inside start button
+   */
+  public boolean isStartClicked(final Point2D point)
   {
     // returns true when user clicks an area inside of start border
     if (!finishedTitle)

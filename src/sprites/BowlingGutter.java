@@ -2,10 +2,17 @@ package sprites;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.Polygon;
 import visual.dynamic.described.RuleBasedSprite;
 import visual.statik.described.TransformableContent;
 
+/**
+ * Bowling gutter graphics for the lane.
+ *
+ * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
+ */
 public class BowlingGutter extends RuleBasedSprite implements KeyListener
 {
   private final int screenW = 1000;
@@ -16,19 +23,25 @@ public class BowlingGutter extends RuleBasedSprite implements KeyListener
   private final int laneTopWidth = 180;
   private final int laneBottomWidth = 1100;
 
-  public BowlingGutter(TransformableContent content)
+  /**
+   * Creates the gutter object.
+   *
+   * @param content
+   *          the visual content
+   */
+  public BowlingGutter(final TransformableContent content)
   {
     super(content);
     setLocation(0, 0);
   }
 
   @Override
-  public void handleTick(int time)
+  public void handleTick(final int time)
   {
   }
 
   @Override
-  public void render(Graphics g)
+  public void render(final Graphics g)
   {
     Graphics2D g2 = (Graphics2D) g;
     // variables to help plot coords
@@ -41,21 +54,18 @@ public class BowlingGutter extends RuleBasedSprite implements KeyListener
     int laneBottomRightX = laneBottomLeftX + laneBottomWidth;
     double taper = (double) laneTopWidth / laneBottomWidth;
     int topGutterWidth = (int) (gutterWidth * taper);
-
     // plot left side gutter
     Polygon leftGutter = new Polygon();
     leftGutter.addPoint(laneBottomLeftX - gutterWidth, laneBottomY);
     leftGutter.addPoint(laneBottomLeftX, laneBottomY);
     leftGutter.addPoint(laneTopLeftX, laneTopY);
     leftGutter.addPoint(laneTopLeftX - topGutterWidth, laneTopY);
-
     // plot right side gutter
     Polygon rightGutter = new Polygon();
     rightGutter.addPoint(laneBottomRightX, laneBottomY);
     rightGutter.addPoint(laneBottomRightX + gutterWidth, laneBottomY);
     rightGutter.addPoint(laneTopRightX + topGutterWidth, laneTopY);
     rightGutter.addPoint(laneTopRightX, laneTopY);
-
     // fill gutter in gray with a black outline
     g2.setColor(new Color(60, 60, 60));
     g2.fill(leftGutter);
@@ -67,17 +77,17 @@ public class BowlingGutter extends RuleBasedSprite implements KeyListener
   }
 
   @Override
-  public void keyPressed(KeyEvent e)
+  public void keyPressed(final KeyEvent e)
   {
   }
 
   @Override
-  public void keyReleased(KeyEvent e)
+  public void keyReleased(final KeyEvent e)
   {
   }
 
   @Override
-  public void keyTyped(KeyEvent e)
+  public void keyTyped(final KeyEvent e)
   {
   }
 

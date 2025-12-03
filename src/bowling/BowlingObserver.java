@@ -2,10 +2,11 @@ package bowling;
 
 /**
  * BowlingObserver for Bowling Game.
- * 
- * Honor Statement: This code adheres to JMU Policy.
- * 
+ *
  * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
  */
 public interface BowlingObserver
 {

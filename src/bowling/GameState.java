@@ -1,44 +1,35 @@
 package bowling;
 
 import java.util.*;
-
 import gui.BowlingScreen;
 import sprites.BowlingPin;
 
 /**
  * GameState for Bowling Game.
- * 
- * Honor Statement: This code adheres to JMU Policy.
- * 
- * @author Jacob Noel and Tristan Apgar
+ *
+ * @author Tristan Apgar and Jacob Noel
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
  */
 public class GameState implements BowlingSubject
 {
-
   private List<BowlingObserver> observers = new ArrayList<>();
   private BowlingBallController ballController;
   private List<Integer> rollScores = new ArrayList<>();
   private BowlingScreen screen;
-
-  // --- FRAME / ROLL STATE ---
   private int set; // 1–10
   private int rollInSet; // 1 or 2
   private String userName = "username";
-
-  // --- PIN TRACKING ---
   private int pinsStanding; // how many pins remain standing
   private int pinsDownThisRoll; // pins knocked only this roll
   private int pinsDownInSet; // total pins knocked in this frame
-  // --- BALL STATE ---
   private boolean ballIsRolling;
   private boolean waitingForBallToStop;
-
+  private boolean collisionSoundPlayedThisRoll = false;
   private boolean waitingForPlayerAim;
-
-  // --- PINS ---
   private Map<Integer, PinData> pins = new HashMap<>(); // Map pinID -> PinData
   private ArrayList<Integer> totalScore = new ArrayList<>();
-
 
   /**
    * PinData logic to use.
@@ -51,7 +42,8 @@ public class GameState implements BowlingSubject
     /**
      * Constructor for PinData.
      *
-     * @param pin to retrieve data
+     * @param pin
+     *          to retrieve data
      */
     public PinData(final BowlingPin pin)
     {
@@ -72,7 +64,8 @@ public class GameState implements BowlingSubject
     /**
      * Sets the pin.
      *
-     * @param pin to be set
+     * @param pin
+     *          to be set
      */
     public void setPin(final BowlingPin pin)
     {
@@ -100,28 +93,24 @@ public class GameState implements BowlingSubject
     { // max 10 sets
       int roll1Index = setIndex * 2;
       int roll2Index = roll1Index + 1;
-
       if (roll1Index >= rollScores.size())
         break; // no rolls yet
       int roll1 = rollScores.get(roll1Index);
       int roll2 = (roll2Index < rollScores.size()) ? rollScores.get(roll2Index) : 0;
-
       int setTotal = roll1 + roll2;
-
-      // Strike bonus
+      // strike point bonus
       if (roll1 == 10)
       {
         int bonus1 = (roll2Index < rollScores.size()) ? rollScores.get(roll2Index) : 0;
         int bonus2 = (roll2Index + 1 < rollScores.size()) ? rollScores.get(roll2Index + 1) : 0;
         setTotal = 10 + bonus1 + bonus2;
       }
-      // Spare bonus
+      // spare point bonus
       else if (roll1 + roll2 == 10)
       {
         int bonus = (roll2Index + 1 < rollScores.size()) ? rollScores.get(roll2Index + 1) : 0;
         setTotal = 10 + bonus;
       }
-
       runningTotal += setTotal;
       totalScore.add(runningTotal);
     }
@@ -202,6 +191,12 @@ public class GameState implements BowlingSubject
         pd.knocked = true;
         pinsDownThisRoll++;
         pinsStanding = Math.max(0, pinsStanding - 1);
+        if (!collisionSoundPlayedThisRoll && screen != null)
+        {
+          collisionSoundPlayedThisRoll = true;
+          screen.playPinHitSound();
+        }
+
         break;
       }
     }
@@ -222,6 +217,7 @@ public class GameState implements BowlingSubject
    */
   public void ballStopped()
   {
+    collisionSoundPlayedThisRoll = false;
     ballIsRolling = false;
     waitingForBallToStop = false;
     pinsDownInSet += pinsDownThisRoll;
@@ -229,16 +225,27 @@ public class GameState implements BowlingSubject
     updateTotalScores();
     boolean isStrike = (rollInSet == 1 && pinsDownThisRoll == 10);
     boolean isSpare = (rollInSet == 2 && pinsDownInSet == 10);
-    // show message
+    boolean isGutter = (pinsDownThisRoll == 0);
+    // show message + play audio
     if (ballController instanceof BowlingScreen)
     {
       setBowlingScreen((BowlingScreen) ballController);
       if (isStrike)
+      {
         screen.showMessage("Nice Strike!");
+        screen.playStrikeSound(); // 🔥 NEW
+      }
       else if (isSpare)
+      {
         screen.showMessage("Nice Spare!");
+        screen.playSpareSound(); // optional, if you add one
+      }
+      else if (isGutter)
+      {
+        screen.showMessage("Horrible Roll!");
+        screen.playGutterSound();
+      }
     }
-
     if (set == 10)
     {
       // after 2nd roll, stop the game
@@ -264,7 +271,6 @@ public class GameState implements BowlingSubject
         return;
       }
     }
-
     if (isStrike || isSpare || rollInSet == 2)
     {
       endFrameAndResetSet();
@@ -276,7 +282,6 @@ public class GameState implements BowlingSubject
       if (ballController != null)
         ballController.resetBall();
     }
-
     notifyObservers();
   }
 
@@ -308,24 +313,20 @@ public class GameState implements BowlingSubject
     waitingForPlayerAim = false;
     ballIsRolling = false;
     waitingForBallToStop = false;
-
     for (PinData pd : pins.values())
     {
       pd.knocked = false; // reset knocked state
       if (pd.getPin() != null)
         pd.getPin().resetPin(); // reset visual state
     }
-
     if (ballController != null)
     {
       if (ballController instanceof BowlingScreen)
       {
         ((BowlingScreen) ballController).schedulePinReset();
         ballController.resetBall();
-
       }
     }
-
     notifyObservers();
   }
 
@@ -385,8 +386,7 @@ public class GameState implements BowlingSubject
     ballIsRolling = false;
     waitingForBallToStop = false;
     rollScores.clear();
-
-    // Reset all pins
+    // reset all pins
     for (PinData pd : pins.values())
     {
       if (pd.getPin() != null)
@@ -395,7 +395,6 @@ public class GameState implements BowlingSubject
         pd.knocked = false;
       }
     }
-
     notifyObservers();
   }
 
@@ -480,4 +479,5 @@ public class GameState implements BowlingSubject
   {
     this.userName = userName;
   }
+
 }

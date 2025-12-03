@@ -9,6 +9,14 @@ import bowling.LeaderboardEntry;
 import visual.dynamic.described.Stage;
 import visual.statik.SimpleContent;
 
+/**
+ * Displays the leaderboard screen.
+ *
+ * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
+ */
 public class LeaderboardScreen extends Stage
 {
   private Rectangle2D playAgainBox;
@@ -16,7 +24,18 @@ public class LeaderboardScreen extends Stage
   private List<LeaderboardEntry> entries;
   private BowlingApplication app;
 
-  public LeaderboardScreen(int timestep, BowlingApplication app, List<LeaderboardEntry> entries)
+  /**
+   * Creates the leaderboard screen.
+   *
+   * @param timestep
+   *          the tick rate
+   * @param app
+   *          the main application
+   * @param entries
+   *          the list of leaderboard entries
+   */
+  public LeaderboardScreen(final int timestep, final BowlingApplication app,
+      final List<LeaderboardEntry> entries)
   {
     super(timestep);
     this.app = app;
@@ -27,14 +46,20 @@ public class LeaderboardScreen extends Stage
     getView().addMouseListener(new MouseAdapter()
     {
       @Override
-      public void mouseClicked(MouseEvent e)
+      public void mouseClicked(final MouseEvent e)
       {
         handleClick(e.getPoint());
       }
     });
   }
 
-  private void handleClick(Point2D p)
+  /**
+   * Handles button clicks.
+   *
+   * @param p
+   *          the click location
+   */
+  private void handleClick(final Point2D p)
   {
     if (playAgainBox.contains(p))
       app.launchStartScreen();
@@ -42,10 +67,13 @@ public class LeaderboardScreen extends Stage
       System.exit(0);
   }
 
+  /**
+   * Renders the leaderboard contents.
+   */
   private class LeaderboardContent implements SimpleContent
   {
     @Override
-    public void render(Graphics g)
+    public void render(final Graphics g)
     {
       Graphics2D g2 = (Graphics2D) g;
       g2.setColor(Color.BLACK);
@@ -70,7 +98,17 @@ public class LeaderboardScreen extends Stage
       drawButton(g2, quitBox, "QUIT");
     }
 
-    private void drawButton(Graphics2D g2, Rectangle2D r, String text)
+    /**
+     * Draws a button.
+     *
+     * @param g2
+     *          the graphics object
+     * @param r
+     *          the button rectangle
+     * @param text
+     *          the button text
+     */
+    private void drawButton(final Graphics2D g2, final Rectangle2D r, final String text)
     {
       g2.setColor(Color.DARK_GRAY);
       g2.fill(r);

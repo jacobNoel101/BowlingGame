@@ -2,8 +2,19 @@ package bowling;
 
 import java.awt.Color;
 
+/**
+ * Manages color themes for the bowling game.
+ *
+ * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
+ */
 public class GameTheme
 {
+  /**
+   * Available theme types.
+   */
   public enum ThemeType
   {
     BASIC, JMU, PINK, REDBLUE
@@ -16,18 +27,35 @@ public class GameTheme
   public Color ballInnerColor;
   public Color pinColor;
 
-  public GameTheme(ThemeType t)
+  /**
+   * Creates a theme.
+   *
+   * @param t
+   *          the theme type
+   */
+  public GameTheme(final ThemeType t)
   {
     this.type = t;
     load(t);
   }
 
+  /**
+   * Gets the theme type.
+   *
+   * @return the theme type
+   */
   public ThemeType getType()
   {
     return type;
   }
 
-  private void load(ThemeType t)
+  /**
+   * Loads colors for a theme.
+   *
+   * @param t
+   *          the theme type
+   */
+  private void load(final ThemeType t)
   {
     switch (t)
     {
@@ -38,7 +66,6 @@ public class GameTheme
         ballInnerColor = new Color(40, 100, 210);
         pinColor = Color.BLACK;
         break;
-
       case JMU:
         backgroundColor = new Color(69, 0, 132);
         laneColor = new Color(203, 182, 119);
@@ -46,7 +73,6 @@ public class GameTheme
         ballInnerColor = new Color(160, 60, 240);
         pinColor = new Color(203, 195, 227);
         break;
-
       case PINK:
         backgroundColor = new Color(255, 200, 220);
         laneColor = new Color(255, 150, 180);
@@ -54,7 +80,6 @@ public class GameTheme
         ballInnerColor = new Color(255, 140, 170);
         pinColor = new Color(255, 192, 203);
         break;
-
       case REDBLUE:
         backgroundColor = new Color(20, 20, 60);
         laneColor = new Color(200, 0, 0);

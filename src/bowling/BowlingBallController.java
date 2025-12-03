@@ -2,17 +2,19 @@ package bowling;
 
 /**
  * BowlingBallController for BowlingScreen.
- * 
- * Honor Statement: This code adheres to JMU Policy.
- * 
+ *
  * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
  */
 public interface BowlingBallController
 {
   /**
    * Starts the roll at angle.
    *
-   * @param angle to be used for roll
+   * @param angle
+   *          to be used for roll
    */
   void startRoll(final double angle);
 
@@ -25,11 +27,12 @@ public interface BowlingBallController
    * resets the pins for next roll.
    */
   void resetPins();
-  
+
   /**
    * Shows the message for super imposition.
    *
-   * @param message to display
+   * @param message
+   *          to display
    */
-  void showMessage(String message);
+  void showMessage(final String message);
 }

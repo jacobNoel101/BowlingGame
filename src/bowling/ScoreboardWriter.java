@@ -6,10 +6,11 @@ import java.util.ArrayList;
 
 /**
  * ScoreboardWriter for Bowling Game.
- * 
- * Honor Statement: This code adheres to JMU Policy.
- * 
+ *
  * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
  */
 public class ScoreboardWriter
 {
@@ -19,7 +20,6 @@ public class ScoreboardWriter
   private static final String GUTTER = "-";
   private static final String STRIKE = "X";
   private static final String SPARE = "/";
-
 
   /**
    * Renders the score on the score board.
@@ -39,7 +39,6 @@ public class ScoreboardWriter
       final ArrayList<Integer> rollScores, final ArrayList<Integer> totalScores,
       final Graphics2D g2)
   {
-
     g2.setFont(FONT);
     FontMetrics metrics = g2.getFontMetrics(FONT);
     int xStart = (int) location.getX();
@@ -47,7 +46,6 @@ public class ScoreboardWriter
     g2.setColor(Color.BLACK);
     drawCentered(g2, username, 70, 50, metrics);
     int rollIndex = 0;
-
     // draw frames 1-9
     for (int set = 1; set <= 9; set++)
     {
@@ -92,7 +90,6 @@ public class ScoreboardWriter
         drawCentered(g2, totalText, xFrame + SPACING / 2, y + metrics.getHeight(), metrics);
       }
     }
-
     // frame 10
     int frame10X = xStart + 9 * (2 * SPACING + SET_SPACING);
     if (rollIndex < rollScores.size())

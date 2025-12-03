@@ -1,12 +1,19 @@
 package app;
 
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import bowling.GameTheme;
 import bowling.LeaderboardEntry;
 import gui.*;
 
+/**
+ * Main Application for the Bowling Game.
+ *
+ * @author Tristan Apgar & Jacob Noel
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
+ */
 public class BowlingApplication extends JApplication implements ActionListener
 {
   public static final int WIDTH = 1000;
@@ -16,23 +23,48 @@ public class BowlingApplication extends JApplication implements ActionListener
   private BowlingScreen bowlingScreen;
   private List<LeaderboardEntry> leaderboard = new ArrayList<>();
 
+  /**
+   * Creates the bowling application.
+   *
+   * @param args
+   *          command-line arguments
+   */
   public BowlingApplication(final String[] args)
   {
     super(WIDTH, HEIGHT);
   }
 
+  /**
+   * Gets the current theme.
+   *
+   * @return current theme
+   */
   public GameTheme getTheme()
   {
     return currentTheme;
   }
 
-  public void addScore(String name, int score)
+  /**
+   * Adds a score to the leaderboard.
+   *
+   * @param name
+   *          player name
+   * @param score
+   *          player score
+   */
+  public void addScore(final String name, final int score)
   {
     leaderboard.add(new LeaderboardEntry(name, score));
     leaderboard.sort((a, b) -> b.score - a.score); // highest first
   }
 
-  public void setTheme(GameTheme.ThemeType t)
+  /**
+   * Sets the active theme.
+   *
+   * @param t
+   *          theme type
+   */
+  public void setTheme(final GameTheme.ThemeType t)
   {
     this.currentTheme = new GameTheme(t);
   }
@@ -48,6 +80,9 @@ public class BowlingApplication extends JApplication implements ActionListener
     getContentPane().repaint();
   }
 
+  /**
+   * Switches to the bowling gameplay screen.
+   */
   public void launchBowlingScreen()
   {
     getContentPane().remove(startScreen.getView());
@@ -60,6 +95,9 @@ public class BowlingApplication extends JApplication implements ActionListener
     bowlingScreen.getView().requestFocusInWindow();
   }
 
+  /**
+   * Switches back to the start screen.
+   */
   public void launchStartScreen()
   {
     getContentPane().removeAll();
@@ -71,6 +109,9 @@ public class BowlingApplication extends JApplication implements ActionListener
     getContentPane().repaint();
   }
 
+  /**
+   * Switches to the theme selection screen.
+   */
   public void launchThemeScreen()
   {
     getContentPane().removeAll();
@@ -82,7 +123,13 @@ public class BowlingApplication extends JApplication implements ActionListener
     getContentPane().repaint();
   }
 
-  public void launchEndScreen(int finalScore)
+  /**
+   * Switches to the end screen.
+   *
+   * @param finalScore
+   *          final game score
+   */
+  public void launchEndScreen(final int finalScore)
   {
     getContentPane().removeAll();
     EndScreen end = new EndScreen(17, this, finalScore);
@@ -93,6 +140,9 @@ public class BowlingApplication extends JApplication implements ActionListener
     getContentPane().repaint();
   }
 
+  /**
+   * Switches to the leaderboard screen.
+   */
   public void launchLeaderboardScreen()
   {
     getContentPane().removeAll();
@@ -105,10 +155,17 @@ public class BowlingApplication extends JApplication implements ActionListener
   }
 
   @Override
-  public void actionPerformed(ActionEvent e)
+  public void actionPerformed(final ActionEvent e)
   {
+    // empty but potential for future implementation!
   }
 
+  /**
+   * Launches the application.
+   *
+   * @param args
+   *          command-line arguments
+   */
   public static void main(final String[] args)
   {
     JApplication app = new BowlingApplication(args);

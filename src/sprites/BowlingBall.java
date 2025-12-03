@@ -11,10 +11,11 @@ import visual.statik.described.*;
 
 /**
  * BowlingBall for the Bowling Game.
- * 
- * Honor Statement: This code adheres to JMU Policy.
- * 
+ *
  * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
  */
 public class BowlingBall extends RuleBasedSprite implements KeyListener
 {
@@ -61,7 +62,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     this.x = 495;
     this.y = 650;
     this.reflectionSprite = new BallReflection(reflection);
-
     setLocation(x, y);
   }
 
@@ -100,13 +100,11 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       reflectionSprite.setOrigin(x, y); // offset to look like a reflection
       reflectionSprite.handleTick(time);
     }
-
     if (inGutter)
     {
       updateGutterMovement();
       return;
     }
-
     if (rolling && !keyTimes.isEmpty())
     {
       int i = 0;
@@ -134,9 +132,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         setRotation(rotation);
         double scale = lerp(s0, s1, t);
         setScale(scale);
-
       }
-
       setLocation(x, y);
       if (rolling && checkGutterCollision())
       {
@@ -146,13 +142,11 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         updateGutterMovement();
         return;
       }
-
       if (time >= keyTimes.get(keyTimes.size() - 1))
       {
         rolling = false;
       }
     }
-    // Check collisions with pins
     for (Sprite s : antagonists)
     {
       if (s instanceof BowlingPin)
@@ -164,7 +158,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         }
       }
     }
-    // Wait for pins to settle after the ball finishes
     if (!rolling && waitingForPins && gameState != null)
     {
       boolean allPinsStopped = true;
@@ -184,7 +177,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
         gameState.ballStopped(); // now scores update correctly
       }
     }
-
   }
 
   /**
@@ -192,13 +184,13 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
    */
   private void updateGutterMovement()
   {
-    // 1. Slide upward
+    // slide upward
     y -= gutterSpeedY;
     if (y < 220)
     {
       y = 220; // clamp to top of lane
     }
-    // Compute lane geometry (same as BowlingGutter)
+    // compute lane geometry (same as BowlingGutter)
     int screenW = 1000;
     int screenH = 900;
     int backWallY = 100;
@@ -239,7 +231,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     {
       gutterFinished = true;
       inGutter = false;
-
       if (gameState != null)
       {
         if (!gameState.anyPinsHit())
@@ -262,7 +253,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   private boolean checkGutterCollision()
   {
     double yPos = this.y;
-    // Lane geometry (MATCHES BowlingGutter)
+    // lane geometry (MATCHES BowlingGutter)
     int screenW = 1000;
     int screenH = 900;
     int backWallY = 100;
@@ -322,13 +313,11 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       int arrowLength = 50; // arrow line length
       int tipx = arrowX + (int) (arrowLength * Math.sin(rollingAngle));
       int tipY = arrowY - (int) (arrowLength * Math.cos(rollingAngle));
-
       g.setColor(Color.BLACK);
       g.drawLine(arrowX, arrowY, tipx, tipY); // draw line
       // plot and draw triangular arrowhead
       Polygon arrowHead = new Polygon();
       g.setColor(Color.RED);
-
       double angle = Math.atan2(tipY - arrowY, tipx - arrowX);
       int headSize = 10;
       arrowHead.addPoint(tipx, tipY);
@@ -372,8 +361,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
       else
       {
         double newX = x - 10;
-
-        // Only allow movement if newX is still inside the lane
         if (!wouldBeInGutter(newX, y))
         {
           x = newX;
@@ -496,10 +483,14 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   /**
    * Add key times for future interpolation.
    *
-   * @param keyTime time for key
-   * @param location of the key time
-   * @param rotation of the shape at time
-   * @param scaling of the shape at time
+   * @param keyTime
+   *          time for key
+   * @param location
+   *          of the key time
+   * @param rotation
+   *          of the shape at time
+   * @param scaling
+   *          of the shape at time
    * @return the index at which the key time was inserted
    */
   public int addKeyTime(final int keyTime, final Point2D location, final Double rotation,
@@ -560,7 +551,8 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   /**
    * Intersection of the bounding bodies of the ball and other shapes.
    *
-   * @param Sprite to check for intersection
+   * @param Sprite
+   *          to check for intersection
    * @return true or false if ball intersects another shape
    */
   public boolean intersects(final Sprite s)

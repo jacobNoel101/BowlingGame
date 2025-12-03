@@ -7,14 +7,14 @@ import visual.statik.described.*;
 
 /**
  * BowlingPin for Bowling Game.
- * 
- * Honor Statement: This code adheres to JMU Policy.
- * 
+ *
  * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
  */
 public class BowlingPin extends RuleBasedSprite
 {
-
   private boolean hit = false; // touched by ball or other pin
   private boolean falling = false; // actively tipping
   private boolean knocked = false; // finished falling
@@ -80,7 +80,6 @@ public class BowlingPin extends RuleBasedSprite
       return;
     }
     hit = true;
-
     // compute linear velocity away from ball
     double dx = x - ball.getX();
     fallDirection = (dx >= 0) ? 1 : -1; // ball hits left → fall right, ball hits right → fall left
@@ -147,7 +146,6 @@ public class BowlingPin extends RuleBasedSprite
       y += velocityY;
       velocityX *= 0.92; // friction
       velocityY *= 0.92;
-
       // rotation (tipping)
       rotation += angularVelocity * fallDirection;
       angularVelocity *= 0.95; // rotational friction
@@ -163,20 +161,17 @@ public class BowlingPin extends RuleBasedSprite
         tiltBackVelocity = 0;
       }
       setScale(1.0 + 0.1 * Math.sin(tiltBack));
-
       // stops when almost stationary
       if (Math.hypot(velocityX, velocityY) < 0.2 && angularVelocity < 0.2 && !knocked)
       {
         knocked = true;
         falling = false;
         setVisible(false);
-
         if (gameState != null)
         {
           gameState.pinKnocked(this);
         }
       }
-
       // collisions with other pins
       for (Sprite s : antagonists)
       {
@@ -219,7 +214,8 @@ public class BowlingPin extends RuleBasedSprite
   /**
    * add antagonists to current pin.
    *
-   * @param s sprite to add as antagonist
+   * @param s
+   *          sprite to add as antagonist
    */
   public void addAntagonist(final Sprite s)
   {

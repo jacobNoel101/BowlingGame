@@ -9,19 +9,19 @@ public class EndScreenButton implements SimpleContent
   private Rectangle2D bounds;
   private String label;
 
-  public EndScreenButton(String label, int x, int y, int w, int h)
+  public EndScreenButton(final String label, final int x, final int y, final int w, final int h)
   {
     this.label = label;
     this.bounds = new Rectangle2D.Double(x, y, w, h);
   }
 
-  public boolean clicked(Point2D p)
+  public boolean clicked(final Point2D p)
   {
     return bounds.contains(p);
   }
 
   @Override
-  public void render(Graphics g)
+  public void render(final Graphics g)
   {
     Graphics2D g2 = (Graphics2D) g;
     g2.setColor(Color.DARK_GRAY);

@@ -8,6 +8,14 @@ import bowling.GameTheme;
 import visual.dynamic.described.Stage;
 import visual.statik.SimpleContent;
 
+/**
+ * Theme selection screen for the game.
+ *
+ * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
+ */
 public class ThemeScreen extends Stage
 {
   private BowlingApplication app;
@@ -16,7 +24,15 @@ public class ThemeScreen extends Stage
   private Rectangle2D pinkBox = new Rectangle2D.Double(300, 380, 300, 60);
   private Rectangle2D redBlueBox = new Rectangle2D.Double(300, 470, 300, 60);
 
-  public ThemeScreen(int timeStep, BowlingApplication app)
+  /**
+   * Creates a theme screen.
+   *
+   * @param timeStep
+   *          the timestep for animation
+   * @param app
+   *          the application controller
+   */
+  public ThemeScreen(final int timeStep, final BowlingApplication app)
   {
     super(timeStep);
     this.app = app;
@@ -24,12 +40,16 @@ public class ThemeScreen extends Stage
     getView().addMouseListener(new MouseHandler());
   }
 
+  /**
+   * Handles mouse clicks on theme options.
+   */
   private class MouseHandler extends MouseAdapter
   {
     @Override
-    public void mouseClicked(MouseEvent e)
+    public void mouseClicked(final MouseEvent e)
     {
       Point2D p = e.getPoint();
+
       if (basicBox.contains(p))
       {
         app.setTheme(GameTheme.ThemeType.BASIC);
@@ -53,10 +73,14 @@ public class ThemeScreen extends Stage
     }
   }
 
+  /**
+   * Draws the theme menu.
+   */
   private class ThemeMenuContent implements SimpleContent
   {
+
     @Override
-    public void render(Graphics g)
+    public void render(final Graphics g)
     {
       Graphics2D g2 = (Graphics2D) g;
       Rectangle2D full = new Rectangle2D.Double(0, 0, 1015, 715);
@@ -72,7 +96,20 @@ public class ThemeScreen extends Stage
       drawButton(g2, redBlueBox, "RED & BLUE", new Color(80, 80, 200));
     }
 
-    private void drawButton(Graphics2D g2, Rectangle2D r, String label, Color fill)
+    /**
+     * Draws a single menu button.
+     *
+     * @param g2
+     *          the graphics object
+     * @param r
+     *          the button rectangle
+     * @param label
+     *          the button label
+     * @param fill
+     *          the fill color
+     */
+    private void drawButton(final Graphics2D g2, final Rectangle2D r, final String label,
+        final Color fill)
     {
       g2.setColor(fill);
       g2.fill(r);

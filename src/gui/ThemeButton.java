@@ -3,12 +3,20 @@ package gui;
 import java.awt.*;
 import java.awt.geom.*;
 
+/**
+ * Theme button for selecting a color theme.
+ *
+ * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
+ */
 class ThemeButton implements visual.statik.SimpleContent
 {
   private Rectangle2D box = new Rectangle2D.Double(380, 430, 240, 45);
 
   @Override
-  public void render(Graphics g)
+  public void render(final Graphics g)
   {
     Graphics2D g2 = (Graphics2D) g;
     g2.setColor(Color.BLACK); // fill
@@ -23,7 +31,14 @@ class ThemeButton implements visual.statik.SimpleContent
     g2.drawString(txt, textX, textY);
   }
 
-  public boolean clicked(Point2D p)
+  /**
+   * Checks if the button was clicked.
+   *
+   * @param p
+   *          the point clicked
+   * @return true if inside button
+   */
+  public boolean clicked(final Point2D p)
   {
     return box.contains(p);
   }
