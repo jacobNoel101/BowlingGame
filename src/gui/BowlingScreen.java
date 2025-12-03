@@ -347,7 +347,7 @@ public class BowlingScreen extends Stage implements BowlingBallController
   public void showMessage(final String message)
   {
     Point2D center = new Point2D.Double(500, 350);
-    int durationTicks = 120;
+    int durationTicks = 60;
     currentMessage = new BowlingSuperImpositions(message, center, durationTicks);
     add(currentMessage);
   }
