@@ -4,17 +4,45 @@ import java.awt.*;
 import java.awt.geom.*;
 import visual.statik.SimpleContent;
 
+/**
+ * Button that leads user to the end screen.
+ *
+ * @author Jacob Noel and Tristan Apgar
+ * @version Fall 2025
+ *
+ *          Honor Statement: This code adheres to JMU Policy.
+ */
 public class EndScreenButton implements SimpleContent
 {
   private Rectangle2D bounds;
   private String label;
 
+  /**
+   * Creates a end screen box.
+   *
+   * @param label
+   *          the message text
+   * @param x
+   *          the x location
+   * @param y
+   *          the y location
+   * @param w
+   *          width
+   * @param h
+   *          the height
+   */
   public EndScreenButton(final String label, final int x, final int y, final int w, final int h)
   {
     this.label = label;
     this.bounds = new Rectangle2D.Double(x, y, w, h);
   }
 
+  /**
+   * Determine if clicked.
+   *
+   * @param p
+   *          the point
+   */
   public boolean clicked(final Point2D p)
   {
     return bounds.contains(p);
