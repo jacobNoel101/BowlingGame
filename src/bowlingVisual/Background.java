@@ -45,7 +45,7 @@ public class Background implements SimpleContent
     g2.drawString("           ROLLING     ", leftX, leftY - 50);
     g2.drawString("1: Move ← / → keys", leftX, leftY);
     g2.drawString("    to choose release point", leftX, leftY + 30);
-    g2.drawString("    Press SPACE to lock it in", leftX, leftY + 60);
+    g2.drawString("    Press SPACE ONCE", leftX, leftY + 60);
     // right of lane
     int rightX = 750;
     int rightY = 200;
