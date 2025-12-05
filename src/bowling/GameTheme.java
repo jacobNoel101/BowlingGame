@@ -81,7 +81,7 @@ public class GameTheme
         pinColor = new Color(255, 192, 203);
         break;
       case REDBLUE:
-        backgroundColor = new Color(20, 20, 60);
+        backgroundColor = new Color(100, 100, 240);
         laneColor = new Color(200, 0, 0);
         ballOuterColor = new Color(0, 80, 255);
         ballInnerColor = new Color(100, 150, 255);

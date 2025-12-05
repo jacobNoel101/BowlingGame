@@ -477,7 +477,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     scalings.clear();
     rolling = false;
     waitingForPins = false;
-
   }
 
   /**
