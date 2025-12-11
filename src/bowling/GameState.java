@@ -233,12 +233,12 @@ public class GameState implements BowlingSubject
       if (isStrike)
       {
         screen.showMessage("Nice Strike!");
-        screen.playStrikeSound(); // 🔥 NEW
+        screen.playStrikeSound();
       }
       else if (isSpare)
       {
         screen.showMessage("Nice Spare!");
-        screen.playSpareSound(); // optional, if you add one
+        screen.playSpareSound();
       }
       else if (isGutter)
       {
@@ -246,23 +246,19 @@ public class GameState implements BowlingSubject
         screen.playGutterSound();
       }
     }
+    boolean isFirstRollStrike = (rollInSet == 1 && pinsDownThisRoll == 10);
+
     if (set == 10)
     {
       // after 2nd roll, stop the game
-      if (rollInSet == 2)
+      if (isFirstRollStrike)
       {
-        waitingForPlayerAim = false;
-        if (screen != null)
-        {
-          int finalScore = totalScore.isEmpty() ? 0 : totalScore.get(totalScore.size() - 1);
-          screen.showEndGamePopup(finalScore);
-        }
-        notifyObservers();
-        return; // stop further rolls
+        rollInSet = 2;
+        resetPinsForSecondRollInTenthFrame();
+        return;
       }
-      else
+      if (rollInSet == 1)
       {
-        // first roll only, go to roll 2
         rollInSet = 2;
         waitingForPlayerAim = false;
         if (ballController != null)
@@ -270,6 +266,24 @@ public class GameState implements BowlingSubject
         notifyObservers();
         return;
       }
+      if (rollInSet == 2)
+      {
+        // End the game on second roll of 10th frame
+        waitingForPlayerAim = false;
+
+        if (screen != null)
+        {
+          int finalScore = totalScore.isEmpty() ? 0 : totalScore.get(totalScore.size() - 1);
+          screen.showEndGamePopup(finalScore);
+        }
+
+        if (ballController != null)
+          ballController.resetBall();
+
+        notifyObservers();
+        return;
+      }
+
     }
     if (isStrike || isSpare || rollInSet == 2)
     {
@@ -298,6 +312,27 @@ public class GameState implements BowlingSubject
         return true;
     }
     return false;
+  }
+
+  private void resetPinsForSecondRollInTenthFrame()
+  {
+    pinsStanding = 10;
+    pinsDownThisRoll = 0;
+    pinsDownInSet = 0;
+
+    for (PinData pd : pins.values())
+    {
+      pd.knocked = false;
+      if (pd.getPin() != null)
+        pd.getPin().resetPin();
+    }
+
+    waitingForPlayerAim = false;
+
+    if (ballController != null)
+      ballController.resetBall();
+
+    notifyObservers();
   }
 
   /**
