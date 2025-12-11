@@ -42,6 +42,7 @@ public class EndScreenButton implements SimpleContent
    *
    * @param p
    *          the point
+   * @return boolean true if bounds contains p
    */
   public boolean clicked(final Point2D p)
   {

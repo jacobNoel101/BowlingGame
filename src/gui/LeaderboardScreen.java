@@ -79,18 +79,18 @@ public class LeaderboardScreen extends Stage
       g2.setColor(Color.BLACK);
       g2.fillRect(0, 0, 1015, 715);
       g2.setColor(Color.WHITE);
-      g2.setFont(new Font("Arial", Font.BOLD, 60));
+      g2.setFont(new Font("Times New Roman", Font.BOLD, 60));
       g2.drawString("LEADERBOARD", 275, 100);
-      g2.setFont(new Font("Arial", Font.BOLD, 32));
+      g2.setFont(new Font("Roboto", Font.BOLD, 32));
       g2.drawString("USER", 200, 160);
       g2.drawString("SCORE", 650, 160);
-      g2.setFont(new Font("Arial", Font.PLAIN, 28));
+      g2.setFont(new Font("Helvetica", Font.PLAIN, 28));
       int y = 220;
       int rank = 1;
       for (LeaderboardEntry e : entries)
       {
-        g2.drawString(rank + ". " + e.username, 180, y);
-        g2.drawString(Integer.toString(e.score), 700, y);
+        g2.drawString(rank + ". " + e.getUsername(), 180, y);
+        g2.drawString(Integer.toString(e.getScore()), 700, y);
         y += 40;
         rank++;
       }

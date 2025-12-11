@@ -51,8 +51,10 @@ public class BowlingScreen extends Stage implements BowlingBallController
    *          the selected theme
    * @param app
    *          the main application
+   * @param username the username
    */
-  public BowlingScreen(final int timeStep, final GameTheme theme, final BowlingApplication app, String username)
+  public BowlingScreen(final int timeStep, final GameTheme theme, final BowlingApplication app,
+      final String username)
   {
     super(timeStep);
     this.theme = theme;
@@ -103,7 +105,7 @@ public class BowlingScreen extends Stage implements BowlingBallController
       bgMusic.playLoop();
     gameState.setBallController(this);
     // add reflection sprite
-    add(ball.reflectionSprite);
+    add(ball.getReflectionSprite());
   }
 
   /**
@@ -217,10 +219,10 @@ public class BowlingScreen extends Stage implements BowlingBallController
   private BowlingBall buildBall()
   {
     Ellipse2D outer = new Ellipse2D.Double(-30, -30, 70, 70);
-    Color oc = theme.ballOuterColor;
+    Color oc = theme.getBallOuterColor();
     TransformableContent outerContent = new Content(outer, oc, oc, null);
     Ellipse2D inner = new Ellipse2D.Double(-10, -10, 10, 10);
-    Color ic = theme.ballInnerColor;
+    Color ic = theme.getBallInnerColor();
     TransformableContent innerContent = new Content(inner, ic, ic, null);
     return new BowlingBall(outerContent, null, innerContent);
   }
@@ -246,8 +248,8 @@ public class BowlingScreen extends Stage implements BowlingBallController
     {
       CompositeContent content = new CompositeContent();
       Color outline = (theme.getType() == GameTheme.ThemeType.BASIC) ? Color.WHITE : Color.BLACK;
-      content.add(new Content(topPin, outline, theme.pinColor, null));
-      content.add(new Content(frontPin, outline, theme.pinColor, null));
+      content.add(new Content(topPin, outline, theme.getPinColor(), null));
+      content.add(new Content(frontPin, outline, theme.getPinColor(), null));
       BowlingPin pin = new BowlingPin(content, positions[i][0], positions[i][1], radius);
       pins.add(pin);
       add(pin);
@@ -272,7 +274,7 @@ public class BowlingScreen extends Stage implements BowlingBallController
    */
   private BowlingLane buildLane()
   {
-    return new BowlingLane(theme.laneColor);
+    return new BowlingLane(theme.getLaneColor());
   }
 
   /**
@@ -282,7 +284,7 @@ public class BowlingScreen extends Stage implements BowlingBallController
    */
   private Background buildBackground()
   {
-    return new Background(theme.backgroundColor);
+    return new Background(theme.getBackgroundColor());
   }
 
   /**
@@ -396,7 +398,7 @@ public class BowlingScreen extends Stage implements BowlingBallController
       g2.fill(box);
       g2.setColor(Color.BLACK);
       g2.draw(box);
-      g2.setFont(new Font("Arial", Font.BOLD, 36));
+      g2.setFont(new Font("Times New Roman", Font.BOLD, 36));
       g2.drawString("END GAME", 390, 320);
       g2.setFont(new Font("Arial", Font.PLAIN, 20));
       g2.drawString("Click to continue", 420, 350);

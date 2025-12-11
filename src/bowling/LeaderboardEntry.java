@@ -10,8 +10,8 @@ package bowling;
  */
 public class LeaderboardEntry
 {
-  public String username;
-  public int score;
+  private String username;
+  private int score;
 
   /**
    * Creates a leaderboard entry.
@@ -23,8 +23,50 @@ public class LeaderboardEntry
    */
   public LeaderboardEntry(final String u, final int s)
   {
-    username = u;
-    score = s;
+    setUsername(u);
+    setScore(s);
+  }
+
+  /**
+   * Get the score.
+   *
+   * @return int the score
+   */
+  public int getScore()
+  {
+    return score;
+  }
+
+  /**
+   * Set the score.
+   *
+   * @param score
+   *          the player's score
+   */
+  public void setScore(final int score)
+  {
+    this.score = score;
+  }
+
+  /**
+   * Get the username.
+   *
+   * @return string the username
+   */
+  public String getUsername()
+  {
+    return username;
+  }
+
+  /**
+   * Set the score.
+   *
+   * @param username
+   *          the player's name
+   */
+  public void setUsername(final String username)
+  {
+    this.username = username;
   }
 
 }

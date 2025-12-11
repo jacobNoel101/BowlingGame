@@ -88,7 +88,7 @@ public class ThemeScreen extends Stage
       g2.fill(full);
       g2.draw(full);
       g2.setColor(Color.WHITE);
-      g2.setFont(new Font("Arial", Font.BOLD, 36));
+      g2.setFont(new Font("Helvetica", Font.BOLD, 36));
       g2.drawString("Select Theme", 360, 150);
       drawButton(g2, basicBox, "BASIC", Color.LIGHT_GRAY);
       drawButton(g2, jmuBox, "JMU", new Color(69, 0, 132));

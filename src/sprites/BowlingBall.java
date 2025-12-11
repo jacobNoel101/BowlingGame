@@ -19,6 +19,11 @@ import visual.statik.described.*;
  */
 public class BowlingBall extends RuleBasedSprite implements KeyListener
 {
+  protected ArrayList<Integer> keyTimes;
+  protected ArrayList<Point2D> locations;
+  protected ArrayList<Double> rotations;
+  protected ArrayList<Double> scalings;
+  private BallReflection reflectionSprite;
   private double rollingAngle; // in radians
   private double aimOffset; // horizontal offset while aiming
   private boolean rolling;
@@ -32,11 +37,6 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   private boolean gutterFinished = false;
   private double x;
   private double y;
-  protected ArrayList<Integer> keyTimes;
-  protected ArrayList<Point2D> locations;
-  protected ArrayList<Double> rotations;
-  protected ArrayList<Double> scalings;
-  public BallReflection reflectionSprite;
 
   /**
    * BowlingBall Constructor.
@@ -61,7 +61,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
     this.scalings = new ArrayList<Double>();
     this.x = 495;
     this.y = 650;
-    this.reflectionSprite = new BallReflection(reflection);
+    this.setReflectionSprite(new BallReflection(reflection));
     setLocation(x, y);
   }
 
@@ -95,10 +95,10 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
    */
   public void handleTick(final int time)
   {
-    if (reflectionSprite != null)
+    if (getReflectionSprite() != null)
     {
-      reflectionSprite.setOrigin(x, y); // offset to look like a reflection
-      reflectionSprite.handleTick(time);
+      getReflectionSprite().setOrigin(x, y); // offset to look like a reflection
+      getReflectionSprite().handleTick(time);
     }
     if (inGutter)
     {
@@ -426,10 +426,13 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   }
 
   /**
-   * 
+   * Determine if ball would be in the gutter.
+   *
    * @param futureX
+   *          where the ball
    * @param yPos
-   * @return
+   *          the y pos
+   * @return if ball is touching gutter
    */
   private boolean wouldBeInGutter(final double futureX, final double yPos)
   {
@@ -550,7 +553,7 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   /**
    * Intersection of the bounding bodies of the ball and other shapes.
    *
-   * @param Sprite
+   * @param s
    *          to check for intersection
    * @return true or false if ball intersects another shape
    */
@@ -584,6 +587,27 @@ public class BowlingBall extends RuleBasedSprite implements KeyListener
   @Override
   public void keyReleased(final KeyEvent e)
   {
+  }
+
+  /**
+   * Set the reflection.
+   *
+   * @return BallReflection the reflection
+   */
+  public BallReflection getReflectionSprite()
+  {
+    return reflectionSprite;
+  }
+
+  /**
+   * Set the ball reflection.
+   *
+   * @param reflectionSprite
+   *          the reflection
+   */
+  public void setReflectionSprite(final BallReflection reflectionSprite)
+  {
+    this.reflectionSprite = reflectionSprite;
   }
 
 }

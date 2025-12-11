@@ -19,8 +19,8 @@ public class Leaderboard
    */
   public static class Entry
   {
-    public final String user;
-    public final int score;
+    private final String user;
+    private final int score;
 
     /**
      * Creates a leaderboard entry.
@@ -34,6 +34,16 @@ public class Leaderboard
     {
       this.user = user;
       this.score = score;
+    }
+
+    /**
+     * Gets the username.
+     *
+     * @return string username
+     */
+    public String getUser()
+    {
+      return user;
     }
   }
 

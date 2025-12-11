@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.io.IOException;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import app.BowlingApplication;
 import bowlingVisual.BackgroundReader;
 import io.ResourceFinder;
@@ -82,8 +84,18 @@ public class EndScreen extends Stage
       outroMusic = new ClipAudio(finder, "outro_music.wav");
       outroMusic.playOnce();
     }
-    catch (Exception e)
+    catch (IOException e)
     {
+      e.printStackTrace();
+    }
+    catch (UnsupportedAudioFileException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch (LineUnavailableException e)
+    {
+      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
@@ -133,7 +145,7 @@ public class EndScreen extends Stage
       Graphics2D g2 = (Graphics2D) g;
       g2.drawImage(backgroundImage, 0, 0, 1015, 715, null);
       g2.setColor(Color.WHITE);
-      g2.setFont(new Font("Arial", Font.BOLD, 64));
+      g2.setFont(new Font("Helvetica", Font.BOLD, 64));
       String scoreText = "FINAL SCORE: " + finalScore;
       int w = g2.getFontMetrics().stringWidth(scoreText);
       g2.drawString(scoreText, 500 - w / 2, 150);

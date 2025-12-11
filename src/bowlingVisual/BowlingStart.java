@@ -28,7 +28,7 @@ public class BowlingStart implements SimpleContent
     int screenH = 900;
     // draw title letters in white
     g2.setColor(Color.WHITE);
-    g2.setFont(new Font("SansSerif", Font.BOLD, 140));
+    g2.setFont(new Font("Arial", Font.BOLD, 140));
     FontMetrics fm = g2.getFontMetrics();
     int titleX = (screenW - fm.stringWidth(displayed)) / 2;
     int titleY = screenH / 2 - 100;

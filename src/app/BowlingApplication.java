@@ -56,7 +56,7 @@ public class BowlingApplication extends JApplication implements ActionListener
   public void addScore(final String name, final int score)
   {
     leaderboard.add(new LeaderboardEntry(name, score));
-    leaderboard.sort((a, b) -> b.score - a.score); // highest first
+    leaderboard.sort((a, b) -> b.getScore() - a.getScore()); // highest first
   }
 
   /**
@@ -73,8 +73,7 @@ public class BowlingApplication extends JApplication implements ActionListener
   /**
    * Gets the active username.
    *
-   * @param name
-   *          username
+   * @return username the username
    */
   public String getUsername()
   {
@@ -87,7 +86,7 @@ public class BowlingApplication extends JApplication implements ActionListener
    * @param name
    *          username
    */
-  public void setUsername(String name)
+  public void setUsername(final String name)
   {
     this.currentUsername = name;
   }
