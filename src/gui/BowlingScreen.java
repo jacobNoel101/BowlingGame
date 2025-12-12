@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.sound.sampled.*;
 import javax.swing.SwingUtilities;
-import app.BowlingApplication;
+
 import bowling.*;
+import bowlingStart.BowlingApplication;
 import bowlingVisual.*;
 import io.ResourceFinder;
 import music.ClipAudio;

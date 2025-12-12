@@ -5,7 +5,8 @@ import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import javax.sound.sampled.*;
-import app.BowlingApplication;
+
+import bowlingStart.BowlingApplication;
 import bowlingVisual.*;
 import io.ResourceFinder;
 import music.ClipAudio;

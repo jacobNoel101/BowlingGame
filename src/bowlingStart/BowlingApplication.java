@@ -1,11 +1,11 @@
-package app;
+package bowlingStart;
 
 import java.awt.event.*;
 import java.util.*;
 import bowling.GameTheme;
 import bowling.LeaderboardEntry;
 import gui.*;
-
+import app.*;
 /**
  * Main Application for the Bowling Game.
  *

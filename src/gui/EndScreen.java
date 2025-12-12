@@ -6,7 +6,8 @@ import java.awt.geom.*;
 import java.io.IOException;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import app.BowlingApplication;
+
+import bowlingStart.BowlingApplication;
 import bowlingVisual.BackgroundReader;
 import io.ResourceFinder;
 import music.ClipAudio;

@@ -3,8 +3,9 @@ package gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-import app.BowlingApplication;
+
 import bowling.GameTheme;
+import bowlingStart.BowlingApplication;
 import visual.dynamic.described.Stage;
 import visual.statik.SimpleContent;
 

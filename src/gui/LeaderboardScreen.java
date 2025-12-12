@@ -4,8 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.util.List;
-import app.BowlingApplication;
+
 import bowling.LeaderboardEntry;
+import bowlingStart.BowlingApplication;
 import visual.dynamic.described.Stage;
 import visual.statik.SimpleContent;
 
