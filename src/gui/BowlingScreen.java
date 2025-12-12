@@ -183,7 +183,6 @@ public class BowlingScreen extends Stage implements BowlingBallController
    */
   private ScoreBoard buildScoreBoard()
   {
-    GameState gameState = this.gameState;
     ResourceFinder finder = ResourceFinder.createInstance(new Marker());
     ScoreBoardReader reader = new ScoreBoardReader(finder);
     Point2D location = new Point2D.Double(177, 40);
@@ -243,7 +242,7 @@ public class BowlingScreen extends Stage implements BowlingBallController
     topPin.addPoint(5, -3);
     double[][] positions = {{490, 210}, {455, 195}, {525, 195}, {435, 180}, {490, 180}, {545, 180},
         {415, 170}, {465, 170}, {515, 170}, {565, 170}};
-    ArrayList<BowlingPin> pins = new ArrayList<>();
+    ArrayList<BowlingPin> bowlingPins = new ArrayList<>();
     double radius = 10;
     for (int i = positions.length - 1; i >= 0; i--)
     {
@@ -252,10 +251,10 @@ public class BowlingScreen extends Stage implements BowlingBallController
       content.add(new Content(topPin, outline, theme.getPinColor(), null));
       content.add(new Content(frontPin, outline, theme.getPinColor(), null));
       BowlingPin pin = new BowlingPin(content, positions[i][0], positions[i][1], radius);
-      pins.add(pin);
+      bowlingPins.add(pin);
       add(pin);
     }
-    return pins;
+    return bowlingPins;
   }
 
   /**

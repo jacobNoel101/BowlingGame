@@ -64,12 +64,12 @@ public class GameState implements BowlingSubject
     /**
      * Sets the pin.
      *
-     * @param pin
+     * @param newPin
      *          to be set
      */
-    public void setPin(final BowlingPin pin)
+    public void setPin(final BowlingPin newPin)
     {
-      this.pin = pin;
+      this.pin = newPin;
     }
   }
 

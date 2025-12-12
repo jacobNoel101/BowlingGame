@@ -6,6 +6,7 @@ import io.ResourceFinder;
 
 /**
  * ClipAudio that loads WAV files and converts unsupported formats into a safe 16-bit PCM format.
+ * Audio clips from FreeSound.org.
  *
  * @author Jacob Noel and Tristan Apgar
  * @version Fall 2025
